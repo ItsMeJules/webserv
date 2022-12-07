@@ -45,7 +45,7 @@ bool Server::monitorAllFd() {
 						return false;
 					this->pollingManager_.pollFd(client.getFd(), EPOLLIN | EPOLLRDHUP | EPOLLERR);
 				} else { // data d'un client existant
-
+					std::cout << "Received data!" << std::endl;
 				}
 			}
 		}

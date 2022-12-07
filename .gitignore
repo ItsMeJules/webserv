@@ -1,1 +1,6 @@
+webserv
 .vscode/*
+.subject/
+.obj/
+.obj/*
+subject/en.subject.pdf
