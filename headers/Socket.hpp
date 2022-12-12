@@ -2,36 +2,29 @@
 # define SOCKET_HPP
 
 # include <iostream>
+# include <netinet/in.h>
+# include <string.h>
+# include <unistd.h>
+# include <errno.h>
 # include <sys/socket.h>
 # include <fcntl.h>
 # include <unistd.h>
 
-# include "Connection.hpp"
-
-class Socket : public Connection {
+class Socket {
 	private:
 	protected:
-		int type_;
-		int protocol_;
-		int backlog_;
+		int _fd;
 
-		bool binded_;
+		sockaddr_in _address;
 	public:
 		Socket();
-		Socket(int domain, int type, int protocol);
 		Socket(Socket const &socket);
-		~Socket();
+		virtual ~Socket();
 
-		bool generateFd();
-		bool bindTo(unsigned int port);
-		bool setNonBlocking();
-		bool setReusable();
+		virtual bool setup() = 0;
 		
-		int getType() const;
-		int getProtocol() const;
-		int getBacklog() const;
-
-		bool isBinded() const;
+		int getFd() const;
+		sockaddr_in &getAddress();
 
 		Socket &operator=(Socket const &rhs);
 };

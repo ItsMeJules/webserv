@@ -1,22 +1,21 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include "Connection.hpp"
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <errno.h>
+# include "ClientSocket.hpp"
 
-class Client : public Connection {
+class Client {
 	private:
-		int listeningFd_;
-
-		Client();
+		ClientSocket _socket;
 	public:
-		Client(int listeningFd);
+		Client();
+		Client(ClientSocket socket);
 		Client(Client const &client);
 		~Client();
 
-		bool generateFd();
+		bool init();
+
+		ClientSocket &getSocket();
+		void setSocket(ClientSocket socket);
 
 		Client &operator=(Client const &rhs);
 };

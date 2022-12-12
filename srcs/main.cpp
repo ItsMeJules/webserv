@@ -1,17 +1,17 @@
-#include "Socket.hpp"
-#include "Server.hpp"
+# include "ServerSocket.hpp"
+# include "Server.hpp"
+# include "EPoll.hpp"
 
 int main() {
-	Socket socket;
-
-	socket.generateFd();
-	socket.setReusable();
-	socket.setNonBlocking();
-	socket.bindTo(9999);
-
-	Server server(socket);
+	ServerSocket serverSocket;
+	serverSocket.setup();
 	
-	server.listenOnSocket(10);
-	server.initServer();
-	server.monitorAllFd();
+	IPoll *poller = new EPoll();
+	Server server(serverSocket, poller);
+
+	// std::cout << "" << std::endl;
+	while (server.getPoller()->polling(server) > 0) {
+
+	}
+	delete poller;
 }

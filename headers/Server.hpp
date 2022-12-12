@@ -1,25 +1,32 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "Socket.hpp"
-# include "PollingManager.hpp"
+# include <vector>
+
+# include "ServerSocket.hpp"
+# include "IPoll.hpp"
+# include "Client.hpp"
+
+class IPoll;
 
 class Server {
 	private:
-		Socket socket_;
-		PollingManager pollingManager_;
+		ServerSocket _socket;
+		IPoll *_poller;
 
-		Server();
+		std::vector<Client> _clients;
+
+		bool startListening(int backlog);
 	public:
-		Server(Socket socket);
+		Server();
+		Server(ServerSocket &socket, IPoll *_poller);
 		Server(Server const &server);
 		~Server();
 
-		bool initServer();
-		bool monitorAllFd();
-		bool listenOnSocket(int backlog);
+		void addClient(Client client);
 
-		Socket getSocket() const;
+		ServerSocket getSocket();
+		IPoll *getPoller();
 
 		Server &operator=(Server const &rhs);
 };
