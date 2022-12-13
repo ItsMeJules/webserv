@@ -9,9 +9,7 @@ int main() {
 	IPoll *poller = new EPoll();
 	Server server(serverSocket, poller);
 
-	// std::cout << "" << std::endl;
-	while (server.getPoller()->polling(server) > 0) {
-
+	while (poller->polling(server) > 0) {
 	}
 	delete poller;
 }

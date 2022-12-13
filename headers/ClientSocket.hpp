@@ -17,6 +17,8 @@ class ClientSocket : public Socket {
 
 		bool setup();
 
+		int getServerListeningFd() const;
+
 		ClientSocket &operator=(ClientSocket const &rhs);
 };
 

@@ -32,3 +32,11 @@ Client &Client::operator=(Client const &rhs) {
 	}
 	return *this;
 }
+
+std::ostream &operator<<(std::ostream &os, const Client &client) {
+	os << "Client:{"
+				<< "serverListeningFd: " << client._socket.getServerListeningFd() \
+				<< ", fd: " << client._socket.getFd() \
+				<< "}";
+	return os;
+}

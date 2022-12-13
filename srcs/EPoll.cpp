@@ -32,7 +32,17 @@ bool EPoll::pollFd(int fd, int events) {
 	return ret != -1;
 }
 
-int EPoll::polling(Server server) {
+bool EPoll::deleteFd(int fd) {
+	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
+	if (ret == -1)
+		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
+	else
+		std::cerr << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
+	return ret != -1;
+}
+
+
+int EPoll::polling(Server &server) {
 	struct epoll_event events[10]; // Penser a mettre une constante
 
 	int readyFdAmount = epoll_wait(_epollFd, events, 10, -1); // ici aussi
@@ -42,8 +52,9 @@ int EPoll::polling(Server server) {
 	}
 	
 	for (int i = 0; i < readyFdAmount; i++) {
-		if (!(events[i].events & EPOLLIN)) {
+		if (!(events[i].events & EPOLLIN) || (events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
 			std::cout << "epoll error on fd: " << events[i].data.fd << std::endl;
+			close(events[i].data.fd);
 			return -2;
 		}
 		if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
@@ -52,8 +63,11 @@ int EPoll::polling(Server server) {
 				return -3;
 				
 			Client client(socket);
-			pollFd(client.getSocket().getFd(), EPOLLIN | EPOLLRDHUP | EPOLLERR);
+			pollFd(client.getSocket().getFd(), EPOLLIN);
 			server.addClient(client);
+		} else {
+			Client client = server.getClient(events[i].data.fd);
+			server.receiveData(client);
 		}
  	}
 	return 1;

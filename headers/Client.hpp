@@ -1,6 +1,8 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
+# include <iostream>
+
 # include "ClientSocket.hpp"
 
 class Client {
@@ -18,6 +20,7 @@ class Client {
 		void setSocket(ClientSocket socket);
 
 		Client &operator=(Client const &rhs);
+		friend std::ostream &operator<<(std::ostream &os, const Client &client);
 };
 
 #endif

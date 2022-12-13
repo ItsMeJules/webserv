@@ -3,7 +3,6 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 Server::Server() : _socket(), _poller(NULL) {
-	_clients = std::vector<Client>();
 }
 
 Server::Server(ServerSocket &socket, IPoll *poller) : _socket(socket), _poller(poller) {
@@ -28,8 +27,36 @@ bool Server::startListening(int backlog) {
 
 // ############## PUBLIC ##############
 
+void Server::receiveData(Client &client) {
+	char buffer[BUFFER_SIZE + 1];
+	memset(buffer, 0, BUFFER_SIZE);
+
+	int clientFd = client.getSocket().getFd();
+	int byteCount = recv(clientFd, buffer, BUFFER_SIZE, 0); 
+	if (byteCount > 0) {
+		buffer[byteCount] = 0;
+		std::cout << "received " << byteCount << " bytes from " << clientFd << std::endl;
+		std::cout << buffer << std::endl;
+	} else if (byteCount == 0) {
+		_poller->deleteFd(clientFd);
+		close(client.getSocket().getFd());
+		removeClient(client);
+	} else {
+		std::cout << "recv returned an error with fd " << clientFd << ": " << strerror(errno) << std::endl;
+	}
+}
+
+
 void Server::addClient(Client client) {
-	_clients.push_back(client);
+	_clients.insert(std::make_pair(client.getSocket().getFd(), client));
+}
+
+void Server::removeClient(Client &client) {
+	_clients.erase(client.getSocket().getFd());
+}
+
+Client &Server::getClient(int fd) {
+	return _clients[fd];
 }
 
 // ############## GETTERS / SETTERS ##############

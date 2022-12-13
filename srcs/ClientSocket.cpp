@@ -17,11 +17,16 @@ bool ClientSocket::setup() {
 		std::cerr << "error in accept: " << strerror(errno) << std::endl;
 		return false;		
 	} else
-		std::cout << "Client sucessfully connected!" << std::endl;
+		std::cout << "client sucessfully connected with fd: " << _fd << std::endl;
 	return true;
 }
 
 // ############## GETTERS / SETTERS ##############
+
+int ClientSocket::getServerListeningFd() const {
+	return _serverListeningFd;
+}
+
 // ############## OPERATORS ##############
 
 ClientSocket &ClientSocket::operator=(ClientSocket const &rhs) { 

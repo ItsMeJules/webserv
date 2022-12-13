@@ -19,7 +19,8 @@ class EPoll : public IPoll {
 
 		bool init();
 		bool pollFd(int fd, int event);
-		int polling(Server server);
+		bool deleteFd(int fd);
+		int polling(Server &server);
 		int readEvent();
 
 		EPoll &operator=(EPoll const &rhs);

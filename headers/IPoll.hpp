@@ -10,7 +10,8 @@ class IPoll {
 		virtual ~IPoll() {};
 		virtual bool init() = 0;
 		virtual bool pollFd(int fd, int event) = 0;
-		virtual int polling(Server server) = 0;
+		virtual bool deleteFd(int fd) = 0;
+		virtual int polling(Server &server) = 0;
 		virtual int readEvent() = 0;
 };
 
