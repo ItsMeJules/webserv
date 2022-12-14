@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Client::Client() : _socket(0) {}
+Client::Client() {}
 Client::Client(ClientSocket socket) : _socket(socket) {}
 Client::Client(Client const &client) { *this = client; }
 Client::~Client() {}
@@ -16,12 +16,20 @@ bool Client::init() {
 
 // ############## GETTERS / SETTERS ##############
 
-ClientSocket &Client::getSocket() {
-	return _socket;
+void Client::setRequest(HttpRequest request) {
+	_request = request;
 }
 
 void Client::setSocket(ClientSocket socket) {
 	_socket = socket;
+}
+
+ClientSocket &Client::getSocket() {
+	return _socket;
+}
+
+HttpRequest &Client::getRequest() {
+	return _request;
 }
 
 // ############## OPERATORS ##############

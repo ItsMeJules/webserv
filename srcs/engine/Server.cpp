@@ -25,6 +25,7 @@ bool Server::startListening(int backlog) {
 	return ret;
 }
 
+
 // ############## PUBLIC ##############
 
 void Server::receiveData(Client &client) {
@@ -36,7 +37,8 @@ void Server::receiveData(Client &client) {
 	if (byteCount > 0) {
 		buffer[byteCount] = 0;
 		std::cout << "received " << byteCount << " bytes from " << clientFd << std::endl;
-		std::cout << buffer << std::endl;
+		parseRequest(client, buffer);
+		// std::cout << buffer << std::endl;
 	} else if (byteCount == 0) {
 		_poller->deleteFd(clientFd);
 		close(client.getSocket().getFd());
@@ -46,6 +48,11 @@ void Server::receiveData(Client &client) {
 	}
 }
 
+void Server::parseRequest(Client &client, std::string req) {
+	HttpRequest request = client.getRequest();
+	request.parse(req);
+
+}
 
 void Server::addClient(Client client) {
 	_clients.insert(std::make_pair(client.getSocket().getFd(), client));

@@ -8,6 +8,7 @@
 # include "ServerSocket.hpp"
 # include "IPoll.hpp"
 # include "Client.hpp"
+# include "HttpRequest.hpp"
 
 # define BUFFER_SIZE 4096
 
@@ -28,6 +29,7 @@ class Server {
 		~Server();
 
 		void receiveData(Client &client);
+		void parseRequest(Client &client, std::string req);
 
 		void addClient(Client client);
 		void removeClient(Client &client);
