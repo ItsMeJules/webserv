@@ -16,12 +16,11 @@ class HttpRequest : public Message {
 		void parseBody(std::string messageBody);
 	public:
 		HttpRequest();
-		HttpRequest(std::string method, std::string path, std::string httpVersion);
 		HttpRequest(HttpRequest const &httpRequest);
 		~HttpRequest();
 
 		std::string build() const;
-		void parse(std::string &request);
+		void parse(std::string request);
 
 		void setMethod(std::string method);
 		void setPath(std::string path);

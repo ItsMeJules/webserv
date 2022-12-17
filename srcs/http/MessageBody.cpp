@@ -10,7 +10,7 @@ MessageBody::~MessageBody() {}
 // ############## PUBLIC ##############
 
 void MessageBody::append(std::string str) {
-
+	_body << str;
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -26,7 +26,8 @@ int MessageBody::getSize() const {
 // ############## OPERATORS ##############
 MessageBody &MessageBody::operator=(MessageBody const &rhs) {
 	if (this != &rhs) {
-
+		_body << rhs._body.str();
+		_size = rhs._size;
 	}
 	return *this;
 }

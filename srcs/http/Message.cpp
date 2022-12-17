@@ -1,14 +1,10 @@
 #include "Message.hpp"
-#include <iostream>
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 Message::Message() {}
-
-Message::Message(std::string firstLine, MessageBody messageBody) 
-	: _firstLine(firstLine), _messageBody(messageBody) {}
-
-Message::Message(Message const &message) {
+Message::Message(std::string firstLine, MessageBody messageBody) : _messageBody(messageBody) {}
+Message::Message(Message const &message){
 	*this = message;
 }
 
@@ -34,9 +30,9 @@ void Message::setMessageBody(MessageBody messageBody) {
 
 Message &Message::operator=(Message const &rhs) {
 	if (this != &rhs) {
-		_firstLine = rhs._firstLine;
-		_headers = rhs._headers;
 		_messageBody = rhs._messageBody;
+		_inReceive = rhs._inReceive;
+		_headers = rhs._headers;
 	}
 	return *this;
 }

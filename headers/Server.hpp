@@ -29,9 +29,8 @@ class Server {
 		~Server();
 
 		void receiveData(Client &client);
-		void parseRequest(Client &client, std::string req);
 
-		void addClient(Client client);
+		void addClient(Client &client);
 		void removeClient(Client &client);
 		Client &getClient(int fd);
 

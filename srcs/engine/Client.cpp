@@ -37,14 +37,15 @@ HttpRequest &Client::getRequest() {
 Client &Client::operator=(Client const &rhs) {
 	if (this !=  &rhs) {
 		_socket = rhs._socket;
+		_request = rhs._request;
 	}
 	return *this;
 }
 
 std::ostream &operator<<(std::ostream &os, const Client &client) {
 	os << "Client:{"
-				<< "serverListeningFd: " << client._socket.getServerListeningFd() \
-				<< ", fd: " << client._socket.getFd() \
-				<< "}";
+		<< "serverListeningFd: " << client._socket.getServerListeningFd() << ", " \
+		<< "fd: " << client._socket.getFd() \
+	<< "}";
 	return os;
 }

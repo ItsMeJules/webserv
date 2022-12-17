@@ -50,7 +50,7 @@ int EPoll::polling(Server &server) {
 		std::cerr << "epoll_wait failed! error: " << strerror(errno) << std::endl;
 		return -1;
 	}
-	
+
 	for (int i = 0; i < readyFdAmount; i++) {
 		if (!(events[i].events & EPOLLIN) || (events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
 			std::cout << "epoll error on fd: " << events[i].data.fd << std::endl;
@@ -66,7 +66,7 @@ int EPoll::polling(Server &server) {
 			pollFd(client.getSocket().getFd(), EPOLLIN);
 			server.addClient(client);
 		} else {
-			Client client = server.getClient(events[i].data.fd);
+			Client &client = server.getClient(events[i].data.fd);
 			server.receiveData(client);
 		}
  	}
