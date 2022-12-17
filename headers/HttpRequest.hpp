@@ -1,15 +1,17 @@
 #ifndef HTTPREQUEST_HPP
 # define HTTPREQUEST_HPP
 
+# include <vector>
 # include <string>
 
 # include "Message.hpp"
 
 class HttpRequest : public Message {
 	private:
+		std::vector<std::string> _inReceive;
+
 		std::string _method;
 		std::string _path;
-		std::string _httpVersion;
 	protected:
 		void parseFirstLine(std::string firstLine);
 		void parseHeaders(std::string headers);
@@ -19,16 +21,14 @@ class HttpRequest : public Message {
 		HttpRequest(HttpRequest const &httpRequest);
 		~HttpRequest();
 
-		std::string build() const;
+		std::string build();
 		void parse(std::string request);
 
 		void setMethod(std::string method);
 		void setPath(std::string path);
-		void setHttpVersion(std::string httpVersion);
 
 		std::string getMethod() const;
 		std::string getPath() const;
-		std::string getHttpVersion() const;
 
 		HttpRequest &operator=(HttpRequest const &rhs);
 };

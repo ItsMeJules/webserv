@@ -9,6 +9,7 @@ class MessageBody {
 		int _size;
 	public:
 		MessageBody();
+		MessageBody(std::string body);
 		MessageBody(MessageBody const &messageBody);
 		~MessageBody();
 

@@ -42,21 +42,17 @@ void HttpRequest::parseBody(std::string messageBody) {
 
 // ############## PUBLIC ##############
 
-std::string HttpRequest::build() const {
+std::string HttpRequest::build() {
 	std::stringstream ss;
 	ss << _method << " ";
 	ss << _path << " ";
 	ss << _httpVersion << "\r\n";
-	for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)
-		ss << it->first << ": " << it->second << "\r\n";
-	ss << "\r\n\r\n";
-	ss << _messageBody.getBody();
+	ss << Message::build();
 	return ss.str();
 }
 
 void HttpRequest::parse(std::string request) {
-	int posEndHeader = request.find("\r\n\r\n");
-	if (posEndHeader == std::string::npos) {
+	if (request.find("\r\n\r\n") == std::string::npos) {
 		_inReceive.push_back(request);
 	} else {
 		std::string str;
@@ -83,11 +79,6 @@ void HttpRequest::setPath(std::string path) {
 	_path = path;
 }
 
-void HttpRequest::setHttpVersion(std::string httpVersion) {
-	_httpVersion = httpVersion;
-}
-
-
 std::string HttpRequest::getMethod() const {
 	return _method;
 }
@@ -96,15 +87,12 @@ std::string HttpRequest::getPath() const {
 	return _path;
 }
 
-std::string HttpRequest::getHttpVersion() const {
-	return _httpVersion;
-}
-
 		
 // ############## OPERATORS ##############
 
 HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 	if (this != &rhs) {
+		_inReceive = rhs._inReceive;
 		_method = rhs._method;
 		_path = rhs._path ;
 		_httpVersion = rhs._httpVersion;

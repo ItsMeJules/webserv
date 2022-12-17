@@ -9,6 +9,7 @@
 # include "IPoll.hpp"
 # include "Client.hpp"
 # include "HttpRequest.hpp"
+# include "HttpResponse.hpp"
 
 # define BUFFER_SIZE 4096
 
@@ -29,6 +30,7 @@ class Server {
 		~Server();
 
 		void receiveData(Client &client);
+		void sendData(Client &client);
 
 		void addClient(Client &client);
 		void removeClient(Client &client);

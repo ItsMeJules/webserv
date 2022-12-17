@@ -38,6 +38,7 @@ void Server::receiveData(Client &client) {
 		buffer[byteCount] = 0;
 		std::cout << "received " << byteCount << " bytes from " << clientFd << std::endl;
 		client.getRequest().parse(buffer);
+		sendData(client);
 	} else if (byteCount == 0) {
 		_poller->deleteFd(clientFd);
 		close(client.getSocket().getFd());
@@ -45,6 +46,18 @@ void Server::receiveData(Client &client) {
 	} else {
 		std::cout << "recv returned an error with fd " << clientFd << ": " << strerror(errno) << std::endl;
 	}
+}
+
+void Server::sendData(Client &client) {
+	HttpResponse response("HTTP/1.1", 200, "OK");
+	MessageBody body("Hello World!");
+	std::stringstream ss;
+	
+	ss << body.getSize();
+	response.addHeader("Content-Type", "text/plain");
+	response.addHeader("Content-Length", ss.str());
+	response.setMessageBody(body);
+	response.send(client);
 }
 
 void Server::addClient(Client &client) {

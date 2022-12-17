@@ -3,6 +3,12 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 MessageBody::MessageBody() {}
+
+MessageBody::MessageBody(std::string body) {
+	_body << body;
+	_size = body.length();
+}
+
 MessageBody::MessageBody(MessageBody const &messageBody) { *this = messageBody; }
 MessageBody::~MessageBody() {}
 
