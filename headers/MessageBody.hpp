@@ -16,6 +16,7 @@ class MessageBody {
 		void append(std::string str);
 
 		std::string getBody() const;
+		std::string getSizeStr() const;
 		int getSize() const;
 
 		MessageBody &operator=(MessageBody const &rhs);

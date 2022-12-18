@@ -25,15 +25,16 @@ void HttpRequest::parseFirstLine(std::string firstLine) {
 	_httpVersion = firstLine;
 }
 
-void HttpRequest::parseHeaders(std::string headers) {
+bool HttpRequest::parseHeaders(std::string headers) {
 	size_t endLinePos = 0;
 	while ((endLinePos = headers.find("\r\n")) != std::string::npos) {
 		size_t separator = headers.find(':');
 		addHeader(headers.substr(0, separator), headers.substr(separator + 2, endLinePos - separator - 2)); // skips ": " and stops before CRLF
 		headers.erase(0, endLinePos + 2); // +2 skips CRLF
-		if (headers == "\r\n")
-			return ;			
+		if (headers == "\r\n") //we got to the end of headers with no body.
+			return false;
 	}
+	return true;
 }
 
 void HttpRequest::parseBody(std::string messageBody) {
@@ -62,7 +63,12 @@ void HttpRequest::parse(std::string request) {
 		}
 		str += request;
 		parseFirstLine(str.substr(0, str.find("\r\n")));
-		parseHeaders(str.substr(str.find("\r\n") + 2)); // skips CRLF
+		if (parseHeaders(str.substr(str.find("\r\n") + 2))) { // skips CRLF
+			if (!isChunked())
+				std::cout << "chunked!" << std::endl;
+			else
+				std::cout << "not chunked!" << std::endl;
+		}
 		_inReceive.clear();
 	}
 	parseBody(request.substr(request.rfind("\r\n") + 2)); // skips CRLF

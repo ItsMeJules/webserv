@@ -51,11 +51,9 @@ void Server::receiveData(Client &client) {
 void Server::sendData(Client &client) {
 	HttpResponse response("HTTP/1.1", 200, "OK");
 	MessageBody body("Hello World!");
-	std::stringstream ss;
-	
-	ss << body.getSize();
+
 	response.addHeader("Content-Type", "text/plain");
-	response.addHeader("Content-Length", ss.str());
+	response.addHeader("Content-Length", body.getSizeStr());
 	response.setMessageBody(body);
 	response.send(client);
 }

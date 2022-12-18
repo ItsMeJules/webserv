@@ -14,7 +14,7 @@ class HttpRequest : public Message {
 		std::string _path;
 	protected:
 		void parseFirstLine(std::string firstLine);
-		void parseHeaders(std::string headers);
+		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
 	public:
 		HttpRequest();

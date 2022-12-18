@@ -29,6 +29,10 @@ void Message::addHeader(std::string headerTag, std::string value) {
 	_headers.insert(std::make_pair(headerTag, value));
 }
 
+bool Message::isChunked() {
+	return _headers.count("Transfer-Encoding") && _headers["Transfer-Encoding"] == "chunked";
+}
+
 // ############## GETTERS / SETTERS ##############
 
 void Message::setMessageBody(MessageBody messageBody) {

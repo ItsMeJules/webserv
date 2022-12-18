@@ -22,6 +22,7 @@ class Message {
 
 		virtual std::string build();
 		void addHeader(std::string headerTag, std::string value);
+		bool isChunked();
 
 		void setMessageBody(MessageBody messageBody);
 		void setHttpVersion(std::string httpVersion);

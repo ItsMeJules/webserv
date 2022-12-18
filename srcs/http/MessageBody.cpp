@@ -25,6 +25,12 @@ std::string MessageBody::getBody() const {
 	return _body.str();
 }
 
+std::string MessageBody::getSizeStr() const {
+	std::stringstream ss;
+	ss << _size;
+	return ss.str();
+}
+
 int MessageBody::getSize() const {
 	return _size;
 }
