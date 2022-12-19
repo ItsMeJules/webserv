@@ -4,12 +4,19 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpRequest::HttpRequest() {}
+HttpRequest::HttpRequest() : _headersReceived(false) {}
 HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
 
 HttpRequest::~HttpRequest() {}
 
 // ############## PRIVATE ##############
+
+std::string HttpRequest::concatenateDataReceived(std::string request) {
+	std::string str;
+	for (std::vector<std::string>::iterator it = _inReceive.begin(); it != _inReceive.end(); it++)
+		str += *it;
+	return str.empty() ? str : str + request;
+}
 
 // ############## PROTECTED ##############
 
@@ -31,14 +38,25 @@ bool HttpRequest::parseHeaders(std::string headers) {
 		size_t separator = headers.find(':');
 		addHeader(headers.substr(0, separator), headers.substr(separator + 2, endLinePos - separator - 2)); // skips ": " and stops before CRLF
 		headers.erase(0, endLinePos + 2); // +2 skips CRLF
-		if (headers == "\r\n") //we got to the end of headers with no body.
-			return false;
+		//we got to the end of headers.
+		if (headers.rfind("\r\n", 0)) { // does the string start with \r\n
+			_headersReceived = true;
+			if (headers.size() == 2) //theres no body after the headers
+				return false;
+			_inReceive.push_back(headers.substr(0, 2));
+			return true;
+		}
 	}
-	return true;
 }
 
 void HttpRequest::parseBody(std::string messageBody) {
-	_messageBody.append(messageBody);
+	if (messageBody.empty())
+		return ;
+	if (!isChunked())
+}
+
+void HttpRequest::readChunked(std::string body) {
+
 }
 
 // ############## PUBLIC ##############
@@ -53,25 +71,18 @@ std::string HttpRequest::build() {
 }
 
 void HttpRequest::parse(std::string request) {
-	if (request.find("\r\n\r\n") == std::string::npos) {
-		_inReceive.push_back(request);
-	} else {
-		std::string str;
-		if (!_inReceive.empty()) {
-			for (std::vector<std::string>::iterator it = _inReceive.begin(); it != _inReceive.end(); it++)
-				str += *it;
+	if (!_headersReceived) {
+		if (request.find("\r\n\r\n") == std::string::npos) {
+			_inReceive.push_back(request);
+		} else {
+			std::string str = concatenateDataReceived(request);
+			_inReceive.clear();
+			parseFirstLine(str.substr(0, str.find("\r\n")));
+			parseHeaders(str.substr(str.find("\r\n") + 2));
 		}
-		str += request;
-		parseFirstLine(str.substr(0, str.find("\r\n")));
-		if (parseHeaders(str.substr(str.find("\r\n") + 2))) { // skips CRLF
-			if (!isChunked())
-				std::cout << "chunked!" << std::endl;
-			else
-				std::cout << "not chunked!" << std::endl;
-		}
-		_inReceive.clear();
 	}
-	parseBody(request.substr(request.rfind("\r\n") + 2)); // skips CRLF
+	if (_headersReceived)
+		parseBody(concatenateDataReceived());
 }
 
 
@@ -102,6 +113,7 @@ HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 		_method = rhs._method;
 		_path = rhs._path ;
 		_httpVersion = rhs._httpVersion;
+		_headersReceived = rhs._headersReceived;
 		Message::operator=(rhs);
 	}
 	return *this;

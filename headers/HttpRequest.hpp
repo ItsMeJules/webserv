@@ -12,10 +12,15 @@ class HttpRequest : public Message {
 
 		std::string _method;
 		std::string _path;
+
+		std::string concatenateDataReceived(std::string request = NULL);
 	protected:
+		bool _headersReceived;
+
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
+		void readChunked(std::string body);
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
