@@ -27,7 +27,6 @@ std::string HttpResponse::build() {
 void HttpResponse::send(Client &client) {
 	std::string response = build();
 
-	std::cout << response << std::endl;
 	write(client.getSocket().getFd(), response.c_str(), response.length());
 }
 

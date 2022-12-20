@@ -13,7 +13,7 @@ class HttpRequest : public Message {
 		std::string _method;
 		std::string _path;
 
-		std::string concatenateDataReceived(std::string request = NULL);
+		std::string concatenateDataReceived(std::string request = "");
 	protected:
 		bool _headersReceived;
 

@@ -15,7 +15,7 @@ std::string HttpRequest::concatenateDataReceived(std::string request) {
 	std::string str;
 	for (std::vector<std::string>::iterator it = _inReceive.begin(); it != _inReceive.end(); it++)
 		str += *it;
-	return str.empty() ? str : str + request;
+	return request.empty() ? str : str + request;
 }
 
 // ############## PROTECTED ##############
@@ -44,15 +44,17 @@ bool HttpRequest::parseHeaders(std::string headers) {
 			if (headers.size() == 2) //theres no body after the headers
 				return false;
 			_inReceive.push_back(headers.substr(2));
-			return true;
+			break ;
 		}
 	}
+	return true;
 }
 
 void HttpRequest::parseBody(std::string messageBody) {
 	if (messageBody.empty())
 		return ;
 	if (!isChunked())
+		return ;
 }
 
 void HttpRequest::readChunked(std::string body) {
