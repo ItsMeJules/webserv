@@ -43,7 +43,7 @@ bool HttpRequest::parseHeaders(std::string headers) {
 			_headersReceived = true;
 			if (headers.size() == 2) //theres no body after the headers
 				return false;
-			_inReceive.push_back(headers.substr(0, 2));
+			_inReceive.push_back(headers.substr(2));
 			return true;
 		}
 	}
