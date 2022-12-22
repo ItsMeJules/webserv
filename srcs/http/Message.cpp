@@ -53,6 +53,7 @@ Message &Message::operator=(Message const &rhs) {
 	if (this != &rhs) {
 		_messageBody = rhs._messageBody;
 		_headers = rhs._headers;
+		_httpVersion = rhs._httpVersion;
 	}
 	return *this;
 }

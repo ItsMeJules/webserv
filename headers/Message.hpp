@@ -14,7 +14,6 @@ class Message {
 
 		std::string _httpVersion;
 	public:
-	public:
 		Message();
 		Message(std::string httpVersion);
 		Message(Message const &message);

@@ -5,29 +5,18 @@
 # include <string>
 
 # include "Message.hpp"
+# include "RequestParser.hpp"
 
 class HttpRequest : public Message {
 	private:
-		std::vector<std::string> _inReceive;
-
 		std::string _method;
 		std::string _path;
-
-		std::string concatenateDataReceived(std::string request = "");
-	protected:
-		bool _headersReceived;
-
-		void parseFirstLine(std::string firstLine);
-		bool parseHeaders(std::string headers);
-		void parseBody(std::string messageBody);
-		void readChunked(std::string body);
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
 		~HttpRequest();
 
 		std::string build();
-		void parse(std::string request);
 
 		void setMethod(std::string method);
 		void setPath(std::string path);

@@ -5,8 +5,7 @@ import requests
 host = "127.0.0.1"
 port = 9999
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((host, port))
-    str = input("Ecrivez quelquechose à envoyer : ")
-    s.send(str.encode())
-print("Connection ended.")
+pload = {'username':'Olivia','password':'123'}
+# rg = requests.get(host + ":" + str(port))
+r = requests.post("http://" + host + ":" + str(port), data = pload)
+print(r.text)
