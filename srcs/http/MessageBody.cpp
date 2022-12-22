@@ -1,8 +1,9 @@
-# include "MessageBody.hpp"
+#include "MessageBody.hpp"
+#include <iostream>
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-MessageBody::MessageBody() {}
+MessageBody::MessageBody() : _size(0) {}
 
 MessageBody::MessageBody(std::string body) {
 	_body << body;
@@ -16,7 +17,9 @@ MessageBody::~MessageBody() {}
 // ############## PUBLIC ##############
 
 void MessageBody::append(std::string str) {
+	std::cout << "appended: " << str << std::endl;
 	_body << str;
+	_size += str.size();
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -26,9 +29,7 @@ std::string MessageBody::getBody() const {
 }
 
 std::string MessageBody::getSizeStr() const {
-	std::stringstream ss;
-	ss << _size;
-	return ss.str();
+	return ws::itos(_size);
 }
 
 int MessageBody::getSize() const {

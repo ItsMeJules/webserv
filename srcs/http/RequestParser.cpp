@@ -51,9 +51,11 @@ bool RequestParser::parseHeaders(std::string headers) {
 
 void RequestParser::parseBody(std::string messageBody) {
 	std::cout << "body: " << messageBody << "size: " << messageBody.size() << std::endl;
-	if (messageBody.empty())
+	if (messageBody.empty() || messageBody.size() > ws::stoi(_request.getHeader("Content-Length")))
 		return ;
-	if (!_request.isChunked())
+	_request.getMessageBody().append(messageBody);
+	std::cout << _request.getMessageBody().getBody() << std::endl;
+	if (!_request.headersContains("Transfer-Encoding", "chunked"))
 		return ;
 }
 

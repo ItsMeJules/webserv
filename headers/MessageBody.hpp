@@ -3,6 +3,8 @@
 
 # include <sstream>
 
+# include "converter.hpp"
+
 class MessageBody {
 	private:
 		std::stringstream _body;

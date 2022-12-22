@@ -21,12 +21,14 @@ class Message {
 
 		virtual std::string build();
 		void addHeader(std::string headerTag, std::string value);
-		bool isChunked();
-
+		std::string getHeader(std::string headerTag);
+		bool headersContains(std::string headerTag, std::string value);
+		
 		void setMessageBody(MessageBody messageBody);
 		void setHttpVersion(std::string httpVersion);
 		
 		std::string getHttpVersion() const;
+		MessageBody getMessageBody();
 
 		Message &operator=(Message const &rhs);
 };

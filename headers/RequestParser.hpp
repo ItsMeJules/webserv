@@ -5,6 +5,7 @@
 # include <string>
 
 # include "HttpRequest.hpp"
+# include "converter.hpp"
 
 class HttpRequest;
 

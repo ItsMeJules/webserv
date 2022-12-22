@@ -29,8 +29,12 @@ void Message::addHeader(std::string headerTag, std::string value) {
 	_headers.insert(std::make_pair(headerTag, value));
 }
 
-bool Message::isChunked() {
-	return _headers.count("Transfer-Encoding") && _headers["Transfer-Encoding"] == "chunked";
+std::string Message::getHeader(std::string headerTag) {
+	return _headers[headerTag];
+}
+
+bool Message::headersContains(std::string headerTag, std::string value) {
+	return _headers.count(headerTag) && _headers[headerTag] == value;
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -41,6 +45,10 @@ void Message::setMessageBody(MessageBody messageBody) {
 
 void Message::setHttpVersion(std::string httpVersion) {
 	_httpVersion = httpVersion;
+}
+
+MessageBody Message::getMessageBody() {
+	return _messageBody;
 }
 
 std::string Message::getHttpVersion() const {
