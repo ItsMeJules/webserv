@@ -28,7 +28,7 @@ class Message {
 		void setHttpVersion(std::string httpVersion);
 		
 		std::string getHttpVersion() const;
-		MessageBody getMessageBody();
+		MessageBody &getMessageBody();
 
 		Message &operator=(Message const &rhs);
 };

@@ -4,7 +4,6 @@
 # include <vector>
 # include <string>
 
-# include "HttpRequest.hpp"
 # include "converter.hpp"
 
 class HttpRequest;
@@ -19,8 +18,9 @@ class RequestParser {
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
-		std::string concatenateDataReceived(std::string request = "");
+		std::string concatenateDataReceived(std::string request);
 	public:
+		RequestParser();
 		RequestParser(HttpRequest &request);
 		RequestParser(RequestParser const &requestParser);
 		~RequestParser();
@@ -30,5 +30,7 @@ class RequestParser {
 
 		RequestParser &operator=(RequestParser const &rhs);
 };
+
+# include "HttpRequest.hpp"
 
 #endif

@@ -11,6 +11,8 @@ class HttpRequest : public Message {
 	private:
 		std::string _method;
 		std::string _path;
+
+		RequestParser _parser;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
@@ -23,6 +25,7 @@ class HttpRequest : public Message {
 
 		std::string getMethod() const;
 		std::string getPath() const;
+		RequestParser &getParser();
 
 		HttpRequest &operator=(HttpRequest const &rhs);
 };

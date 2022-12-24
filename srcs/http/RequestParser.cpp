@@ -37,7 +37,6 @@ bool RequestParser::parseHeaders(std::string headers) {
 		size_t separator = headers.find(':');
 		_request.addHeader(headers.substr(0, separator), headers.substr(separator + 2, endLinePos - separator - 2)); // skips ": " and stops before CRLF
 		headers.erase(0, endLinePos + 2); // +2 skips CRLF
-		//we got to the end of headers.
 		if (headers.rfind("\r\n", 0) != std::string::npos) { // does the string start with \r\n
 			_headersReceived = true;
 			if (headers.size() == 2) //theres no body after the headers
@@ -50,13 +49,9 @@ bool RequestParser::parseHeaders(std::string headers) {
 }
 
 void RequestParser::parseBody(std::string messageBody) {
-	std::cout << "body: " << messageBody << "size: " << messageBody.size() << std::endl;
-	if (messageBody.empty() || messageBody.size() > ws::stoi(_request.getHeader("Content-Length")))
+	if (messageBody.empty())
 		return ;
 	_request.getMessageBody().append(messageBody);
-	std::cout << _request.getMessageBody().getBody() << std::endl;
-	if (!_request.headersContains("Transfer-Encoding", "chunked"))
-		return ;
 }
 
 // ############## PUBLIC ##############
@@ -67,13 +62,15 @@ bool RequestParser::parseRequest(std::string request) {
 			_inReceive.push_back(request);
 		} else {
 			std::string str = concatenateDataReceived(request);
-			_inReceive.clear();
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
+			request = *(_inReceive.end() - 1);
+			_inReceive.clear();
 		}
 	}
-	if (_headersReceived)
-		parseBody(concatenateDataReceived());
+	if (_headersReceived) {
+		parseBody(request);
+	}
 	return true;
 }
 
@@ -89,6 +86,7 @@ RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 	if (this != &rhs) {
 		_inReceive = rhs._inReceive;
 		_headersReceived = rhs._headersReceived;
+		_request = rhs._request;
 	}
 	return *this;
 }

@@ -16,8 +16,11 @@ MessageBody::~MessageBody() {}
 // ############## PRIVATE ##############
 // ############## PUBLIC ##############
 
+int MessageBody::getSizeWith(std::string str) {
+	return _size + str.size();
+}
+
 void MessageBody::append(std::string str) {
-	std::cout << "appended: " << str << std::endl;
 	_body << str;
 	_size += str.size();
 }

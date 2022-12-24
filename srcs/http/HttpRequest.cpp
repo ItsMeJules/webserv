@@ -4,8 +4,8 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpRequest::HttpRequest() {}
-HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
+HttpRequest::HttpRequest() : _parser(*this) {}
+HttpRequest::HttpRequest(HttpRequest const &httpRequest) : _parser(*this) { *this = httpRequest; }
 
 HttpRequest::~HttpRequest() {}
 
@@ -42,6 +42,9 @@ std::string HttpRequest::getPath() const {
 	return _path;
 }
 
+RequestParser &HttpRequest::getParser() {
+	return _parser;
+}
 		
 // ############## OPERATORS ##############
 

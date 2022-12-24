@@ -15,6 +15,7 @@ class MessageBody {
 		MessageBody(MessageBody const &messageBody);
 		~MessageBody();
 
+		int MessageBody::getSizeWith(std::string str);
 		void append(std::string str);
 
 		std::string getBody() const;

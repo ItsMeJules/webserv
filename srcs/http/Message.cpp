@@ -47,7 +47,7 @@ void Message::setHttpVersion(std::string httpVersion) {
 	_httpVersion = httpVersion;
 }
 
-MessageBody Message::getMessageBody() {
+MessageBody &Message::getMessageBody() {
 	return _messageBody;
 }
 
