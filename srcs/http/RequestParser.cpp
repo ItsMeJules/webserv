@@ -14,8 +14,8 @@ RequestParser::~RequestParser() {}
 
 std::string RequestParser::concatenateDataReceived(std::string request) {
 	std::string str;
-	for (std::vector<std::string>::iterator it = _inReceive.begin(); it != _inReceive.end(); it++)
-		str += *it;
+	// for (std::vector<std::string>::iterator it = _inReceive.begin(); it != _inReceive.end(); it++)
+	// 	str += *it;
 	return request.empty() ? str : str + request;
 }
 
@@ -41,7 +41,7 @@ bool RequestParser::parseHeaders(std::string headers) {
 			_headersReceived = true;
 			if (headers.size() == 2) //theres no body after the headers
 				return false;
-			_inReceive.push_back(headers.substr(2));
+			_inReceive << headers.substr(2);
 			break ;
 		}
 	}
@@ -61,14 +61,13 @@ void RequestParser::parseBody(std::string messageBody) {
 
 bool RequestParser::parseRequest(std::string request) {
 	if (!_headersReceived) {
-		if (request.find("\r\n\r\n") == std::string::npos) {
-			_inReceive.push_back(request);
-		} else {
-			std::string str = concatenateDataReceived(request);
+		_inReceive << request;
+		if (request.find("\r\n\r\n") != std::string::npos) {
+			std::string str = _inReceive.str();
+			_inReceive.str("");
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
-			request = *(_inReceive.end() - 1);
-			_inReceive.clear();
+			request = _inReceive.str();
 		}
 	}
 	if (_headersReceived) {
@@ -90,7 +89,7 @@ void RequestParser::readChunked(std::string body) {
 
 RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 	if (this != &rhs) {
-		_inReceive = rhs._inReceive;
+		_inReceive << rhs._inReceive.str();
 		_headersReceived = rhs._headersReceived;
 		_request = rhs._request;
 	}

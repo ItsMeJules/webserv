@@ -10,7 +10,7 @@ class HttpRequest;
 
 class RequestParser {
 	private:
-		std::vector<std::string> _inReceive;
+		std::stringstream _inReceive;
 		bool _headersReceived;
 
 		HttpRequest &_request;
