@@ -12,13 +12,6 @@ RequestParser::~RequestParser() {}
 
 // ############## PRIVATE ##############
 
-std::string RequestParser::concatenateDataReceived(std::string request) {
-	std::string str;
-	// for (std::vector<std::string>::iterator it = _inReceive.begin(); it != _inReceive.end(); it++)
-	// 	str += *it;
-	return request.empty() ? str : str + request;
-}
-
 void RequestParser::parseFirstLine(std::string firstLine) {
 	size_t pos = 0;
 	while ((pos = firstLine.find(' ')) != std::string::npos) {
@@ -80,6 +73,9 @@ bool RequestParser::parseRequest(std::string request) {
 }
 
 void RequestParser::readChunked(std::string body) {
+	MessageBody &body = _request.getMessageBody();
+	if (body.find_first_not_of("0123456789abcdef") != std::string::npos);
+	int pos = body.find("\r\n");
 	_request.setRequestReceived(true);
 }
 

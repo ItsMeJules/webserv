@@ -15,10 +15,11 @@ class RequestParser {
 
 		HttpRequest &_request;
 
+		std::string hex;
+
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
-		std::string concatenateDataReceived(std::string request);
 	public:
 		RequestParser();
 		RequestParser(HttpRequest &request);
