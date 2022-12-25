@@ -69,13 +69,16 @@ bool RequestParser::parseRequest(std::string request) {
 		}
 	}
 	if (_headersReceived) {
-		parseBody(request);
+		if (_request.getHeader("Transfer-Encoding") == "chunked")
+			readChunked(request);
+		else
+			parseBody(request);
 	}
 	return true;
 }
 
 void RequestParser::readChunked(std::string body) {
-
+	
 }
 
 // ############## GETTERS / SETTERS ##############
