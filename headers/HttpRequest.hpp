@@ -11,6 +11,7 @@ class HttpRequest : public Message {
 	private:
 		std::string _method;
 		std::string _path;
+		bool _requestReceived;
 
 		RequestParser _parser;
 	public:
@@ -22,7 +23,9 @@ class HttpRequest : public Message {
 
 		void setMethod(std::string method);
 		void setPath(std::string path);
+		void setRequestReceived(bool requestReceived);
 
+		bool isRequestReceived() const;
 		std::string getMethod() const;
 		std::string getPath() const;
 		RequestParser &getParser();

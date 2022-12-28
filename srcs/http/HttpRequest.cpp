@@ -34,6 +34,14 @@ void HttpRequest::setPath(std::string path) {
 	_path = path;
 }
 
+void HttpRequest::setRequestReceived(bool requestReceived) {
+	_requestReceived = requestReceived;
+}
+
+bool HttpRequest::isRequestReceived() const {
+	return _requestReceived;
+}
+
 std::string HttpRequest::getMethod() const {
 	return _method;
 }

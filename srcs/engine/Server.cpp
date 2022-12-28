@@ -36,12 +36,13 @@ void Server::receiveData(Client &client) {
 	int byteCount = recv(clientFd, buffer, BUFFER_SIZE, 0); 
 	if (byteCount > 0) {
 		buffer[byteCount] = 0;
-		RequestParser &parser = client.getRequest().getParser();
+		HttpRequest &request = client.getRequest();
 		std::cout << "received " << byteCount << " bytes from " << clientFd << std::endl;
 		std::cout << "data received : \n" << buffer << std::endl;
-		parser.parseRequest(buffer);
-		std::cout << "data parsed : \n" << client.getRequest().build() << std::endl;
-		// sendData(client);
+		request.getParser().parseRequest(buffer);
+		std::cout << "data parsed : \n" << request.build() << std::endl;
+		if (request.isRequestReceived())
+			sendData(client);
 	} else if (byteCount == 0) {
 		_poller->deleteFd(clientFd);
 		close(client.getSocket().getFd());

@@ -49,9 +49,12 @@ bool RequestParser::parseHeaders(std::string headers) {
 }
 
 void RequestParser::parseBody(std::string messageBody) {
+	MessageBody &body = _request.getMessageBody();
 	if (messageBody.empty())
 		return ;
-	_request.getMessageBody().append(messageBody);
+	body.append(messageBody);
+	if (messageBody.getSize() >= ws::stoi(_request.getHeader("Content-Length")))
+		_request.setRequestReceived(true);
 }
 
 // ############## PUBLIC ##############
@@ -78,7 +81,7 @@ bool RequestParser::parseRequest(std::string request) {
 }
 
 void RequestParser::readChunked(std::string body) {
-	
+	_request.setRequestReceived(true);
 }
 
 // ############## GETTERS / SETTERS ##############

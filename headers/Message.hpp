@@ -8,11 +8,9 @@
 
 class Message {
 	protected:
-		MessageBody _messageBody;
-
-		std::map<std::string, std::string> _headers;
-
 		std::string _httpVersion;
+		std::map<std::string, std::string> _headers;
+		MessageBody _messageBody;
 	public:
 		Message();
 		Message(std::string httpVersion);
