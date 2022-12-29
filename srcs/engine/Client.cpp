@@ -16,10 +16,6 @@ bool Client::init() {
 
 // ############## GETTERS / SETTERS ##############
 
-void Client::setRequest(HttpRequest request) {
-	_request = request;
-}
-
 void Client::setSocket(ClientSocket socket) {
 	_socket = socket;
 }
@@ -28,8 +24,8 @@ ClientSocket &Client::getSocket() {
 	return _socket;
 }
 
-HttpRequest &Client::getRequest() {
-	return _request;
+RequestParser &Client::getRequestParser() {
+	return _parser;
 }
 
 // ############## OPERATORS ##############
@@ -37,7 +33,7 @@ HttpRequest &Client::getRequest() {
 Client &Client::operator=(Client const &rhs) {
 	if (this !=  &rhs) {
 		_socket = rhs._socket;
-		_request = rhs._request;
+		_parser = rhs._parser;
 	}
 	return *this;
 }

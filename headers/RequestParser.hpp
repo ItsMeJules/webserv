@@ -5,35 +5,36 @@
 # include <string>
 
 # include "utils.hpp"
+# include "HttpRequest.hpp"
 
 # define HEX_VALUES "0123456789abcdef"
-
-class HttpRequest;
 
 class RequestParser {
 	private:
 		std::stringstream _inReceive;
 		bool _headersReceived;
+		bool _requestParsed;
 
-		HttpRequest &_request;
+		HttpRequest _request;
 
-		std::string hex;
+		std::string _hex;
 
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
 	public:
 		RequestParser();
-		RequestParser(HttpRequest &request);
-		RequestParser(RequestParser const &requestParser);
+		RequestParser(RequestParser const &request);
 		~RequestParser();
 
 		bool parseRequest(std::string request);
 		int readChunked(std::string body);
 
+		bool isRequestParsed() const;
+		HttpRequest &getHttpRequest();
+
 		RequestParser &operator=(RequestParser const &rhs);
 };
 
-# include "HttpRequest.hpp"
 
 #endif

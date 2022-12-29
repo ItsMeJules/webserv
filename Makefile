@@ -1,5 +1,5 @@
 NAME		=	webserv
-CC			=	clang++
+CC			=	g++
 CFLAGS		=	-fsanitize=address -g -std=c++98
 RM			=	rm -rf
 SRC_DIR 	= 	srcs/

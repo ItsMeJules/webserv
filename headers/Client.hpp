@@ -5,11 +5,12 @@
 
 # include "ClientSocket.hpp"
 # include "HttpRequest.hpp"
+# include "RequestParser.hpp"
 
 class Client {
 	private:
 		ClientSocket _socket;
-		HttpRequest _request;
+		RequestParser _parser;
 	public:
 		Client();
 		Client(ClientSocket socket);
@@ -19,10 +20,9 @@ class Client {
 		bool init();
 
 		void setSocket(ClientSocket socket);
-		void setRequest(HttpRequest request);
 
 		ClientSocket &getSocket();
-		HttpRequest &getRequest();
+		RequestParser &getRequestParser();
 
 		Client &operator=(Client const &rhs);
 		friend std::ostream &operator<<(std::ostream &os, const Client &client);

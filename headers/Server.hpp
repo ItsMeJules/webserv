@@ -11,7 +11,7 @@
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
 
-# define BUFFER_SIZE 40
+# define BUFFER_SIZE 10
 
 class IPoll;
 

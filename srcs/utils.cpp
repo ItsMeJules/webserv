@@ -20,9 +20,9 @@ std::string ws::itos(int nbr) {
 	return ss.str();	
 }
 
-bool char_in_string(char *tab, char c) {
-	for (int i = 0; tab[i]; i++) {
-		if (tab[i] == c)
+bool ws::char_in_string(std::string const s, char c) {
+	for (int i = 0; s[i]; i++) {
+		if (s[i] == c)
 			return true;
 	}
 	return false;

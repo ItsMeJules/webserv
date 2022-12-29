@@ -4,8 +4,8 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpRequest::HttpRequest() : _parser(*this) {}
-HttpRequest::HttpRequest(HttpRequest const &httpRequest) : _parser(*this) { *this = httpRequest; }
+HttpRequest::HttpRequest() {}
+HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
 
 HttpRequest::~HttpRequest() {}
 
@@ -34,14 +34,6 @@ void HttpRequest::setPath(std::string path) {
 	_path = path;
 }
 
-void HttpRequest::setRequestReceived(bool requestReceived) {
-	_requestReceived = requestReceived;
-}
-
-bool HttpRequest::isRequestReceived() const {
-	return _requestReceived;
-}
-
 std::string HttpRequest::getMethod() const {
 	return _method;
 }
@@ -49,17 +41,13 @@ std::string HttpRequest::getMethod() const {
 std::string HttpRequest::getPath() const {
 	return _path;
 }
-
-RequestParser &HttpRequest::getParser() {
-	return _parser;
-}
 		
 // ############## OPERATORS ##############
 
 HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 	if (this != &rhs) {
 		_method = rhs._method;
-		_path = rhs._path ;
+		_path = rhs._path;
 		Message::operator=(rhs);
 	}
 	return *this;

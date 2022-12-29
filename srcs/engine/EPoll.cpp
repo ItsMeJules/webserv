@@ -53,7 +53,8 @@ int EPoll::polling(Server &server) {
 
 	for (int i = 0; i < readyFdAmount; i++) {
 		if (!(events[i].events & EPOLLIN) || (events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
-			std::cout << "epoll error on fd: " << events[i].data.fd << std::endl;
+			std::cerr << !(events[i].events & EPOLLIN) << " | " << (events[i].events & EPOLLERR) << " | " << (events[i].events & EPOLLHUP) << std::endl;
+			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events" << events[i].events << std::endl;
 			close(events[i].data.fd);
 			return -2;
 		}
