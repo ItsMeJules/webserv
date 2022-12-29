@@ -72,9 +72,32 @@ bool RequestParser::parseRequest(std::string request) {
 	return true;
 }
 
-void RequestParser::readChunked(std::string body) {
+int RequestParser::readChunked(std::string body) {
+	for (size_t end = body.find("\r\n"); end != std::string::npos;) {
+		if (hex.empty()) {
+			hex = body.substr()
+			for (int i = 0; i < body.size(); i++) {
+				if ((body[i] == '\r' || body[i] == '\n') && !hex.empty())
+					break ;
+				if (!ws::char_in_string(HEX_VALUES, body[i]))
+					return -1;
+				hex += body[i];
+			}
+		}
+	}
+	
+	for (int i = 0; i < body.size(); i++) {
+		if (hex.empty()) {
+			if ((body[i] == '\r' || body[i] == '\n') && !hex.empty())
+				break ;
+			if (!ws::char_in_string(HEX_VALUES, body[i]))
+				return -1;
+			hex += body[i];
+		} else {
+			hex.clear();
+		}
+	}
 	MessageBody &body = _request.getMessageBody();
-	if (body.find_first_not_of("0123456789abcdef") != std::string::npos);
 	int pos = body.find("\r\n");
 	_request.setRequestReceived(true);
 }

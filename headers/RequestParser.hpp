@@ -4,7 +4,9 @@
 # include <vector>
 # include <string>
 
-# include "converter.hpp"
+# include "utils.hpp"
+
+# define HEX_VALUES "0123456789abcdef"
 
 class HttpRequest;
 
@@ -27,7 +29,7 @@ class RequestParser {
 		~RequestParser();
 
 		bool parseRequest(std::string request);
-		void readChunked(std::string body);
+		int readChunked(std::string body);
 
 		RequestParser &operator=(RequestParser const &rhs);
 };

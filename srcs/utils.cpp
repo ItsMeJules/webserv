@@ -1,4 +1,4 @@
-#include "converter.hpp"
+#include "utils.hpp"
 
 int ws::stoi(std::string str) {
 	int nbr;
@@ -18,4 +18,12 @@ std::string ws::itos(int nbr) {
 	std::stringstream ss;
 	ss << nbr;
 	return ss.str();	
+}
+
+bool char_in_string(char *tab, char c) {
+	for (int i = 0; tab[i]; i++) {
+		if (tab[i] == c)
+			return true;
+	}
+	return false;
 }
