@@ -15,7 +15,7 @@ class RequestParser {
 		bool _headersReceived;
 		bool _requestParsed;
 
-		HttpRequest _request;
+		HttpRequest _httpRequest;
 
 		std::string _hex;
 
