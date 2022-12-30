@@ -19,16 +19,18 @@ class RequestParser {
 
 		std::string _hex;
 
+		int _sizeRead;
+
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
+		int readChunked(std::string body);
 	public:
 		RequestParser();
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
 		bool parseRequest(std::string request);
-		int readChunked(std::string body);
 
 		bool isRequestParsed() const;
 		HttpRequest &getHttpRequest();

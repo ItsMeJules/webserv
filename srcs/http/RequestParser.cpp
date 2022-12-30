@@ -46,6 +46,19 @@ void RequestParser::parseBody(std::string messageBody) {
 		_requestParsed = true;
 }
 
+int RequestParser::readChunked(std::string body) {
+	std::cout << "body: " << std::endl << body << std::endl << "end body------" << std::endl;
+	if (_hex.empty()) {
+		_hex = body.substr(0, body.find("\r\n"));
+		_sizeRead = 0;
+		body.erase(0, body.find("\r\n") + 2);
+	} else {
+		
+	}
+	_requestParsed = true;
+	return 1;
+}
+
 // ############## PUBLIC ##############
 
 bool RequestParser::parseRequest(std::string request) {
@@ -69,19 +82,15 @@ bool RequestParser::parseRequest(std::string request) {
 			_inReceive << request;
 			return true;
 		}
-		if (_inReceive.rdbuf()->in_avail() != 0)
+		if (_inReceive.rdbuf()->in_avail() != 0) {
 			request += _inReceive.str();
+			_inReceive.str("");
+		}
 		readChunked(request);
 	} else
 		parseBody(request);
 
 	return true;
-}
-
-int RequestParser::readChunked(std::string body) {
-	std::cout << "body: " << std::endl << body << std::endl << "end body------" << std::endl;
-	_requestParsed = true;
-	return 1;
 }
 
 // ############## GETTERS / SETTERS ##############

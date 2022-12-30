@@ -6,7 +6,6 @@ host = "127.0.0.1"
 port = 9999
 
 def gen():
-    yield "HOOOOOOOOOOO"
     yield "HOOOOOOOOOOOOOOO".encode()
     yield "HELLO THERE HOW ARE YOU".encode()
     yield "THIS TEXT IS NONSENSE".encode()
