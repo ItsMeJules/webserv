@@ -11,7 +11,7 @@ namespace ws {
 	std::string itos(int nbr);
 
 	//I DONT KNOW
-	bool char_in_string(std::string const s, char c);
+	bool string_in_range(std::string const &range, std::string const &str);
 }
 
 #endif

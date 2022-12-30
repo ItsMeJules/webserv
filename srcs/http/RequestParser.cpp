@@ -37,23 +37,39 @@ bool RequestParser::parseHeaders(std::string headers) {
 	return true;
 }
 
-void RequestParser::parseBody(std::string messageBody) {
+int RequestParser::parseBody(std::string messageBody) {
 	MessageBody &body = _httpRequest.getMessageBody();
-	if (messageBody.empty())
-		return;
-	body.append(messageBody);
-	if (body.getSize() >= ws::stoi(_httpRequest.getHeader("Content-Length")))
-		_requestParsed = true;
+    int contentLength = ws::stoi(_httpRequest.getHeader("Content-Length"));
+    if (body.getSize() < contentLength) {
+        size_t endPos = messageBody.find(("\r\n\r\n"));
+        // if the size of the actual messsageBody - 4 (\r\n\r\n) + what's already parsed is lower than content length error
+        if (endPos != std::string::npos && body.getSize() + messageBody.size() - 4 < contentLength) {
+            std::cerr << "the size of the body (" << body.getSize() << ") differs from the content length (" << contentLength << ")." << std::endl;
+            return -2;
+        }
+        body.append(endPos == std::string::npos ? messageBody.substr(0, endPos) : messageBody);
+    }
+    if (body.getSize() > contentLength) {
+        std::cerr << "the size of the body (" << body.getSize() << ") differs from the content length (" << contentLength << ")." << std::endl;
+        return -1;
+    }
+    _requestParsed = true;
+    return 1;
 }
 
-bool RequestParser::readChunked(std::string body) {
+int RequestParser::readChunked(std::string body) {
     body = emptyAndClearStream() + body;
     size_t pos = body.find("\r\n");
     if (_hexSize == -1) {
         if (pos == std::string::npos)
             _inReceive << body;
         else {
-            _hexSize = ws::hextoi(body.substr(0, pos));
+            std::string hexStr = body.substr(0, pos);
+            if (!ws::string_in_range(HEX_VALUES, hexStr)) {
+                std::cerr << "error while reading chunk size. \"" << hexStr << "\" isn't a valid hex value." << std::endl;
+                return -1;
+            }
+            _hexSize = ws::hextoi(hexStr);
             if (_hexSize != 0 && !body.erase(0, pos + 2).empty()) // deletes up to \r\n
                 readChunked(body);
         }
@@ -62,7 +78,12 @@ bool RequestParser::readChunked(std::string body) {
             _inReceive << body;
         else {
             pos = body.find("\r\n");
-            _httpRequest.getMessageBody().append(body.substr(0, pos));
+            std::string chunkContent = body.substr(0, pos);
+            if (chunkContent.size() > _hexSize) {
+                std::cerr << "error while reading chunk : \"" << chunkContent << "\" the chunk size is bigger than the given size (" << _hexSize << ")." << std::endl;
+                return -2;
+            }
+            _httpRequest.getMessageBody().append(chunkContent);
             _inReceive << body.erase(0, pos + 2);
             _hexSize = -1;
             // just in case we received the 0 and parseRequest won't be called again bc recv read everything.

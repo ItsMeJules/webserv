@@ -20,10 +20,10 @@ std::string ws::itos(int nbr) {
 	return ss.str();	
 }
 
-bool ws::char_in_string(std::string const s, char c) {
-	for (int i = 0; s[i]; i++) {
-		if (s[i] == c)
-			return true;
-	}
-	return false;
+bool ws::string_in_range(std::string const &range, std::string const &str) {
+    for (int i = 0; str[i]; i++) {
+        if (range.find(str[i]) == std::string::npos)
+            return false;
+    }
+	return true;
 }

@@ -21,8 +21,8 @@ class RequestParser {
 
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
-		void parseBody(std::string messageBody);
-        bool readChunked(std::string body);
+		int parseBody(std::string messageBody);
+        int readChunked(std::string body);
 
 		std::string emptyAndClearStream();
 	public:
