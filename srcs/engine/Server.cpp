@@ -39,9 +39,10 @@ void Server::receiveData(Client &client) {
 		RequestParser &parser = client.getRequestParser();
 		// std::cout << "data received (size=" << byteCount << ')' << ":" << std::endl << buffer << std::endl;
 		parser.parseRequest(buffer);
-		std::cout << "data parsed : \n" << parser.getHttpRequest().build() << std::endl;
-		// if (parser.isRequestParsed())
-		// 	sendData(client);
+        if (parser.isRequestParsed()) {
+            std::cout << "data parsed : \n" << parser.getHttpRequest().build() << std::endl;
+//            sendData(client);
+        }
 	} else if (byteCount == 0) {
 		_poller->deleteFd(clientFd);
 		close(client.getSocket().getFd());

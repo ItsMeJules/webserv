@@ -17,14 +17,14 @@ class RequestParser {
 
 		HttpRequest _httpRequest;
 
-		std::string _hex;
-
-		int _sizeRead;
+		int _hexSize;
 
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 		void parseBody(std::string messageBody);
-		int readChunked(std::string body);
+        bool readChunked(std::string body);
+
+		std::string emptyAndClearStream();
 	public:
 		RequestParser();
 		RequestParser(RequestParser const &request);

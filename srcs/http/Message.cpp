@@ -22,7 +22,7 @@ std::string Message::build() {
 		ss << it->first << ": " << it->second << "\r\n";
 	ss << "\r\n";
 	ss << _messageBody.getBody();
-	return ss.str();
+    return ss.str();
 }
 
 void Message::addHeader(std::string headerTag, std::string value) {

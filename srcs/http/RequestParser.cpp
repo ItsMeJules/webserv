@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-RequestParser::RequestParser() : _headersReceived(false) {}
+RequestParser::RequestParser() : _headersReceived(false), _hexSize(-1) {}
 RequestParser::RequestParser(RequestParser const &request) { *this = request; }
 RequestParser::~RequestParser() {}
 
@@ -25,7 +25,7 @@ bool RequestParser::parseHeaders(std::string headers) {
 	while ((endLinePos = headers.find("\r\n")) != std::string::npos) {
 		size_t separator = headers.find(':');
 		_httpRequest.addHeader(headers.substr(0, separator), headers.substr(separator + 2, endLinePos - separator - 2)); // skips ": " and stops before CRLF
-		headers.erase(0, endLinePos + 2);																			 // +2 skips CRLF
+		headers.erase(0, endLinePos + 2); // +2 skips CRLF
 		if (headers.rfind("\r\n", 0) != std::string::npos) { // does the string start with \r\n
 			_headersReceived = true;
 			if (headers.size() == 2) // theres no body after the headers
@@ -46,17 +46,37 @@ void RequestParser::parseBody(std::string messageBody) {
 		_requestParsed = true;
 }
 
-int RequestParser::readChunked(std::string body) {
-	std::cout << "body: " << std::endl << body << std::endl << "end body------" << std::endl;
-	if (_hex.empty()) {
-		_hex = body.substr(0, body.find("\r\n"));
-		_sizeRead = 0;
-		body.erase(0, body.find("\r\n") + 2);
-	} else {
-		
-	}
-	_requestParsed = true;
-	return 1;
+bool RequestParser::readChunked(std::string body) {
+    body = emptyAndClearStream() + body;
+    size_t pos = body.find("\r\n");
+    if (_hexSize == -1) {
+        if (pos == std::string::npos)
+            _inReceive << body;
+        else {
+            _hexSize = ws::hextoi(body.substr(0, pos));
+            if (_hexSize != 0 && !body.erase(0, pos + 2).empty()) // deletes up to \r\n
+                readChunked(body);
+        }
+    } else {
+        if (pos == std::string::npos)
+            _inReceive << body;
+        else {
+            pos = body.find("\r\n");
+            _httpRequest.getMessageBody().append(body.substr(0, pos));
+            _inReceive << body.erase(0, pos + 2);
+            _hexSize = -1;
+            // just in case we received the 0 and parseRequest won't be called again bc recv read everything.
+            if (body.find("\r\n\r\n") != std::string::npos)
+                readChunked("");
+        }
+    }
+	return _hexSize == 0;
+}
+
+std::string RequestParser::emptyAndClearStream() {
+	std::string str = _inReceive.str();
+	_inReceive.str("");
+	return str;
 }
 
 // ############## PUBLIC ##############
@@ -64,32 +84,20 @@ int RequestParser::readChunked(std::string body) {
 bool RequestParser::parseRequest(std::string request) {
 	if (!_headersReceived) {
 		if (request.find("\r\n\r\n") != std::string::npos) {
-			std::string str = _inReceive.str() + request;
-			_inReceive.str(""); // clears the stream
+			std::string str = emptyAndClearStream() + request;
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
-			request = _inReceive.str(); // contains the possible body following headers
-			_inReceive.str("");
+			request = emptyAndClearStream(); // contains the possible body following headers
+			if (!request.empty())
+				parseRequest(request);
 		} else
 			_inReceive << request;
+	} else {
+		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked")
+			_requestParsed = readChunked(request);
+		else
+			parseBody(request);
 	}
-	if (!_headersReceived)
-		return false;
-
-	if (_httpRequest.getHeader("Transfer-Encoding") == "chunked") {
-		if (_hex.empty() && request.find("\r\n") == std::string::npos) {
-			std::cout << "request : " << request << std::endl;
-			_inReceive << request;
-			return true;
-		}
-		if (_inReceive.rdbuf()->in_avail() != 0) {
-			request += _inReceive.str();
-			_inReceive.str("");
-		}
-		readChunked(request);
-	} else
-		parseBody(request);
-
 	return true;
 }
 
@@ -111,7 +119,7 @@ RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 		_headersReceived = rhs._headersReceived;
 		_requestParsed = rhs._requestParsed;
 		_httpRequest = rhs._httpRequest;
-		_hex = rhs._hex;
+		_hexSize = rhs._hexSize;
 	}
 	return *this;
 }
