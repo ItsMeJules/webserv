@@ -53,37 +53,32 @@ int EPoll::polling(Server &server) {
 
 	for (int i = 0; i < readyFdAmount; i++) {
 		if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
-			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events";
-            std::cerr << (events[i].events & EPOLLERR) << std::endl;
-            std::cerr << (events[i].events & EPOLLHUP) << std::endl;
-            std::cerr << (events[i].events & EPOLLIN) << std::endl;
-            std::cerr << (events[i].events & EPOLLOUT) << std::endl;
+			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events" << events[i].events << std::endl;
 			close(events[i].data.fd);
 			return -2;
 		}
-        if (events[i].events & EPOLLIN) {
-            if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
-                ClientSocket socket(server.getSocket().getFd());
-                if (!socket.setup())
-                    return -3;
+        if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
+            ClientSocket socket(server.getSocket().getFd());
+            if (!socket.setup())
+                return -3;
 
-                Client client(socket);
-                server.connect(client);
-            } else {
-                Client &client = server.getClient(events[i].data.fd);
+            Client client(socket);
+            server.connect(client);
+        } else {
+            Client &client = server.getClient(events[i].data.fd);
+            if (events[i].events & EPOLLIN) {
                 server.receiveData(client);
                 std::cout << client.getRequestParser().getHttpRequest().build();
-            }
-        } else if (events[i].events & EPOLLOUT) {
-            Client &client = server.getClient(events[i].data.fd);
-            HttpResponse response("HTTP/1.1", 200, "OK");
-            MessageBody body("Hello World!");
+            } else if (events[i].events & EPOLLOUT && client.getRequestParser().isRequestParsed()) {
+                HttpResponse response("HTTP/1.1", 200, "OK");
+                MessageBody body("Hello World!");
 
-            response.addHeader("Content-Type", "text/plain");
-            response.addHeader("Content-Length", body.getSizeStr());
-            response.setMessageBody(body);
-            server.sendData(client, response);
-            server.disconnect(client);
+                response.addHeader("Content-Type", "text/plain");
+                response.addHeader("Content-Length", body.getSizeStr());
+                response.setMessageBody(body);
+                server.sendData(client, response);
+                server.disconnect(client);
+            }
         }
  	}
 	return 1;

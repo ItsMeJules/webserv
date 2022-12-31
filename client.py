@@ -15,8 +15,14 @@ def gen():
 
 pload = {'username':'Olivia','password':'123'}
 r = ""
-if (sys.argv[1] == "chunked"):
+
+files = {'upload_file': open('client.py','rb')}
+values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
+
+if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
+elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
+    r = requests.post(url, files=files, data=values)
 else:
     r = requests.post(url, data = pload)
 print(r.text)
