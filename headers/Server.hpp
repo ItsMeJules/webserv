@@ -30,10 +30,10 @@ class Server {
 		~Server();
 
 		void receiveData(Client &client);
-		void sendData(Client &client);
+		void sendData(Client &client, HttpResponse &response);
+        bool connect(Client &client);
+        bool disconnect(Client &client);
 
-		void addClient(Client &client);
-		void removeClient(Client &client);
 		Client &getClient(int fd);
 
 		ServerSocket getSocket();

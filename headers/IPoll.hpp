@@ -12,7 +12,9 @@ class IPoll {
 		virtual bool pollFd(int fd, int event) = 0;
 		virtual bool deleteFd(int fd) = 0;
 		virtual int polling(Server &server) = 0;
-		virtual int readEvent() = 0;
+
+        virtual int clientEvents() = 0;
+        virtual int listenerEvents() = 0;
 };
 
 #endif

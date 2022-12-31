@@ -52,31 +52,50 @@ int EPoll::polling(Server &server) {
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
-		if (!(events[i].events & EPOLLIN) || (events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
-			std::cerr << !(events[i].events & EPOLLIN) << " | " << (events[i].events & EPOLLERR) << " | " << (events[i].events & EPOLLHUP) << std::endl;
-			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events" << events[i].events << std::endl;
+		if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
+			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events";
+            std::cerr << (events[i].events & EPOLLERR) << std::endl;
+            std::cerr << (events[i].events & EPOLLHUP) << std::endl;
+            std::cerr << (events[i].events & EPOLLIN) << std::endl;
+            std::cerr << (events[i].events & EPOLLOUT) << std::endl;
 			close(events[i].data.fd);
 			return -2;
 		}
-		if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
-			ClientSocket socket(server.getSocket().getFd());
-			if (!socket.setup())
-				return -3;
-				
-			Client client(socket);
-			pollFd(client.getSocket().getFd(), EPOLLIN);
-			server.addClient(client);
-		} else {
-			Client &client = server.getClient(events[i].data.fd);
-			server.receiveData(client);
-		}
+        if (events[i].events & EPOLLIN) {
+            if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
+                ClientSocket socket(server.getSocket().getFd());
+                if (!socket.setup())
+                    return -3;
+
+                Client client(socket);
+                server.connect(client);
+            } else {
+                Client &client = server.getClient(events[i].data.fd);
+                server.receiveData(client);
+                std::cout << client.getRequestParser().getHttpRequest().build();
+            }
+        } else if (events[i].events & EPOLLOUT) {
+            Client &client = server.getClient(events[i].data.fd);
+            HttpResponse response("HTTP/1.1", 200, "OK");
+            MessageBody body("Hello World!");
+
+            response.addHeader("Content-Type", "text/plain");
+            response.addHeader("Content-Length", body.getSizeStr());
+            response.setMessageBody(body);
+            server.sendData(client, response);
+            server.disconnect(client);
+        }
  	}
 	return 1;
 }
 
 
-int EPoll::readEvent() {
-	return EPOLLIN;
+int EPoll::clientEvents() {
+	return EPOLLIN | EPOLLOUT;
+}
+
+int EPoll::listenerEvents() {
+    return EPOLLIN;
 }
 
 // ############## GETTERS / SETTERS ##############
