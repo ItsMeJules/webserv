@@ -4,7 +4,9 @@
 
 EPoll::EPoll() {}
 EPoll::EPoll(EPoll const &ePoll) { *this = ePoll; }
-EPoll::~EPoll() {}
+EPoll::~EPoll() {
+    close(_epollFd);
+}
 
 // ############## PRIVATE ##############
 // ############## PUBLIC ##############
@@ -12,7 +14,7 @@ EPoll::~EPoll() {}
 bool EPoll::init() {
 	std::cout << "creating poll instance" << std::endl;
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
-	if (_epollFd == -1) 
+	if (_epollFd == -1)
 		std::cerr << "failed to create poll instance error: " << strerror(errno) << std::endl;
 	else
 		std::cout << "epoll created with fd: " << _epollFd << std::endl;
@@ -43,9 +45,9 @@ bool EPoll::deleteFd(int fd) {
 
 
 int EPoll::polling(Server &server) {
-	struct epoll_event events[10]; // Penser a mettre une constante
+	struct epoll_event events[EVENTS_SIZE];
 
-	int readyFdAmount = epoll_wait(_epollFd, events, 10, -1); // ici aussi
+	int readyFdAmount = epoll_wait(_epollFd, events, MAX_EVENTS, POLL_WAIT_TIMEOUT);
 	if (readyFdAmount == -1) {
 		std::cerr << "epoll_wait failed! error: " << strerror(errno) << std::endl;
 		return -1;

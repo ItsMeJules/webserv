@@ -8,7 +8,7 @@ Server::Server() : _socket(), _poller(NULL) {
 Server::Server(ServerSocket &socket, IPoll *poller) : _socket(socket), _poller(poller) {
 	startListening(10);
 	poller->init();
-	poller->pollFd(socket.getFd(), poller->listenerEvents()); //peut etre d'autres event a mettre
+	poller->pollFd(socket.getFd(), poller->listenerEvents());
 }
 
 Server::Server(Server const &server) { *this = server; }
@@ -37,7 +37,7 @@ void Server::receiveData(Client &client) {
 	if (byteCount > 0) {
         buffer[byteCount] = 0;
         RequestParser &parser = client.getRequestParser();
-        // std::cout << "data received (size=" << byteCount << ')' << ":" << std::endl << buffer << std::endl;
+         std::cout << "data received (size=" << byteCount << ')' << ":" << std::endl << buffer << std::endl;
         parser.parseRequest(buffer);
     } else if (byteCount == 0)
         disconnect(client);

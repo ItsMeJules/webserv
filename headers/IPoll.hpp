@@ -3,6 +3,10 @@
 
 # include "Server.hpp"
 
+# define MAX_EVENTS 10
+# define EVENTS_SIZE 10
+# define POLL_WAIT_TIMEOUT 60 * 1000
+
 class Server;
 
 class IPoll {

@@ -7,7 +7,6 @@ ServerSocket::ServerSocket(int domain, int type, int protocol, int port)
 	: _domain(domain), _type(type), _protocol(protocol), _port(port) {}
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
-
 ServerSocket::~ServerSocket() {}
 
 // ############## PUBLIC ##############
@@ -50,7 +49,7 @@ bool ServerSocket::setNonBlocking() {
 		flags = 0;
 	int ret = fcntl(_fd, F_SETFL, flags | O_NONBLOCK);
 	if (ret != -1) {
-		std::cout << "sucessfully set socket non blocking on fd: " << _fd << " reusable" << std::endl;
+		std::cout << "sucessfully set socket non blocking on fd: " << _fd << std::endl;
 		return true;
 	}
 	std::cerr << "error while setting socket non blocking on fd: " << _fd << "\nerror:" << strerror(errno) << std::endl;

@@ -40,20 +40,13 @@ bool RequestParser::parseHeaders(std::string headers) {
 int RequestParser::parseBody(std::string messageBody) {
 	MessageBody &body = _httpRequest.getMessageBody();
     int contentLength = ws::stoi(_httpRequest.getHeader("Content-Length"));
-    if (body.getSize() < contentLength) {
-        size_t endPos = messageBody.find(("\r\n\r\n"));
-        // if the size of the actual messsageBody - 4 (\r\n\r\n) + what's already parsed is lower than content length error
-        if (endPos != std::string::npos && body.getSize() + messageBody.size() - 4 < contentLength) {
-            std::cerr << "the size of the body (" << body.getSize() << ") differs from the content length (" << contentLength << ")." << std::endl;
-            return -2;
-        }
-        body.append(endPos == std::string::npos ? messageBody.substr(0, endPos) : messageBody);
-    }
-    if (body.getSize() > contentLength) {
-        std::cerr << "the size of the body (" << body.getSize() << ") differs from the content length (" << contentLength << ")." << std::endl;
+    if (body.getSize() + messageBody.size() > contentLength) {
+        std::cerr << "the size of the body (" << body.getSize() + messageBody.size() << ") differs from the content length (" << contentLength << ")." << std::endl;
         return -1;
     }
-    _requestParsed = true;
+    body.append(messageBody);
+    if (body.getSize() == contentLength)
+        _requestParsed = true;
     return 1;
 }
 
@@ -117,7 +110,7 @@ bool RequestParser::parseRequest(std::string request) {
 		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked")
 			_requestParsed = readChunked(request);
 		else
-			parseBody(request);
+            _requestParsed = parseBody(request);
 	}
 	return true;
 }
