@@ -18,7 +18,6 @@ pload = {'username':'Olivia','password':'123'}
 headers = {'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate',
             'Connection': 'keep-alive',
-            'Content-Length': '24',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Host': '127.0.0.1:9999',
             'Transfer-Encoding': '',
@@ -36,6 +35,6 @@ else:
     s = Session()
     req = Request('POST', url, data=pload)
     prepped = req.prepare()
-    prepped.headers['Content-Length'] = 24
+    prepped.headers['Content-Length'] = 30
     r = s.send(prepped)
 print(r.text)

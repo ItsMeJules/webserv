@@ -46,8 +46,8 @@ int RequestParser::parseBody(std::string messageBody) {
     }
     body.append(messageBody);
     if (body.getSize() == contentLength)
-        _requestParsed = true;
-    return 1;
+        return 1;
+    return 0;
 }
 
 int RequestParser::readChunked(std::string body) {
@@ -87,6 +87,25 @@ int RequestParser::readChunked(std::string body) {
 	return _hexSize == 0;
 }
 
+int RequestParser::readFile(std::string body) {
+    if (_boundary.empty()) {
+        // Finds the separator and splits after the 'boundary='
+        size_t pos = body.find("boundary=");
+        if (pos == std::string::npos) {
+            std::cerr << "boundary= not found in headers." << std::endl;
+            return -1;
+        }
+        _boundary = _httpRequest.getHeader("Content-Type").substr( pos + 9);
+    }
+    body = emptyAndClearStream() + body;
+    size_t pos = body.find(_boundary + "--");
+    if (pos == std::string::npos)
+        _inReceive << body;
+    else {
+        
+    }
+}
+
 std::string RequestParser::emptyAndClearStream() {
 	std::string str = _inReceive.str();
 	_inReceive.str("");
@@ -108,18 +127,16 @@ bool RequestParser::parseRequest(std::string request) {
 			_inReceive << request;
 	} else {
 		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked")
-			_requestParsed = readChunked(request);
+			readChunked(request);
+//        else if (_httpRequest.getHeader("Content-Type") == "multipart/form-data")
+//            readFile(request);
 		else
-            _requestParsed = parseBody(request);
+            parseBody(request);
 	}
 	return true;
 }
 
 // ############## GETTERS / SETTERS ##############
-
-bool RequestParser::isRequestParsed() const {
-	return _requestParsed;
-}
 
 HttpRequest &RequestParser::getHttpRequest() {
 	return _httpRequest;
@@ -131,7 +148,6 @@ RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 	if (this != &rhs) {
 		_inReceive << rhs._inReceive.str();
 		_headersReceived = rhs._headersReceived;
-		_requestParsed = rhs._requestParsed;
 		_httpRequest = rhs._httpRequest;
 		_hexSize = rhs._hexSize;
 	}
