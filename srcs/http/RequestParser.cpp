@@ -38,14 +38,14 @@ bool RequestParser::parseHeaders(std::string headers) {
 }
 
 int RequestParser::parseBody(std::string messageBody) {
-	MessageBody &body = _httpRequest.getMessageBody();
+	IMessageBody *body = _httpRequest.getMessageBody();
     int contentLength = ws::stoi(_httpRequest.getHeader("Content-Length"));
-    if (body.getSize() + messageBody.size() > contentLength) {
-        std::cerr << "the size of the body (" << body.getSize() + messageBody.size() << ") differs from the content length (" << contentLength << ")." << std::endl;
+    if (body->getSize() + messageBody.size() > contentLength) {
+        std::cerr << "the size of the body (" << body->getSize() + messageBody.size() << ") differs from the content length (" << contentLength << ")." << std::endl;
         return -1;
     }
-    body.append(messageBody);
-    if (body.getSize() == contentLength)
+    body->append(messageBody);
+    if (body->getSize() == contentLength)
         return 1;
     return 0;
 }
@@ -76,7 +76,7 @@ int RequestParser::readChunked(std::string body) {
                 std::cerr << "error while reading chunk : \"" << chunkContent << "\" the chunk size is bigger than the given size (" << _hexSize << ")." << std::endl;
                 return -2;
             }
-            _httpRequest.getMessageBody().append(chunkContent);
+            _httpRequest.getMessageBody()->append(chunkContent, _hexSize);
             _inReceive << body.erase(0, pos + 2);
             _hexSize = -1;
             // just in case we received the 0 and parseRequest won't be called again bc recv read everything.
@@ -102,7 +102,7 @@ int RequestParser::readFile(std::string body) {
     if (pos == std::string::npos)
         _inReceive << body;
     else {
-        
+
     }
 }
 
@@ -126,13 +126,20 @@ bool RequestParser::parseRequest(std::string request) {
 		} else
 			_inReceive << request;
 	} else {
-		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked")
-			readChunked(request);
-//        else if (_httpRequest.getHeader("Content-Type") == "multipart/form-data")
-//            readFile(request);
-		else
+		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked") {
+            if (_httpRequest.getMessageBody() == NULL)
+                _httpRequest.setMessageBody(new ChunkedBody());
+            readChunked(request);
+        } else if (_httpRequest.getHeader("Content-Type") == "multipart/form-data") {
+            if (_httpRequest.getMessageBody() == NULL)
+                _httpRequest.setMessageBody(new FileBody());
+            readFile(request);
+        } else {
+            if (_httpRequest.getMessageBody() == NULL)
+                _httpRequest.setMessageBody(new RegularBody());
             parseBody(request);
-	}
+        }
+    }
 	return true;
 }
 

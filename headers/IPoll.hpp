@@ -2,6 +2,7 @@
 # define IPOLL_HPP
 
 # include "Server.hpp"
+# include "utils.hpp"
 
 # define MAX_EVENTS 10
 # define EVENTS_SIZE 10

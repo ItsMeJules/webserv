@@ -6,6 +6,9 @@
 
 # include "utils.hpp"
 # include "HttpRequest.hpp"
+# include "ChunkedBody.hpp"
+# include "FileBody.hpp"
+# include "RegularBody.hpp"
 
 # define HEX_VALUES "0123456789abcdef"
 

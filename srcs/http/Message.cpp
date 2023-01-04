@@ -2,15 +2,10 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Message::Message() {}
-Message::Message(std::string httpVersion) : _httpVersion(httpVersion) {}
-Message::Message(Message const &message) {
-	*this = message;
-}
-
-Message::~Message() {
-
-}
+Message::Message() : _messageBody(NULL) {}
+Message::Message(std::string httpVersion) : _httpVersion(httpVersion), _messageBody(NULL) {}
+Message::Message(Message const &message) { *this = message; }
+Message::~Message() {}
 
 // ############## PRIVATE ##############
 
@@ -21,7 +16,7 @@ std::string Message::build() {
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)
 		ss << it->first << ": " << it->second << "\r\n";
 	ss << "\r\n";
-	ss << _messageBody.getBody();
+	ss << _messageBody->getBody();
     return ss.str();
 }
 
@@ -39,7 +34,7 @@ bool Message::headersContains(std::string headerTag, std::string value) {
 
 // ############## GETTERS / SETTERS ##############
 
-void Message::setMessageBody(MessageBody messageBody) {
+void Message::setMessageBody(IMessageBody *messageBody) {
 	_messageBody = messageBody;
 }
 
@@ -47,7 +42,7 @@ void Message::setHttpVersion(std::string httpVersion) {
 	_httpVersion = httpVersion;
 }
 
-MessageBody &Message::getMessageBody() {
+IMessageBody *Message::getMessageBody() {
 	return _messageBody;
 }
 

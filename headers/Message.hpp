@@ -4,13 +4,13 @@
 # include <map>
 # include <iostream>
 
-# include "MessageBody.hpp"
+# include "IMessageBody.hpp"
 
 class Message {
 	protected:
 		std::string _httpVersion;
 		std::map<std::string, std::string> _headers;
-		MessageBody _messageBody;
+		IMessageBody *_messageBody;
 	public:
 		Message();
 		Message(std::string httpVersion);
@@ -22,11 +22,11 @@ class Message {
 		std::string getHeader(std::string headerTag);
 		bool headersContains(std::string headerTag, std::string value);
 		
-		void setMessageBody(MessageBody messageBody);
+		void setMessageBody(IMessageBody *messageBody);
 		void setHttpVersion(std::string httpVersion);
 		
 		std::string getHttpVersion() const;
-		MessageBody &getMessageBody();
+		IMessageBody *getMessageBody();
 
 		Message &operator=(Message const &rhs);
 };
