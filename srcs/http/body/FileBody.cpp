@@ -25,6 +25,10 @@ std::string FileBody::getBody() const {
 	return _contents.str();
 }
 
+std::string FileBody::getFileHeader() const {
+    return _fileHeader;
+}
+
 int FileBody::getSize() const {
 	return _size;
 }
@@ -33,11 +37,29 @@ std::string FileBody::getFileName() const {
 	return _fileName;
 }
 
+std::string FileBody::getBoundary() const {
+    return _boundary;
+}
+
+void FileBody::parseFileHeader(std::string body) {
+    _fileHeader = body.substr(body.find((_boundary)) + _boundary.size() + 2, body.find("\r\n\r\n") - _boundary.size() - 4);
+    size_t fileNamePos = _fileHeader.find("filename=") + 10;
+    _fileName = _fileHeader.substr(fileNamePos, _fileHeader.size() - fileNamePos - 1);
+}
+
+void FileBody::setBoundary(std::string header) {
+    _boundary = header.substr( header.find("boundary=") + 9);
+}
+
 // ############## OPERATORS ##############
 
 FileBody &FileBody::operator=(FileBody const &rhs) {
 	if (this != &rhs) {
-		
+        _contents << rhs._contents.str();
+        _fileHeader = rhs._fileHeader;
+        _fileName = rhs._fileName;
+        _boundary = rhs._boundary;
+        _size = rhs._size;
 	}
 	return *this;
 }

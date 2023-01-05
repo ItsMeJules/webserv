@@ -87,29 +87,40 @@ int RequestParser::readChunked(std::string body) {
 	return _hexSize == 0;
 }
 
-int RequestParser::readFile(std::string body) {
-    if (_boundary.empty()) {
-        // Finds the separator and splits after the 'boundary='
-        size_t pos = body.find("boundary=");
-        if (pos == std::string::npos) {
-            std::cerr << "boundary= not found in headers." << std::endl;
-            return -1;
-        }
-        _boundary = _httpRequest.getHeader("Content-Type").substr( pos + 9);
-    }
+int RequestParser::readFile(std::string body, FileBody *fileBody) {
     body = emptyAndClearStream() + body;
-    size_t pos = body.find(_boundary + "--");
-    if (pos == std::string::npos)
+    size_t endPos = body.find(fileBody->getBoundary() + "--");
+    if (endPos == std::string::npos)
         _inReceive << body;
     else {
-
+        fileBody->parseFileHeader(body);
+        fileBody->append(body.substr(body.find("\r\n\r\n") + 4, endPos - body.find("\r\n\r\n") - 8));
     }
+    return 1;
 }
 
 std::string RequestParser::emptyAndClearStream() {
 	std::string str = _inReceive.str();
 	_inReceive.str("");
 	return str;
+}
+
+void RequestParser::setAccordingBodyType(int type) {
+    if (_httpRequest.getMessageBody() != NULL)
+        return ;
+    switch (type) {
+        case 0:
+            _httpRequest.setMessageBody(new ChunkedBody());
+            break;
+        case 1:
+            _httpRequest.setMessageBody(new FileBody());
+            break;
+        case 2:
+            _httpRequest.setMessageBody(new RegularBody());
+            break;
+        default:
+            break;
+    }
 }
 
 // ############## PUBLIC ##############
@@ -125,18 +136,22 @@ bool RequestParser::parseRequest(std::string request) {
 				parseRequest(request);
 		} else
 			_inReceive << request;
-	} else {
+	} else { // This part can be coded better using some polymorphism
 		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked") {
-            if (_httpRequest.getMessageBody() == NULL)
-                _httpRequest.setMessageBody(new ChunkedBody());
+            setAccordingBodyType(0);
             readChunked(request);
-        } else if (_httpRequest.getHeader("Content-Type") == "multipart/form-data") {
-            if (_httpRequest.getMessageBody() == NULL)
-                _httpRequest.setMessageBody(new FileBody());
-            readFile(request);
+        } else if (_httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos) {
+            setAccordingBodyType(1);
+            FileBody *fileBody = dynamic_cast<FileBody*>(_httpRequest.getMessageBody());
+            if (fileBody == NULL) {
+                std::cerr << "A dynamic cast failed!" << std::endl;
+                return false;
+            }
+            if (fileBody->getBoundary().empty())
+                fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
+            readFile(request, fileBody);
         } else {
-            if (_httpRequest.getMessageBody() == NULL)
-                _httpRequest.setMessageBody(new RegularBody());
+            setAccordingBodyType(2);
             parseBody(request);
         }
     }

@@ -15,7 +15,6 @@
 class RequestParser {
 	private:
 		std::stringstream _inReceive;
-        std::string _boundary;
 		bool _headersReceived;
 
 		HttpRequest _httpRequest;
@@ -26,9 +25,11 @@ class RequestParser {
 		bool parseHeaders(std::string headers);
 		int parseBody(std::string messageBody);
         int readChunked(std::string body);
-        int readFile(std::string body);
+        int readFile(std::string body, FileBody *fileBody);
 
 		std::string emptyAndClearStream();
+        void setAccordingBodyType(int type);
+
 	public:
 		RequestParser();
 		RequestParser(RequestParser const &request);

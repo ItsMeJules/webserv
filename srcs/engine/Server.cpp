@@ -36,9 +36,7 @@ void Server::receiveData(Client &client) {
 	int byteCount = recv(clientFd, buffer, BUFFER_SIZE, 0);
 	if (byteCount > 0) {
         buffer[byteCount] = 0;
-        RequestParser &parser = client.getRequestParser();
-         std::cout << "data received (size=" << byteCount << ')' << ":" << std::endl << buffer << std::endl;
-        parser.parseRequest(buffer);
+        client.getRequestParser().parseRequest(buffer);
     } else if (byteCount == 0)
         disconnect(client);
 	else

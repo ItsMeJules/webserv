@@ -24,7 +24,7 @@ headers = {'Accept': '*/*',
             'User-Agent': 'python-requests/2.25.1'}
 r = ""
 
-files = {'upload_file': open('client.py','rb')}
+files = {'upload_file': open('srcs/main.cpp','rb')}
 
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
