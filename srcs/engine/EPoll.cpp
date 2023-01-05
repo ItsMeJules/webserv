@@ -73,12 +73,12 @@ int EPoll::polling(Server &server) {
             } else if (events[i].events & EPOLLOUT) {
                 std::cout << client.getRequestParser().getHttpRequest().build();
                 HttpResponse response("HTTP/1.1", 200, "OK");
-                RegularBody body;
+                RegularBody *body = new RegularBody();
 
-				body.append("Hello World!");
+				body->append("Hello World!");
                 response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body.getSize()));
-                response.setMessageBody(&body);
+                response.addHeader("Content-Length", ws::itos(body->getSize()));
+                response.setMessageBody(body);
                 server.sendData(client, response);
                 server.disconnect(client);
             }

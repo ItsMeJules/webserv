@@ -6,7 +6,6 @@
 
 HttpRequest::HttpRequest() {}
 HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
-
 HttpRequest::~HttpRequest() {}
 
 // ############## PRIVATE ##############
