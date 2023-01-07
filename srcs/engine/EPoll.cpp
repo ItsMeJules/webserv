@@ -16,7 +16,7 @@ bool EPoll::init() {
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
 		std::cerr << "failed to create poll instance error: " << strerror(errno) << std::endl;
-	else
+	else                                                                                                                                                                
 		std::cout << "epoll created with fd: " << _epollFd << std::endl;
 	return _epollFd != -1;
 }

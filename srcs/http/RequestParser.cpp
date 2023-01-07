@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-RequestParser::RequestParser() : _headersReceived(false), _hexSize(-1) {}
+RequestParser::RequestParser() : _headersReceived(false) {}
 RequestParser::RequestParser(RequestParser const &request) { *this = request; }
 RequestParser::~RequestParser() {}
 
@@ -37,90 +37,19 @@ bool RequestParser::parseHeaders(std::string headers) {
 	return true;
 }
 
-int RequestParser::parseBody(std::string messageBody) {
-	IMessageBody *body = _httpRequest.getMessageBody();
-    int contentLength = ws::stoi(_httpRequest.getHeader("Content-Length"));
-    if (body->getSize() + messageBody.size() > contentLength) {
-        std::cerr << "the size of the body (" << body->getSize() + messageBody.size() << ") differs from the content length (" << contentLength << ")." << std::endl;
-        return -1;
-    }
-    body->append(messageBody);
-    if (body->getSize() == contentLength)
-        return 1;
-    return 0;
-}
-
-int RequestParser::readChunked(std::string body) {
-    body = emptyAndClearStream() + body;
-    size_t pos = body.find("\r\n");
-    if (_hexSize == -1) {
-        if (pos == std::string::npos)
-            _inReceive << body;
-        else {
-            std::string hexStr = body.substr(0, pos);
-            if (!ws::string_in_range(HEX_VALUES, hexStr)) {
-                std::cerr << "error while reading chunk size. \"" << hexStr << "\" isn't a valid hex value." << std::endl;
-                return -1;
-            }
-            _hexSize = ws::hextoi(hexStr);
-            if (_hexSize != 0 && !body.erase(0, pos + 2).empty()) // deletes up to \r\n
-                readChunked(body);
-        }
-    } else {
-        if (pos == std::string::npos)
-            _inReceive << body;
-        else {
-            pos = body.find("\r\n");
-            std::string chunkContent = body.substr(0, pos);
-            if (chunkContent.size() > _hexSize) {
-                std::cerr << "error while reading chunk : \"" << chunkContent << "\" the chunk size is bigger than the given size (" << _hexSize << ")." << std::endl;
-                return -2;
-            }
-            _httpRequest.getMessageBody()->append(chunkContent, _hexSize);
-            _inReceive << body.erase(0, pos + 2);
-            _hexSize = -1;
-            // just in case we received the 0 and parseRequest won't be called again bc recv read everything.
-            if (body.find("\r\n\r\n") != std::string::npos)
-                readChunked("");
-        }
-    }
-	return _hexSize == 0;
-}
-
-int RequestParser::readFile(std::string body, FileBody *fileBody) {
-    body = emptyAndClearStream() + body;
-    size_t endPos = body.find(fileBody->getBoundary() + "--");
-    if (endPos == std::string::npos)
-        _inReceive << body;
-    else {
-        fileBody->parseFileHeader(body);
-        fileBody->append(body.substr(body.find("\r\n\r\n") + 4, endPos - body.find("\r\n\r\n") - 8));
-    }
-    return 1;
-}
-
 std::string RequestParser::emptyAndClearStream() {
 	std::string str = _inReceive.str();
 	_inReceive.str("");
 	return str;
 }
 
-void RequestParser::setAccordingBodyType(int type) {
-    if (_httpRequest.getMessageBody() != NULL)
-        return ;
-    switch (type) {
-        case 0:
-            _httpRequest.setMessageBody(new ChunkedBody());
-            break;
-        case 1:
-            _httpRequest.setMessageBody(new FileBody());
-            break;
-        case 2:
-            _httpRequest.setMessageBody(new RegularBody());
-            break;
-        default:
-            break;
-    }
+IMessageBody *RequestParser::getAccordingBodyType() {
+    if (_httpRequest.getHeader("Transfer-Encoding") == "chunked")
+        return new ChunkedBody();
+    else if (_httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos)
+        return new FileBody();
+    else
+        return new RegularBody();
 }
 
 // ############## PUBLIC ##############
@@ -136,24 +65,14 @@ bool RequestParser::parseRequest(std::string request) {
 				parseRequest(request);
 		} else
 			_inReceive << request;
-	} else { // This part can be coded better using some polymorphism
-		if (_httpRequest.getHeader("Transfer-Encoding") == "chunked") {
-            setAccordingBodyType(0);
-            readChunked(request);
-        } else if (_httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos) {
-            setAccordingBodyType(1);
+	} else {
+        if (_httpRequest.getMessageBody() == NULL) {
+            _httpRequest.setMessageBody(getAccordingBodyType());
             FileBody *fileBody = dynamic_cast<FileBody*>(_httpRequest.getMessageBody());
-            if (fileBody == NULL) {
-                std::cerr << "A dynamic cast failed!" << std::endl;
-                return false;
-            }
-            if (fileBody->getBoundary().empty())
+            if (fileBody != NULL && fileBody->getBoundary().empty())
                 fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
-            readFile(request, fileBody);
-        } else {
-            setAccordingBodyType(2);
-            parseBody(request);
         }
+        _httpRequest.getMessageBody()->parse(request);
     }
 	return true;
 }
@@ -171,7 +90,6 @@ RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 		_inReceive << rhs._inReceive.str();
 		_headersReceived = rhs._headersReceived;
 		_httpRequest = rhs._httpRequest;
-		_hexSize = rhs._hexSize;
 	}
 	return *this;
 }

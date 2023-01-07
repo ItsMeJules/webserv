@@ -10,8 +10,6 @@
 # include "FileBody.hpp"
 # include "RegularBody.hpp"
 
-# define HEX_VALUES "0123456789abcdef"
-
 class RequestParser {
 	private:
 		std::stringstream _inReceive;
@@ -19,16 +17,11 @@ class RequestParser {
 
 		HttpRequest _httpRequest;
 
-		int _hexSize;
-
 		void parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
-		int parseBody(std::string messageBody);
-        int readChunked(std::string body);
-        int readFile(std::string body, FileBody *fileBody);
 
 		std::string emptyAndClearStream();
-        void setAccordingBodyType(int type);
+        IMessageBody *getAccordingBodyType();
 
 	public:
 		RequestParser();

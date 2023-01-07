@@ -19,6 +19,21 @@ void FileBody::append(std::string str, int size) {
 	_size += size;
 }
 
+int FileBody::parse(std::string body) {
+    body = _inReceive.str() + body;
+    _inReceive.str("");
+    size_t endPos = body.find(_boundary + "--");
+    if (endPos == std::string::npos)
+        _inReceive << body;
+    else {
+        _fileHeader = body.substr(body.find((_boundary)) + _boundary.size() + 2, body.find("\r\n\r\n") - _boundary.size() - 4);
+        size_t fileNamePos = _fileHeader.find("filename=") + 10;
+        _fileName = _fileHeader.substr(fileNamePos, _fileHeader.size() - fileNamePos - 1);
+        append(body.substr(body.find("\r\n\r\n") + 4, endPos - body.find("\r\n\r\n") - 8));
+    }
+    return 1;
+}
+
 // ############## GETTERS / SETTERS ##############
 
 std::string FileBody::getBody() const {
@@ -41,12 +56,6 @@ std::string FileBody::getBoundary() const {
     return _boundary;
 }
 
-void FileBody::parseFileHeader(std::string body) {
-    _fileHeader = body.substr(body.find((_boundary)) + _boundary.size() + 2, body.find("\r\n\r\n") - _boundary.size() - 4);
-    size_t fileNamePos = _fileHeader.find("filename=") + 10;
-    _fileName = _fileHeader.substr(fileNamePos, _fileHeader.size() - fileNamePos - 1);
-}
-
 void FileBody::setBoundary(std::string header) {
     _boundary = header.substr( header.find("boundary=") + 9);
 }
@@ -55,6 +64,7 @@ void FileBody::setBoundary(std::string header) {
 
 FileBody &FileBody::operator=(FileBody const &rhs) {
 	if (this != &rhs) {
+        _inReceive << rhs._inReceive.str();
         _contents << rhs._contents.str();
         _fileHeader = rhs._fileHeader;
         _fileName = rhs._fileName;

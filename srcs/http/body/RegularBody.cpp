@@ -19,6 +19,11 @@ void RegularBody::append(std::string str, int size) {
 	_size += str.size();
 }
 
+int RegularBody::parse(std::string body) {
+    append(body);
+    return 1;
+}
+
 // ############## GETTERS / SETTERS ##############
 
 std::string RegularBody::getBody() const {

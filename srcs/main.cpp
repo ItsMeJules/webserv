@@ -5,7 +5,7 @@
 int main() {
 	ServerSocket serverSocket;
 	serverSocket.setup();
-	
+
 	IPoll *poller = new EPoll();
 	Server server(serverSocket, poller);
 
