@@ -53,7 +53,7 @@ bool Server::connect(Client &client) {
 }
 
 bool Server::disconnect(Client &client) {
-    bool ret = _poller->deleteFd(client.getSocket().getFd()) && close(client.getSocket().getFd()) == 0;
+    bool ret = client.getSocket().close(_poller);
     _clients.erase(client.getSocket().getFd());
     return ret;
 }

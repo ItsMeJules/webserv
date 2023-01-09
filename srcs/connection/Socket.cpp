@@ -1,4 +1,5 @@
 # include "Socket.hpp"
+# include "IPoll.hpp" // the code doesn't work if i put this header in the hpp
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -8,7 +9,9 @@ Socket::~Socket() {}
 
 // ############## PUBLIC ##############
 
-
+bool Socket::close(IPoll *poller) {
+    return poller->deleteFd(_fd) && ::close(_fd) == 0;
+}
 
 // ############## GETTERS / SETTERS ##############
 int Socket::getFd() const {

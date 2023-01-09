@@ -11,7 +11,6 @@ int main() {
 
 	while (poller->polling(server) > 0) {
 	}
-    poller->deleteFd(serverSocket.getFd());
-    close(serverSocket.getFd());
+    serverSocket.close(poller);
 	delete poller;
 }

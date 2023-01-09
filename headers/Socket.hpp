@@ -10,6 +10,8 @@
 # include <sys/socket.h>
 # include <fcntl.h>
 
+class IPoll;
+
 class Socket {
 	private:
 	protected:
@@ -22,7 +24,8 @@ class Socket {
 		virtual ~Socket();
 
 		virtual bool setup() = 0;
-		
+        virtual bool close(IPoll *poller);
+
 		int getFd() const;
 		sockaddr_in &getAddress();
 
