@@ -43,7 +43,6 @@ bool EPoll::deleteFd(int fd) {
 	return ret != -1;
 }
 
-
 int EPoll::polling(Server &server) {
 	struct epoll_event events[EVENTS_SIZE];
 

@@ -19,7 +19,7 @@ void RegularBody::append(std::string str, int size) {
 	_size += str.size();
 }
 
-int RegularBody::parse(std::string body) {
+int RegularBody::parse(std::string body, std::stringstream &inReceive) {
     append(body);
     return 1;
 }

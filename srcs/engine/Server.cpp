@@ -36,9 +36,10 @@ void Server::receiveData(Client &client) {
 	int byteCount = recv(clientFd, buffer, BUFFER_SIZE, 0);
 	if (byteCount > 0) {
         buffer[byteCount] = 0;
+        std::cout << "read: " << std::endl << buffer << std::endl;
         client.getRequestParser().parseRequest(buffer);
     } else if (byteCount == 0)
-        disconnect(client);
+        disconnect(client); // if header Connection: keep-alive don't close
 	else
 		std::cout << "recv returned an error with fd " << clientFd << ": " << strerror(errno) << std::endl;
 }

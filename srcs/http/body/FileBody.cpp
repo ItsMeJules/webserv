@@ -19,12 +19,10 @@ void FileBody::append(std::string str, int size) {
 	_size += size;
 }
 
-int FileBody::parse(std::string body) {
-    body = _inReceive.str() + body;
-    _inReceive.str("");
+int FileBody::parse(std::string body, std::stringstream &inReceive) {
     size_t endPos = body.find(_boundary + "--");
     if (endPos == std::string::npos)
-        _inReceive << body;
+        inReceive << body;
     else {
         _fileHeader = body.substr(body.find((_boundary)) + _boundary.size() + 2, body.find("\r\n\r\n") - _boundary.size() - 4);
         size_t fileNamePos = _fileHeader.find("filename=") + 10;
@@ -64,7 +62,6 @@ void FileBody::setBoundary(std::string header) {
 
 FileBody &FileBody::operator=(FileBody const &rhs) {
 	if (this != &rhs) {
-        _inReceive << rhs._inReceive.str();
         _contents << rhs._contents.str();
         _fileHeader = rhs._fileHeader;
         _fileName = rhs._fileName;

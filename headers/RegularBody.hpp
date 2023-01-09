@@ -14,7 +14,7 @@ class RegularBody : public IMessageBody {
 
         void append(std::string str);
         void append(std::string str, int size);
-        int parse(std::string body);
+        int parse(std::string body, std::stringstream &inReceive);
 
         std::string getBody() const;
         int getSize() const;

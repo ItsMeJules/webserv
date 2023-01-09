@@ -15,7 +15,6 @@ class ChunkedBody : public IMessageBody {
         } t_block;
 
         std::vector<t_block> _blocks;
-        std::stringstream _inReceive;
         int _hexSize;
     public:
         ChunkedBody();
@@ -24,7 +23,7 @@ class ChunkedBody : public IMessageBody {
 
         void append(std::string str);
         void append(std::string str, int size);
-        int parse(std::string body);
+        int parse(std::string body, std::stringstream &inReceive);
 
         std::string getBody() const;
         int getSize() const;

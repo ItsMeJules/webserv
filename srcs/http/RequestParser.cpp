@@ -23,8 +23,8 @@ void RequestParser::parseFirstLine(std::string firstLine) {
 bool RequestParser::parseHeaders(std::string headers) {
 	size_t endLinePos = 0;
 	while ((endLinePos = headers.find("\r\n")) != std::string::npos) {
-		size_t separator = headers.find(':');
-		_httpRequest.addHeader(headers.substr(0, separator), headers.substr(separator + 2, endLinePos - separator - 2)); // skips ": " and stops before CRLF
+		size_t separatorPos = headers.find(':');
+		_httpRequest.addHeader(headers.substr(0, separatorPos), headers.substr(separatorPos + 2, endLinePos - separatorPos - 2)); // skips ": " and stops before CRLF
 		headers.erase(0, endLinePos + 2); // +2 skips CRLF
 		if (headers.rfind("\r\n", 0) != std::string::npos) { // does the string start with \r\n
 			_headersReceived = true;
@@ -72,7 +72,7 @@ bool RequestParser::parseRequest(std::string request) {
             if (fileBody != NULL && fileBody->getBoundary().empty())
                 fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
         }
-        _httpRequest.getMessageBody()->parse(request);
+        _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
     }
 	return true;
 }
