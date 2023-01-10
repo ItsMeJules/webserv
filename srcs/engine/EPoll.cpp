@@ -1,5 +1,5 @@
 #include "EPoll.hpp"
-
+#include <cstdio>
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 EPoll::EPoll() {}
@@ -45,6 +45,7 @@ bool EPoll::deleteFd(int fd) {
 
 int EPoll::polling(Server &server) {
 	struct epoll_event events[EVENTS_SIZE];
+	int error_code = -1;
 
 	int readyFdAmount = epoll_wait(_epollFd, events, MAX_EVENTS, POLL_WAIT_TIMEOUT);
 	if (readyFdAmount == -1) {
@@ -74,14 +75,23 @@ int EPoll::polling(Server &server) {
                 std::cout << client.getRequestParser().getHttpRequest().build();
 				StatusCode status_code(client.getRequestParser().getHttpRequest());
 				HttpRequest http_request = client.getRequestParser().getHttpRequest();
-                HttpResponse response("HTTP/1.1", 200, "OK");
+				StatusCode statusCode;
+				 HttpResponse response;
                 RegularBody *body = new RegularBody();
+				if (fopen("./test.txt", "r"))
+					error_code = 200;
+				else
+					error_code = 404;
+                response = statusCode.createResponse(statusCode, error_code, body);
 
-				body->append("Hello World!");
+				// std::cout << "error code : " << error_code << std::endl;
+
+				body->append("Hello World!\n");
                 response.addHeader("Content-Type", "text/plain");
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
-                server.sendData(client, response);
+				std::cout << response.getMessageBody()->getBody() << std::endl;
+				server.sendData(client, response);
                 server.disconnect(client);
             }
         }

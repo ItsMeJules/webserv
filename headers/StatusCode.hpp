@@ -18,7 +18,7 @@ class StatusCode : public RequestParser {
 	public :
 		StatusCode();
 		StatusCode(std::map<int, std::string> statusCode) : _statusCode(statusCode) {}
-		StatusCode(StatusCode const &src);
+		StatusCode(StatusCode const &src) {*this = src;}
 		StatusCode(HttpRequest request);
 		~StatusCode();
 
@@ -26,7 +26,7 @@ class StatusCode : public RequestParser {
 		StatusCode &operator=(StatusCode const &rhs);
 		void	testCreateResponse();
 
-		HttpResponse	createResponse(StatusCode &status, int errorCode);
+		HttpResponse	createResponse(StatusCode status, int errorCode, RegularBody * body);
 };
 
 #endif

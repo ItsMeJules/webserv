@@ -59,14 +59,26 @@ StatusCode::StatusCode()
 	_statusCode[505] = "HTTP Version Non supported";
 };
 
-HttpResponse	StatusCode::createResponse(StatusCode &status, int errorCode)
+HttpResponse	StatusCode::createResponse(StatusCode status, int errorCode, RegularBody * body)
 {
     std::string message = status[errorCode];
     HttpResponse response("HTTP/1.1", errorCode, message);
-    response.setMessageBody(new RegularBody(message));
+	std::cout << "error code = " << errorCode << std::endl;
+	body->append(message);
     return response;
 }
 
 std::string &StatusCode::operator[](int status_code) {
   return _statusCode[status_code];
+}
+
+
+StatusCode	&StatusCode::operator=(StatusCode const &rhs)
+{
+	if (this != &rhs)
+	{
+		this->_statusCode = rhs._statusCode;
+		this->http_request = rhs.http_request;
+	}
+	return *this;
 }

@@ -19,6 +19,8 @@ class RegularBody : public IMessageBody {
         int parse(std::string body, std::stringstream &inReceive);
 
         std::string getBody() const;
+        std::string getMessage() const;
+
         int getSize() const;
         RegularBody &operator=(RegularBody const &rhs);
 };
