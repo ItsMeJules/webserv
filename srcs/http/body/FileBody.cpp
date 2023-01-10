@@ -34,23 +34,23 @@ int FileBody::parse(std::string body, std::stringstream &inReceive) {
 
 // ############## GETTERS / SETTERS ##############
 
-std::string FileBody::getBody() const {
+const std::string FileBody::getBody() const {
 	return _contents.str();
 }
 
-std::string FileBody::getFileHeader() const {
+const std::string &FileBody::getFileHeader() const {
     return _fileHeader;
 }
 
-int FileBody::getSize() const {
+const int &FileBody::getSize() const {
 	return _size;
 }
 
-std::string FileBody::getFileName() const {
+const std::string &FileBody::getFileName() const {
 	return _fileName;
 }
 
-std::string FileBody::getBoundary() const {
+const std::string &FileBody::getBoundary() const {
     return _boundary;
 }
 

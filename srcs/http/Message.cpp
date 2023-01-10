@@ -11,7 +11,7 @@ Message::~Message() {}
 
 // ############## PUBLIC ##############
 
-std::string Message::build() {
+const std::string Message::build() const {
 	std::stringstream ss;
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)
 		ss << it->first << ": " << it->second << "\r\n";
@@ -24,12 +24,16 @@ void Message::addHeader(std::string headerTag, std::string value) {
 	_headers.insert(std::make_pair(headerTag, value));
 }
 
-std::string Message::getHeader(std::string headerTag) {
-	return _headers[headerTag];
+const std::string &Message::getHeader(std::string headerTag) const {
+    return _headers.at(headerTag);
 }
 
-bool Message::headersContains(std::string headerTag, std::string value) {
-	return _headers.count(headerTag) && _headers[headerTag] == value;
+bool Message::headersHasKey(std::string headerTag) const {
+    return _headers.count(headerTag) == 1;
+}
+
+bool Message::headersContains(std::string headerTag, std::string value) const {
+	return _headers.count(headerTag) && _headers.at(headerTag) == value;
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -46,7 +50,7 @@ IMessageBody *Message::getMessageBody() {
 	return _messageBody;
 }
 
-std::string Message::getHttpVersion() const {
+const std::string &Message::getHttpVersion() const {
 	return _httpVersion;
 }
 		

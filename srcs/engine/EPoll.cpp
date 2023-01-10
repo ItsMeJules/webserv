@@ -21,7 +21,7 @@ bool EPoll::init() {
 	return _epollFd != -1;
 }
 
-bool EPoll::pollFd(int fd, int events) {
+const bool EPoll::pollFd(int fd, int events) const {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
@@ -34,7 +34,7 @@ bool EPoll::pollFd(int fd, int events) {
 	return ret != -1;
 }
 
-bool EPoll::deleteFd(int fd) {
+const bool EPoll::deleteFd(int fd) const {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
 		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
@@ -43,7 +43,7 @@ bool EPoll::deleteFd(int fd) {
 	return ret != -1;
 }
 
-int EPoll::polling(Server &server) {
+const int EPoll::polling(Server &server) const {
 	struct epoll_event events[EVENTS_SIZE];
 
 	int readyFdAmount = epoll_wait(_epollFd, events, MAX_EVENTS, POLL_WAIT_TIMEOUT);
@@ -86,11 +86,11 @@ int EPoll::polling(Server &server) {
 }
 
 
-int EPoll::clientEvents() {
+const int EPoll::clientEvents() const {
 	return EPOLLIN | EPOLLOUT;
 }
 
-int EPoll::listenerEvents() {
+const int EPoll::listenerEvents() const {
     return EPOLLIN;
 }
 

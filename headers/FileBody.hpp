@@ -21,11 +21,11 @@ class FileBody : public IMessageBody {
         void append(std::string str, int size);
         int parse(std::string body, std::stringstream &inReceive);
 
-        std::string getBody() const;
-        std::string getFileHeader() const;
-		std::string getFileName() const;
-        std::string getBoundary() const;
-        int getSize() const;
+        const std::string getBody() const;
+        const std::string &getFileHeader() const;
+		const std::string &getFileName() const;
+        const std::string &getBoundary() const;
+        const int &getSize() const;
 
         void setBoundary(std::string header);
 

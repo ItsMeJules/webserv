@@ -18,11 +18,11 @@ class EPoll : public IPoll {
 		~EPoll();
 
 		bool init();
-		bool pollFd(int fd, int event);
-		bool deleteFd(int fd);
-		int polling(Server &server);
-		int clientEvents();
-        int listenerEvents();
+		bool const pollFd(int fd, int event) const;
+		bool const deleteFd(int fd) const;
+		int const polling(Server &server) const;
+		int const clientEvents() const;
+        int const listenerEvents() const;
 
 		EPoll &operator=(EPoll const &rhs);
 };

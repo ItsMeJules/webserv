@@ -2,26 +2,32 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerSocket::ServerSocket() : _domain(-1) {}
+ServerSocket::ServerSocket() : _domain(-1) {
+    setup();
+}
+
 ServerSocket::ServerSocket(int domain, int type, int protocol, int port)
-	: _domain(domain), _type(type), _protocol(protocol), _port(port) {}
+	: _domain(domain), _type(type), _protocol(protocol), _port(port)
+{
+    setup();
+}
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
 ServerSocket::~ServerSocket() {}
 
 // ############## PUBLIC ##############
 
-bool ServerSocket::setup() {
-	if (_domain == -1) {
-		_domain = AF_INET;
-		_type = SOCK_STREAM;
-		_protocol = 0;
-		_port = 9999;
-	}
-	return generateFd() && setReusable() && setNonBlocking() && bindTo();
-}
-
 // ############## PRIVATE ##############
+
+bool ServerSocket::setup() {
+    if (_domain == -1) {
+        _domain = AF_INET;
+        _type = SOCK_STREAM;
+        _protocol = 0;
+        _port = 9999;
+    }
+    return generateFd() && setReusable() && setNonBlocking() && bindTo();
+}
 
 bool ServerSocket::generateFd() {
 	_fd = socket(_domain, _type, _protocol);

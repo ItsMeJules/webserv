@@ -9,16 +9,16 @@ Socket::~Socket() {}
 
 // ############## PUBLIC ##############
 
-bool Socket::close(IPoll *poller) {
+bool Socket::close(IPoll *poller) const {
     return poller->deleteFd(_fd) && ::close(_fd) == 0;
 }
 
 // ############## GETTERS / SETTERS ##############
-int Socket::getFd() const {
+const int &Socket::getFd() const {
 	return _fd;
 }
 
-sockaddr_in &Socket::getAddress() {
+const sockaddr_in &Socket::getAddress() const {
 	return _address;
 }
 
