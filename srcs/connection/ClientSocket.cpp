@@ -23,7 +23,7 @@ bool ClientSocket::setup() {
 
 // ############## GETTERS / SETTERS ##############
 
-int ClientSocket::getServerListeningFd() const {
+const int &ClientSocket::getServerListeningFd() const {
 	return _serverListeningFd;
 }
 
