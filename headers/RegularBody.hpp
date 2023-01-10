@@ -6,10 +6,12 @@
 class RegularBody : public IMessageBody {
     private:
         std::stringstream _body;
+        std::string     _msg;
 	    int _size;
     public:
         RegularBody();
         RegularBody(RegularBody const &regularBody);
+        RegularBody(std::string msg) : _msg(msg) {}
         ~RegularBody();
 
         void append(std::string str);

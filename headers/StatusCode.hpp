@@ -3,26 +3,30 @@
 
 # include <vector>
 # include <string>
+# include <map>
 
 #include "utils.hpp"
 #include "RequestParser.hpp"
+#include "HttpResponse.hpp"
+#include "RegularBody.hpp"
 
 class StatusCode : public RequestParser {
 	private:
-		RequestParser	request_parser;
 		HttpRequest		http_request;
-		int	statusCode;
-		int	errorCode;
+		std::map<int, std::string> _statusCode;
 
 	public :
 		StatusCode();
+		StatusCode(std::map<int, std::string> statusCode) : _statusCode(statusCode) {}
 		StatusCode(StatusCode const &src);
+		StatusCode(HttpRequest request);
 		~StatusCode();
 
+		std::string &operator[](int errorCode);
 		StatusCode &operator=(StatusCode const &rhs);
-		void	recupInfoParserRequest(std::string request);
+		void	testCreateResponse();
 
-		int	getStatusCode() const {return statusCode;}
+		HttpResponse	createResponse(StatusCode &status, int errorCode);
 };
 
 #endif

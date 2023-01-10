@@ -16,7 +16,7 @@ bool EPoll::init() {
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
 		std::cerr << "failed to create poll instance error: " << strerror(errno) << std::endl;
-	else                                                                                                                                                                
+	else
 		std::cout << "epoll created with fd: " << _epollFd << std::endl;
 	return _epollFd != -1;
 }
@@ -70,7 +70,10 @@ int EPoll::polling(Server &server) {
             if (events[i].events & EPOLLIN) {
                 server.receiveData(client);
             } else if (events[i].events & EPOLLOUT) {
+				std::cout << "parsed request : " << std::endl;
                 std::cout << client.getRequestParser().getHttpRequest().build();
+				StatusCode status_code(client.getRequestParser().getHttpRequest());
+				HttpRequest http_request = client.getRequestParser().getHttpRequest();
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 

@@ -15,9 +15,7 @@ int main() {
 	IPoll *poller = new EPoll();
 	Server server(serverSocket, poller);
 
-	std::cout << "HELLO WORLD" << std::endl;
-	status_code.recupInfoParserRequest(request);
-	std::cout << "StatusCode: " << status_code.getStatusCode() << std::endl;
+
 	while (poller->polling(server) > 0) {
 	}
     serverSocket.close(poller);
