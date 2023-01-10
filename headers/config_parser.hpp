@@ -9,7 +9,7 @@
 # include "ServerInfo.hpp"
 
 namespace ws {
-    int parse_config(std::string name, std::vector<Server> &servers);
+    int parse_config(std::string const &name, std::vector<Server> &servers);
 };
 
 #endif
