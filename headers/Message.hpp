@@ -17,15 +17,15 @@ class Message {
 		Message(Message const &message);
 		virtual ~Message();
 
-		virtual std::string build();
+		virtual const std::string build() const;
 		void addHeader(std::string headerTag, std::string value);
-		std::string getHeader(std::string headerTag);
-		bool headersContains(std::string headerTag, std::string value);
+		const std::string &getHeader(std::string headerTag) const;
+		bool headersContains(std::string headerTag, std::string value) const;
 		
 		void setMessageBody(IMessageBody *messageBody);
 		void setHttpVersion(std::string httpVersion);
 		
-		std::string getHttpVersion() const;
+		const std::string &getHttpVersion() const;
 		IMessageBody *getMessageBody();
 
 		Message &operator=(Message const &rhs);

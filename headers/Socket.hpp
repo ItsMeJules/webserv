@@ -24,10 +24,10 @@ class Socket {
 		virtual ~Socket();
 
 		virtual bool setup() = 0;
-        virtual bool close(IPoll *poller);
+        virtual bool close(IPoll *poller) const;
 
-		int getFd() const;
-		sockaddr_in &getAddress();
+		const int &getFd() const;
+		const sockaddr_in &getAddress() const;
 
 		Socket &operator=(Socket const &rhs);
 };
