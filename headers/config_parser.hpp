@@ -10,6 +10,7 @@
 
 namespace ws {
     int parse_config(std::string const &name, std::vector<Server> &servers);
+    std::string get_block_type(std::string line);
 };
 
 #endif

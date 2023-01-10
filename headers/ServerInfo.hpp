@@ -9,11 +9,12 @@ class ServerInfo {
 	public:
 		class Location {
 			private:
+                std::string _locationPath;
 				std::string _indexPath;
 
 				bool _autoindex;
 			public:
-				Location();
+				Location(std::string locationPath);
 				Location(Location const &location);
 				~Location();
 		

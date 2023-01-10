@@ -7,7 +7,7 @@ ServerInfo::ServerInfo() {}
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
 ServerInfo::~ServerInfo() {}
 
-ServerInfo::Location::Location() {}
+ServerInfo::Location::Location(std::string locationPath) : _locationPath(locationPath) {}
 ServerInfo::Location::Location(Location const &location) { *this = location; }
 ServerInfo::Location::~Location() {}
 
