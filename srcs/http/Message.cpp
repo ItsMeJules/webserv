@@ -25,7 +25,11 @@ void Message::addHeader(std::string headerTag, std::string value) {
 }
 
 const std::string &Message::getHeader(std::string headerTag) const {
-	return _headers.at(headerTag);
+    return _headers.at(headerTag);
+}
+
+bool Message::headersHasKey(std::string headerTag) const {
+    return _headers.count(headerTag) == 1;
 }
 
 bool Message::headersContains(std::string headerTag, std::string value) const {

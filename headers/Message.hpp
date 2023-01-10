@@ -18,9 +18,11 @@ class Message {
 		virtual ~Message();
 
 		virtual const std::string build() const;
+
 		void addHeader(std::string headerTag, std::string value);
 		const std::string &getHeader(std::string headerTag) const;
-		bool headersContains(std::string headerTag, std::string value) const;
+        bool headersHasKey(std::string headerTag) const;
+        bool headersContains(std::string headerTag, std::string value) const;
 		
 		void setMessageBody(IMessageBody *messageBody);
 		void setHttpVersion(std::string httpVersion);
