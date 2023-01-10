@@ -70,7 +70,6 @@ int EPoll::polling(Server &server) {
             if (events[i].events & EPOLLIN) {
                 server.receiveData(client);
             } else if (events[i].events & EPOLLOUT) {
-                std::cout << client.getRequestParser().getHttpRequest().build();
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 

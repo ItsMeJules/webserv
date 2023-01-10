@@ -10,6 +10,7 @@
 # include "Client.hpp"
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
+# include "ServerInfo.hpp"
 
 # define BUFFER_SIZE 1000
 
@@ -17,8 +18,11 @@ class IPoll;
 
 class Server {
 	private:
+        static std::vector<Server> servers;
+
 		ServerSocket _socket;
 		IPoll *_poller;
+        ServerInfo _serverInfo;
 
 		std::map<int, Client> _clients;
 
@@ -38,6 +42,8 @@ class Server {
 
 		ServerSocket getSocket();
 		IPoll *getPoller();
+
+        static std::vector<Server> getServers();
 
 		Server &operator=(Server const &rhs);
 };
