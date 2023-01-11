@@ -42,6 +42,7 @@ class Server {
 
 		const ServerSocket &getSocket() const;
 		const IPoll *getPoller() const;
+        ServerInfo &getServerInfo();
 
         static std::vector<Server> getServers();
 

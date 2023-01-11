@@ -72,6 +72,10 @@ const IPoll *Server::getPoller() const {
 	return _poller;
 }
 
+ServerInfo &Server::getServerInfo() {
+    return _serverInfo;
+}
+
 // ############## OPERATORS ##############
 
 Server &Server::operator=(Server const &rhs) {

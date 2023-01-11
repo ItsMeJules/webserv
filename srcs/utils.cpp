@@ -20,20 +20,12 @@ std::string ws::itos(int const &nbr) {
 	return ss.str();
 }
 
-inline std::string &ws::ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-                                    std::not1(std::ptr_fun<int, int>(std::isspace))));
-    return s;
-}
-
-inline std::string &ws::rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-    return s;
-}
-
-inline std::string &ws::trim(std::string &s) {
-    return ws::ltrim(ws::rtrim(s));
+std::string &ws::skip_chars(std::string &str, std::string const &toSkip) {
+    int i = 0;
+    while (toSkip.find(str[i]) != std::string::npos)
+        i++;
+    str.erase(0, i);
+    return str;
 }
 
 bool ws::string_in_range(std::string const &range, std::string const &str) {
