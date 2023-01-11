@@ -1,4 +1,3 @@
-#include <cstdint>
 #include "ServerInfo.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############

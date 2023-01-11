@@ -18,8 +18,6 @@ class IPoll;
 
 class Server {
 	private:
-        static std::vector<Server> servers;
-
 		ServerSocket _socket;
 		IPoll *_poller;
         ServerInfo _serverInfo;
@@ -27,6 +25,8 @@ class Server {
 		std::map<int, Client> _clients;
 
 		bool startListening(int backlog);
+    public:
+        static std::vector<Server> servers;
 	public:
 		Server();
 		Server(ServerSocket &socket, IPoll *_poller);

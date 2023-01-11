@@ -18,13 +18,21 @@ namespace ws {
     enum ConfigBlockType {
         SERVER,
         LOCATION,
+        END,
         NONE
     };
 
     int parse_config(std::string const &name, std::vector<Server> &servers);
     ConfigBlockType get_block_type(std::string line);
-    int parse_server_block(config_parsing_t &cpt, Server &server);
-    int parse_location_block(config_parsing_t &cpt, ServerInfo::Location location);
+    ws::ConfigBlockType parse_server_block(config_parsing_t &cpt, Server &server);
+    ws::ConfigBlockType parse_location_block(config_parsing_t &cpt, ServerInfo::Location location);
+    void parse_server_line(config_parsing_t &cpt, Server &server);
+    void parse_location_line(config_parsing_t &cpt, ServerInfo::Location &location);
+
+    void check_opening_bracket(std::string line, std::string fullLine);
+    int check_closing_bracket(std::string line, std::string fullLine);
+
+
 };
 
 #endif
