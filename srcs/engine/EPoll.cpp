@@ -75,17 +75,15 @@ const int EPoll::polling(Server &server) const {
                 std::cout << client.getRequestParser().getHttpRequest().build();
 				StatusCode status_code(client.getRequestParser().getHttpRequest());
 				HttpRequest http_request = client.getRequestParser().getHttpRequest();
+                HttpResponse response("HTTP/1.1", 200, "OK");
 				StatusCode statusCode;
-				 HttpResponse response;
+				// HttpResponse response;
                 RegularBody *body = new RegularBody();
 				if (fopen("./test.txt", "r"))
 					error_code = 200;
 				else
 					error_code = 404;
                 response = statusCode.createResponse(statusCode, error_code, body);
-
-				// std::cout << "error code : " << error_code << std::endl;
-
 				body->append("Hello World!\n");
                 response.addHeader("Content-Type", "text/plain");
                 response.addHeader("Content-Length", ws::itos(body->getSize()));

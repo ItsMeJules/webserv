@@ -15,11 +15,11 @@ def gen():
     yield "I USE IT ONLY FOR TESTING".encode()
 
 pload = {'username':'Olivia','password':'123'}
-headers = {'Accept' : '*/*',
+headers = {'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate',
             'Connection': 'keep-alive',
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Host' : '127.0.0.1:9999',
+            'Host': '127.0.0.1:9999',
             'Transfer-Encoding': '',
             'User-Agent': 'python-requests/2.25.1'}
 r = ""

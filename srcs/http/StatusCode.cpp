@@ -61,9 +61,10 @@ StatusCode::StatusCode()
 
 HttpResponse	StatusCode::createResponse(StatusCode status, int errorCode, RegularBody * body)
 {
+	// std::cout << "arrive dans create response" << std::endl;
     std::string message = status[errorCode];
     HttpResponse response("HTTP/1.1", errorCode, message);
-	std::cout << "error code = " << errorCode << std::endl;
+	// std::cout << "error code = " << errorCode << std::endl;
 	body->append(message);
     return response;
 }
@@ -71,7 +72,6 @@ HttpResponse	StatusCode::createResponse(StatusCode status, int errorCode, Regula
 std::string &StatusCode::operator[](int status_code) {
   return _statusCode[status_code];
 }
-
 
 StatusCode	&StatusCode::operator=(StatusCode const &rhs)
 {
