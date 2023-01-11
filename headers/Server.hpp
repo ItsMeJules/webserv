@@ -36,8 +36,8 @@ class Server {
 
 		Client &getClient(int fd);
 
-		ServerSocket getSocket();
-		IPoll *getPoller();
+		const ServerSocket &getSocket() const;
+		const IPoll *getPoller() const;
 
 		Server &operator=(Server const &rhs);
 };

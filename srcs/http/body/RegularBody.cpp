@@ -26,7 +26,7 @@ int RegularBody::parse(std::string body, std::stringstream &inReceive) {
 
 // ############## GETTERS / SETTERS ##############
 
-std::string RegularBody::getBody() const {
+const std::string RegularBody::getBody() const {
 	return _body.str();
 }
 
@@ -35,7 +35,7 @@ std::string RegularBody::getMessage() const {
 	return _msg.c_str();
 }
 
-int RegularBody::getSize() const {
+const int &RegularBody::getSize() const {
 	return _size;
 }
 

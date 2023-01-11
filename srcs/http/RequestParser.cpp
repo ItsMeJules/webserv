@@ -48,9 +48,10 @@ std::string RequestParser::emptyAndClearStream() {
 }
 
 IMessageBody *RequestParser::getAccordingBodyType() {
-    if (_httpRequest.getHeader("Transfer-Encoding") == "chunked")
+    if (_httpRequest.headersHasKey("Transfer-Encoding") && _httpRequest.getHeader("Transfer-Encoding") == "chunked")
         return new ChunkedBody();
-    else if (_httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos)
+    else if (_httpRequest.headersHasKey("Content-Type")
+                && _httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos)
         return new FileBody();
     else
         return new RegularBody();

@@ -11,9 +11,11 @@ class IMessageBody {
         virtual void append(std::string str, int size) = 0;
         virtual int parse(std::string body, std::stringstream &inReceive) = 0;
 
-		virtual std::string getBody() const = 0;
+		// virtual std::string getBody() const = 0;
 
-		virtual int getSize() const = 0;
+		// virtual int getSize() const = 0;
+		virtual const std::string getBody() const = 0;
+		virtual const int &getSize() const = 0;
 };
 
 #endif

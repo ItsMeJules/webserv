@@ -64,11 +64,11 @@ Client &Server::getClient(int fd) {
 
 // ############## GETTERS / SETTERS ##############
 
-ServerSocket Server::getSocket() {
+const ServerSocket &Server::getSocket() const {
 	return _socket;
 }
 
-IPoll *Server::getPoller() {
+const IPoll *Server::getPoller() const {
 	return _poller;
 }
 

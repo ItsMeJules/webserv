@@ -1,12 +1,12 @@
 #include "utils.hpp"
 
-int ws::stoi(std::string str) {
+int ws::stoi(std::string const &str) {
 	int nbr;
 	std::stringstream(str) >> nbr;
 	return nbr;
 }
 
-unsigned int ws::hextoi(std::string str) {
+unsigned int ws::hextoi(std::string const &str) {
 	unsigned int x;
 	std::stringstream ss;
 	ss << std::hex << str;
@@ -14,10 +14,10 @@ unsigned int ws::hextoi(std::string str) {
 	return x;
 }
 
-std::string ws::itos(int nbr) {
+std::string ws::itos(int const &nbr) {
 	std::stringstream ss;
 	ss << nbr;
-	return ss.str();	
+	return ss.str();
 }
 
 bool ws::string_in_range(std::string const &range, std::string const &str) {
