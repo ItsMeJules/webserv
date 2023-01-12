@@ -1,13 +1,10 @@
 #include "Server.hpp"
 
-std::vector<Server*> Server::servers = std::vector<Server*>();
-
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Server::Server() : _socket(), _poller(NULL) {
-}
+Server::Server() : _socket() {}
 
-Server::Server(ServerSocket &socket, IPoll *poller) : _socket(socket), _poller(poller) {
+Server::Server(ServerSocket &socket) : _socket(socket) {
 	startListening(10);
 	poller->init();
 	poller->pollFd(socket.getFd(), poller->listenerEvents());
@@ -51,11 +48,11 @@ void Server::sendData(Client &client, HttpResponse &response) {
 
 bool Server::connect(Client &client) {
     _clients.insert(std::make_pair(client.getSocket().getFd(), client));
-    return _poller->pollFd(client.getSocket().getFd(), _poller->clientEvents());
+    return poller->pollFd(client.getSocket().getFd(), poller->clientEvents());
 }
 
 bool Server::disconnect(Client &client) {
-    bool ret = client.getSocket().close(_poller);
+    bool ret = client.getSocket().close();
     _clients.erase(client.getSocket().getFd());
     return ret;
 }
@@ -70,10 +67,6 @@ const ServerSocket &Server::getSocket() const {
 	return _socket;
 }
 
-const IPoll *Server::getPoller() const {
-	return _poller;
-}
-
 ServerInfo &Server::getServerInfo() {
     return _serverInfo;
 }
@@ -83,7 +76,6 @@ ServerInfo &Server::getServerInfo() {
 Server &Server::operator=(Server const &rhs) {
 	if (this != &rhs) {
 		_socket = rhs._socket;
-		_poller = rhs._poller;
 		_clients = rhs._clients;
 	}
 	return *this;

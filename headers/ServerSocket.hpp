@@ -30,6 +30,7 @@ class ServerSocket : public Socket {
 	public:
 		ServerSocket();
 		ServerSocket(int domain, int type, int protocol, int port);
+        ServerSocket(std::string ip, int port);
 		ServerSocket(ServerSocket const &socket);
 		~ServerSocket();
 

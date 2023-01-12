@@ -89,7 +89,6 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                 if (lineType == LOCATION && location == NULL) {
                     std::cout << "\tnew location line: " << cpt.line << std::endl;
 
-
                     ws::skip_chars(cpt.line.erase(0, 8), ws::WHITE_SPACES); //we erase "location", then we skip the spaces after location
                     cpt.line.erase(cpt.line.find_first_of(ws::WHITE_SPACES)); //we erase any trailing characters after the path
                     ws::check_location_path(cpt.line);

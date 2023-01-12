@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerSocket::ServerSocket() : _domain(-1) {
+ServerSocket::ServerSocket() : _domain(-1), _port(-1) {
     setup();
 }
 
@@ -10,6 +10,10 @@ ServerSocket::ServerSocket(int domain, int type, int protocol, int port)
 	: _domain(domain), _type(type), _protocol(protocol), _port(port)
 {
     setup();
+}
+
+ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port) {
+
 }
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
@@ -24,7 +28,8 @@ bool ServerSocket::setup() {
         _domain = AF_INET;
         _type = SOCK_STREAM;
         _protocol = 0;
-        _port = 9999;
+        if (_port == -1)
+            _port = 9999;
     }
     return generateFd() && setReusable() && setNonBlocking() && bindTo();
 }
