@@ -79,7 +79,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
         switch (cpt.blockLevel) {
             case 0: //we are not inside any block
                 if (lineType != SERVER)
-                    return -1;
+                    throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only server blocks can be found at this level.");
                 std::cout << "new server line: " << cpt.line << std::endl;
                 server = new Server();
                 servers.push_back(server);
