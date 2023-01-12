@@ -1,18 +1,26 @@
 #include "ServerInfo.hpp"
+#include <iostream>
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 ServerInfo::ServerInfo() {}
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
-ServerInfo::~ServerInfo() {}
+ServerInfo::~ServerInfo() {
+    for (std::map<std::string, ServerInfo::Location*>::iterator it = _locations.begin(); it != _locations.end(); it++)
+        delete it->second;
+}
 
-ServerInfo::Location::Location(std::string locationPath) : _locationPath(locationPath) {}
+ServerInfo::Location::Location() {}
 ServerInfo::Location::Location(Location const &location) { *this = location; }
 ServerInfo::Location::~Location() {}
 
 // ############## PRIVATE ##############
 
 // ############## PUBLIC ##############
+
+void ServerInfo::addLocation(std::string path, ServerInfo::Location *location) {
+    _locations.insert(std::make_pair(path, location));
+}
 
 // ############## GETTERS / SETTERS ##############
 
@@ -36,7 +44,7 @@ const std::map<std::string, std::string> &ServerInfo::getCgis() const {
     return _cgis;
 }
 
-const std::map<std::string, ServerInfo::Location> &ServerInfo::getLocations() const {
+const std::map<std::string, ServerInfo::Location*> &ServerInfo::getLocations() const {
     return _locations;
 }
 

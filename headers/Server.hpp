@@ -26,7 +26,7 @@ class Server {
 
 		bool startListening(int backlog);
     public:
-        static std::vector<Server> servers;
+        static std::vector<Server*> servers;
 	public:
 		Server();
 		Server(ServerSocket &socket, IPoll *_poller);
@@ -43,8 +43,6 @@ class Server {
 		const ServerSocket &getSocket() const;
 		const IPoll *getPoller() const;
         ServerInfo &getServerInfo();
-
-        static std::vector<Server> getServers();
 
 		Server &operator=(Server const &rhs);
 };

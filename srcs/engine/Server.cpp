@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+std::vector<Server*> Server::servers = std::vector<Server*>();
+
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 Server::Server() : _socket(), _poller(NULL) {
