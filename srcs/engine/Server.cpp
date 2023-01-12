@@ -3,13 +3,7 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 Server::Server() : _socket() {}
-
-Server::Server(ServerSocket &socket) : _socket(socket) {
-	startListening(10);
-	poller->init();
-	poller->pollFd(socket.getFd(), poller->listenerEvents());
-}
-
+Server::Server(ServerSocket &socket) : _socket(socket) {}
 Server::Server(Server const &server) { *this = server; }
 Server::~Server() {}
 
@@ -24,8 +18,11 @@ bool Server::startListening(int backlog) {
 	return ret;
 }
 
-
 // ############## PUBLIC ##############
+
+bool Server::setup() {
+    return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->listenerEvents());
+}
 
 void Server::receiveData(Client &client) {
 	char buffer[BUFFER_SIZE + 1];

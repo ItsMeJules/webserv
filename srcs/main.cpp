@@ -12,6 +12,7 @@ int main(int ac, char **av) {
         serverSocket.setup();
 
         Server server(serverSocket);
+        server.setup();
 
         while (Server::poller->polling(server) > 0) {
         }
