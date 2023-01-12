@@ -9,6 +9,7 @@
 # include <sys/socket.h>
 # include <fcntl.h>
 # include <unistd.h>
+# include <arpa/inet.h>
 
 # include "Socket.hpp"
 
@@ -18,6 +19,8 @@ class ServerSocket : public Socket {
 		int _type;
 		int _protocol;
 		int _port;
+
+        std::string _ip;
 
 		bool generateFd();
 		bool setReusable();
@@ -31,7 +34,11 @@ class ServerSocket : public Socket {
 		~ServerSocket();
 
 		bool setup();
-		
+
+        std::string const &getIp() const;
+
+        void setIp(std::string ip);
+
 		ServerSocket &operator=(ServerSocket const &rhs);
 };
 

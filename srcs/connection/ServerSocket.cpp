@@ -65,7 +65,7 @@ bool ServerSocket::setNonBlocking() {
 bool ServerSocket::bindTo() {
 	memset((char *)&_address, 0, sizeof(struct sockaddr_in));
 	_address.sin_family = _domain;
-	_address.sin_addr.s_addr = INADDR_ANY;
+	_address.sin_addr.s_addr = _ip.empty() ? INADDR_ANY : inet_addr(_ip.c_str());
 	_address.sin_port = htons(_port);
 
 	bool binded = bind(_fd, (struct sockaddr *)&_address, sizeof(_address)) == 0;
@@ -74,6 +74,16 @@ bool ServerSocket::bindTo() {
 	else
 		std::cerr << "error while binding fd: " << _fd << "\nerror:" << strerror(errno) << std::endl;
 	return binded;
+}
+
+// ############## GETTERS / SETTERS ##############
+
+std::string const &ServerSocket::getIp() const {
+    return _ip;
+}
+
+void ServerSocket::setIp(std::string ip) {
+    _ip = ip;
 }
 
 // ############## OPERATORS ##############
