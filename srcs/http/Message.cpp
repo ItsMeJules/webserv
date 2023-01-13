@@ -16,6 +16,7 @@ const std::string Message::build() const {
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)
 		ss << it->first << ": " << it->second << "\r\n";
 	ss << "\r\n";
+	std::cout << "ICI LE SEGFAULT" << std::endl;
 	ss << _messageBody->getBody();
     return ss.str();
 }
@@ -53,7 +54,7 @@ IMessageBody *Message::getMessageBody() {
 const std::string &Message::getHttpVersion() const {
 	return _httpVersion;
 }
-		
+
 // ############## OPERATORS ##############
 
 Message &Message::operator=(Message const &rhs) {

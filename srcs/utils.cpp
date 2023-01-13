@@ -28,10 +28,3 @@ bool ws::string_in_range(std::string const &range, std::string const &str) {
 	return true;
 }
 
-std::string	int_to_string(int i)
-{
-	std::stringstream ss;
-	ss << i;
-	std::string s = ss.str();
-	return s;
-}

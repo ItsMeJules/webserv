@@ -21,6 +21,7 @@ class Server {
 		IPoll *_poller;
 
 		std::map<int, Client> _clients;
+		std::string _name;
 
 		bool startListening(int backlog);
 	public:
@@ -35,6 +36,7 @@ class Server {
         bool disconnect(Client &client);
 
 		Client &getClient(int fd);
+		std::string	getName() const;
 
 		const ServerSocket &getSocket() const;
 		const IPoll *getPoller() const;

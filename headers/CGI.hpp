@@ -2,6 +2,10 @@
 #define CGI_HPP
 
 #include "utils.hpp"
+# include <map>
+
+#include "HttpRequest.hpp"
+#include "Server.hpp"
 
 class Cgi {
 	private:
@@ -11,7 +15,8 @@ class Cgi {
 		HttpRequest	_httpRequest;
 
 	public:
-		Cgi (Server const &server, HttpRequest const &request, std::string binary, std::string target) {}
+		Cgi();
+		Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target);
 		~Cgi() {}
 
 		std::string getBinary() const
@@ -23,6 +28,8 @@ class Cgi {
 		{
 			return _target;
 		}
+
+		std::string	int_to_string(int i);
 };
 
 #endif
