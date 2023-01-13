@@ -15,15 +15,13 @@ Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, s
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_NAME"] = server.getName();
 	_env["REMOTE_USER"] = "user";
-
 }
 
-
-std::string	Cgi::int_to_string(int i)
+std::string	executeCGI(void)
 {
-	std::stringstream ss;
-	ss << i;
-	std::string s = ss.str();
-	return s;
+	std::string _body;
+
+	int	
+
 }
 
