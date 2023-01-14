@@ -9,6 +9,7 @@ OBJ 		= 	$(addprefix $(OBJ_DIR)/,$(SRC:.cpp=.o))
 INC_DIR		=	headers
 INC			=	$(shell find $(INC_DIR) -type f -name "*.hpp")
 IFLAGS 		=	-I $(INC_DIR)
+
 vpath			%.cpp $(shell find $(SRC_DIR) -type d)
 .SUFFIXES: 		.cpp .o .hpp
 
@@ -28,8 +29,8 @@ init			:
 					@ $(shell mkdir -p $(OBJ_DIR))
 					
 $(NAME)			:	$(OBJ) $(INC)
-					@ echo "$(_INFO) Initialize $(NAME)"
-				 	@ $(CC) $(CFLAGS) $(IFLAGS) -o $(NAME) $(OBJ)
+					@ echo "$(_INFO) Initializing $(NAME)"
+				 	@ $(CC) $(CFLAGS) $(IFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%.o	:	%.cpp
 					@ echo "\t$(_YELLOW)Compiling$(_RESET) $*.cpp\r\c"
