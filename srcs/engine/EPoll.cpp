@@ -71,7 +71,7 @@ const int EPoll::polling(Server &server) const {
                 server.receiveData(client);
             } else if (events[i].events & EPOLLOUT) {
                 std::cout << client.getRequestParser().getHttpRequest().build();
-                HttpResponse response("HTTP/1.1", 200, "OK");
+                HttpResponse response = HttpResponse::fromRequest(server, client.getRequestParser().getHttpRequest());
                 RegularBody *body = new RegularBody();
 
 				body->append("Hello World!");

@@ -7,11 +7,14 @@
 
 # include "Message.hpp"
 # include "Client.hpp"
+# include "Server.hpp"
 
 class HttpResponse : public Message {
 	private:
 		int _statusCode;
 		std::string _reasonPhrase;
+
+        static std::map<int, std::string> codes;
 	public:
 		HttpResponse();
 		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);
@@ -22,6 +25,9 @@ class HttpResponse : public Message {
 		void send(Client &client);
 
 		HttpResponse &operator=(HttpResponse const &rhs);
+
+        static HttpResponse fromRequest(Server server, HttpRequest request);
+        static std::map<int, std::string> createCodes();
 };
 
 #endif
