@@ -28,6 +28,7 @@ class Message {
 		void setHttpVersion(std::string httpVersion);
 		
 		const std::string &getHttpVersion() const;
+		const std::map<std::string, std::string> getHeaders() const;
 		IMessageBody *getMessageBody();
 
 		Message &operator=(Message const &rhs);

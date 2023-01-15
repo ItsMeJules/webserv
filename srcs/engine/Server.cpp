@@ -15,7 +15,7 @@ bool Server::startListening(int backlog) {
 		std::cerr << "failed to listen on fd: " << _socket.getFd() << " " << strerror(errno) << std::endl;
 	else
 		std::cout << "successfully listening on fd: " << _socket.getFd() << std::endl;
-	return ret;
+	return !ret;
 }
 
 // ############## PUBLIC ##############
@@ -24,7 +24,7 @@ bool Server::setup() {
     return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->listenerEvents());
 }
 
-void Server::receiveData(Client &client) {
+bool Server::receiveData(Client &client) {
 	char buffer[BUFFER_SIZE + 1];
 	memset(buffer, 0, BUFFER_SIZE);
 
@@ -34,9 +34,10 @@ void Server::receiveData(Client &client) {
         buffer[byteCount] = 0;
         client.getRequestParser().parseRequest(buffer);
     } else if (byteCount == 0)
-        disconnect(client); // if header Connection: keep-alive don't close
+        return false;
 	else
 		std::cout << "recv returned an error with fd " << clientFd << ": " << strerror(errno) << std::endl;
+    return true;
 }
 
 void Server::sendData(Client &client, HttpResponse &response) {

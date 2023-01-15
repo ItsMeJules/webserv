@@ -35,7 +35,7 @@ class Server {
 
         bool setup();
 
-		void receiveData(Client &client);
+		bool receiveData(Client &client);
 		void sendData(Client &client, HttpResponse &response);
         bool connect(Client &client);
         bool disconnect(Client &client);

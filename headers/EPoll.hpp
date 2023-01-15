@@ -20,6 +20,7 @@ class EPoll : public IPoll {
 		bool init();
 		bool const pollFd(int fd, int event) const;
 		bool const deleteFd(int fd) const;
+        bool const modFd(int fd, int event) const;
 		int const polling(Server &server) const;
 		int const clientEvents() const;
         int const listenerEvents() const;

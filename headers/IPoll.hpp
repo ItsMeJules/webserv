@@ -16,6 +16,7 @@ class IPoll {
 		virtual bool init() = 0;
 		virtual const bool pollFd(int fd, int event) const = 0;
 		virtual const bool deleteFd(int fd) const = 0;
+        virtual const bool modFd(int fd, int event) const = 0;
 		virtual const int polling(Server &server) const = 0;
 
         virtual const int clientEvents() const = 0;
