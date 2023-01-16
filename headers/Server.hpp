@@ -7,6 +7,7 @@
 
 # include "ServerSocket.hpp"
 # include "IPoll.hpp"
+# include "Poll.hpp"
 # include "Client.hpp"
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
@@ -29,10 +30,11 @@ class Server {
 		Server(Server const &server);
 		~Server();
 
-		void receiveData(Client &client);
-		void sendData(Client &client, HttpResponse &response);
-        bool connect(Client &client);
-        bool disconnect(Client &client);
+		void	receiveData(Client &client);
+		void	sendData(Client &client, HttpResponse &response);
+        bool 	connect(Client &client);
+		poll_it connect(Client &client, poll_it it);
+        bool 	disconnect(Client &client);
 
 		Client &getClient(int fd);
 

@@ -52,6 +52,11 @@ bool Server::connect(Client &client) {
     return _poller->pollFd(client.getSocket().getFd(), _poller->clientEvents());
 }
 
+poll_it Server::connect(Client &client, poll_it it) {
+    _clients.insert(std::make_pair(client.getSocket().getFd(), client));
+    return _poller->addClient(client.getSocket().getFd(), _poller->clientEvents(), it);
+}
+
 bool Server::disconnect(Client &client) {
     bool ret = _poller->deleteFd(client.getSocket().getFd()) && close(client.getSocket().getFd()) == 0;
     _clients.erase(client.getSocket().getFd());

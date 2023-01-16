@@ -1,6 +1,11 @@
 # include "ServerSocket.hpp"
 # include "Server.hpp"
-//# include "EPoll.hpp"
+
+#ifdef __linux__
+# include "EPoll.hpp"
+#else
+# include "Poll.hpp"
+#endif
 
 int main() {
 	ServerSocket serverSocket;
@@ -11,6 +16,7 @@ int main() {
 #else
 	IPoll *poller = new Poll(); // POLL_MAC
 #endif
+
 	Server server(serverSocket, poller);
 
 	while (poller->polling(server) > 0) {
