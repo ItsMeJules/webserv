@@ -25,8 +25,9 @@ class StatusCode : public RequestParser {
 		std::string &operator[](int errorCode);
 		StatusCode &operator=(StatusCode const &rhs);
 		void	testCreateResponse();
+		void	writeResponse();
 
-		HttpResponse	createResponse(StatusCode status, int errorCode, RegularBody * body);
+		HttpResponse	createResponse(int errorCode, RegularBody * body);
 };
 
 #endif
