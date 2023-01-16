@@ -10,6 +10,7 @@ Poll::~Poll() {}
 // ############## PUBLIC ##############
 
 bool Poll::init() {
+	return true;
 } // Not needed for classic polling
 
 bool Poll::pollFd(int fd, int events) {
@@ -19,6 +20,7 @@ bool Poll::pollFd(int fd, int events) {
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
     _pollfd.push_back(event); // to add to the vector
+	return true;
 }
 
 poll_it	Poll::addClient(int fd, int events, poll_it it) {
@@ -28,6 +30,10 @@ poll_it	Poll::addClient(int fd, int events, poll_it it) {
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
     return (_pollfd.insert(it, event));
+}
+
+bool Poll::deleteFd(int fd) {
+	return true;
 }
 
 int Poll::polling(Server &server) {

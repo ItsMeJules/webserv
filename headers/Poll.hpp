@@ -8,8 +8,6 @@
 # include "Server.hpp"
 # include "Client.hpp"
 
-typedef std::vector<struct pollfd>::iterator poll_it;
-
 class Poll : public IPoll {
 	private:
         std::vector<struct pollfd>  _pollfd;

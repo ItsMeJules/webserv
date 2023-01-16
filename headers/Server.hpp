@@ -16,6 +16,8 @@
 
 class IPoll;
 
+typedef std::vector<struct pollfd>::iterator poll_it;
+
 class Server {
 	private:
 		ServerSocket _socket;

@@ -1,4 +1,5 @@
-#include "EPoll.hpp"
+#ifdef __linux__
+# include "EPoll.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -105,3 +106,5 @@ EPoll &EPoll::operator=(EPoll const &rhs) {
 	}
 	return *this;
 }
+
+#endif
