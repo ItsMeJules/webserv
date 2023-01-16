@@ -40,7 +40,12 @@ std::string HttpRequest::getMethod() const {
 std::string HttpRequest::getPath() const {
 	return _path;
 }
-		
+
+std::vector<std::string> HttpRequest::getData() const
+{
+	return _data;
+}
+
 // ############## OPERATORS ##############
 
 HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {

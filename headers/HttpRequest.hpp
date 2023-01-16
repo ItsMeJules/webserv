@@ -10,6 +10,7 @@ class HttpRequest : public Message {
 	private:
 		std::string _method;
 		std::string _path;
+		std::vector<std::string> _data;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
@@ -22,6 +23,7 @@ class HttpRequest : public Message {
 
 		std::string getMethod() const;
 		std::string getPath() const;
+		std::vector<std::string>	getData() const;
 
 		HttpRequest &operator=(HttpRequest const &rhs);
 };
