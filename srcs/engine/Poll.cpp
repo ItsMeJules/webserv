@@ -30,16 +30,6 @@ poll_it	Poll::addClient(int fd, int events, poll_it it) {
     return (_pollfd.insert(it, event));
 }
 
-bool Poll::deleteFd(int fd) {
-	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
-	if (ret == -1)
-		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
-	else
-		std::cerr << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
-	return ret != -1;
-}
-
-
 int Poll::polling(Server &server) {
 
 	int readyFdAmount = poll(_pollfd.data(), _pollfd.size(), -1);
@@ -69,7 +59,7 @@ int Poll::polling(Server &server) {
 
            		Client client(socket);
             	server.connect(client, it);
-			} else {
+			} else { /* Dans le cas du Client */
 				Client	&client = server.getClient(it->fd);
 				if (it->revents & POLLIN) {
 					server.receiveData(client);
