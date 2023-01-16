@@ -9,11 +9,13 @@
 #include "RequestParser.hpp"
 #include "HttpResponse.hpp"
 #include "RegularBody.hpp"
+# include "FileBody.hpp"
 
 class StatusCode : public RequestParser {
 	private:
 		HttpRequest		http_request;
 		std::map<int, std::string> _statusCode;
+		FileBody _file;
 
 	public :
 		StatusCode();

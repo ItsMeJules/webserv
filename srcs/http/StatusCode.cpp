@@ -73,6 +73,7 @@ void	StatusCode::writeResponse()
 	HttpRequest request;
 	RegularBody *body = new RegularBody();
 	StatusCode statusCode;
+	std::string _path;
 
 	if (request.getMethod() != "GET")
 		reponse = statusCode.createResponse(405, body);
@@ -82,7 +83,8 @@ void	StatusCode::writeResponse()
 		reponse = statusCode.createResponse(405, body);
 	else if (request.getPath() == "")
 		reponse = statusCode.createResponse(404, body);
-
+	else if (request.getPath().empty())
+		reponse = statusCode.createResponse(404, body);
 }
 
 std::string &StatusCode::operator[](int status_code) {
