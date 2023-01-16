@@ -1,6 +1,6 @@
 #include "HttpResponse.hpp"
 
-std::map<int, std::string> codes = HttpResponse::createCodes();
+std::map<int, std::string> HttpResponse::codes = HttpResponse::createCodes();
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -44,7 +44,7 @@ HttpResponse &HttpResponse::operator=(HttpResponse const &rhs) {
 	return *this;
 }
 
-HttpResponse HttpResponse::fromRequest(Server server, HttpRequest request) {
+HttpResponse HttpResponse::fromRequest(ServerInfo const &serverInfo, HttpRequest const &request) {
     return HttpResponse("HTTP/1.1", 200, codes[200]);
 }
 

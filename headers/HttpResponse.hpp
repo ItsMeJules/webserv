@@ -7,7 +7,7 @@
 
 # include "Message.hpp"
 # include "Client.hpp"
-# include "Server.hpp"
+# include "ServerInfo.hpp"
 
 class HttpResponse : public Message {
 	private:
@@ -26,7 +26,7 @@ class HttpResponse : public Message {
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 
-        static HttpResponse fromRequest(Server server, HttpRequest request);
+        static HttpResponse fromRequest(ServerInfo const &serverInfo, HttpRequest const &request);
         static std::map<int, std::string> createCodes();
 };
 
