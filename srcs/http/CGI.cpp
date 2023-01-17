@@ -59,7 +59,7 @@ void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
 {
 	std::string binary = getCGIExecutable(request.getHttpVersion());
 	std::string target = request.getHttpVersion();
-	std::string inputBody = request.getMessageBody();
+	std::string inputBody = request.getMessageBody()->getBody();
 	std::map<std::string, std::string> env = createCGIMap(request, server);
 	Cgi cgi(server, request, binary, target);
 	cgi.setInputBody(inputBody);
