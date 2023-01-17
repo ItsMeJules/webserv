@@ -57,8 +57,8 @@ std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server con
 
 void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
 {
-	std::string binary = getCGIExecutable(request.getHttpVersion());
-	std::string target = request.getHttpVersion();
+	std::string binary = getCGIExecutable(request.getPath());
+	std::string target = request.getPath();
 	std::string inputBody = request.getMessageBody()->getBody();
 	std::map<std::string, std::string> env = createCGIMap(request, server);
 	Cgi cgi(server, request, binary, target);
