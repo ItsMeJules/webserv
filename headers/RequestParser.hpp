@@ -14,6 +14,7 @@ class RequestParser {
 	private:
 		std::stringstream _inReceive;
 		bool _headersReceived;
+		bool _requestParsed;
 
 		HttpRequest _httpRequest;
 
@@ -32,6 +33,7 @@ class RequestParser {
         void clear();
 
 		HttpRequest &getHttpRequest();
+		const bool isRequestParsed() const;
 
 		RequestParser &operator=(RequestParser const &rhs);
 };

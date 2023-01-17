@@ -2,7 +2,8 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-RegularBody::RegularBody() : _size(0) {}
+RegularBody::RegularBody() : _size(0), _contentLength(-1) {}
+RegularBody::RegularBody(int contentLength) : _size(0), _contentLength(contentLength) {}
 RegularBody::RegularBody(RegularBody  const &regularBody ) { *this = regularBody; }
 RegularBody::~RegularBody() {}
 
@@ -21,7 +22,7 @@ void RegularBody::append(std::string str, int size) {
 
 int RegularBody::parse(std::string body, std::stringstream &inReceive) {
     append(body);
-    return 1;
+	return _size >= _contentLength;
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -40,6 +41,7 @@ RegularBody  &RegularBody ::operator=(RegularBody  const &rhs) {
 	if (this != &rhs) {
 		_body << rhs._body.str();
 		_size = rhs._size;
+		_contentLength = rhs._contentLength;
 	}
 	return *this;
 }
