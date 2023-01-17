@@ -70,3 +70,16 @@ std::string	replace(std::string src, std::string search, std::string replace)
 	}
 	return (src);
 }
+
+void	ft_strcpy(const char *src, char *dest)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+}

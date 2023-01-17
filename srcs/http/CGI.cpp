@@ -1,5 +1,7 @@
 #include "CGI.hpp"
 #include "utils.hpp"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 Cgi::Cgi(){}
 
@@ -53,6 +55,7 @@ std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server con
 	env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	env["SERVER_NAME"] = server.getName();
 	env["REMOTE_USER"] = "user";
+	//Pour GET, la seule variable est QUERY STRING
 
 	return env;
 }
@@ -95,7 +98,6 @@ int	Cgi::execute(int clientSocket)
 {
 	std::string _body;
 	pid_t	pid;
-	char	tmp[BUFFER_SIZE];
 	int		ret = 1;
 	int		fd[2];
 
@@ -107,5 +109,25 @@ int	Cgi::execute(int clientSocket)
 
 	int	input_fd = fileno(input_file);
 	int	output_fd = fileno(output_file);
+
+	if (pid == -1)
+		return 500; // ou alors faire un truc avec write response de status code idk
+	else if (pid == 0)
+	{
+		char **av = new char * [3];
+		av[0] = new char [_binary.length() + 1];
+		av[1] = new char [_target.length() + 1];
+
+		dup2(output_fd, STDOUT_FILENO);
+		dup2(input_fd, STDIN_FILENO);
+
+		ft_strcpy(_binary.c_str(), av[0]);
+		ft_strcpy(_target.c_str(), av[1]);
+		av[2] = NULL;
+		execve(_binary.c_str(), av, );//il faut crer une fonction qui retourne un tab
+	}
+	else
+	{
+	}
 
 }

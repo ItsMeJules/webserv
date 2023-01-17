@@ -29,6 +29,8 @@ namespace ws {
     // STRING MANIPULATION
     std::string &skip_chars(std::string &str, std::string const &toSkip);
 	bool string_in_range(std::string const &range, std::string const &str, size_t npos = std::string::npos);
+	void	ft_strcpy(const char *src, char *dest);
+
 }
 
 #endif

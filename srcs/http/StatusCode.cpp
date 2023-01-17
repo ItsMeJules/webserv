@@ -85,6 +85,7 @@ void	StatusCode::writeResponse()
 		reponse = statusCode.createResponse(404, body);
 	else if (request.getPath().empty())
 		reponse = statusCode.createResponse(404, body);
+	//rajouter une condition si GCI n'est pas ok. Ce sera une erreur 500 car erreur de server
 }
 
 std::string &StatusCode::operator[](int status_code) {
