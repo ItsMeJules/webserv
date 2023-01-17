@@ -59,9 +59,7 @@ int const Poll::polling(Server &server) {
 			else
 				deleteFd(it->fd);
 			continue ;
-		}
-		// Dans le cas du Serveur
-		if (server.getSocket().getFd() == it->fd) {
+		} else if (server.getSocket().getFd() == it->fd) { // Dans le cas du Serveur
 			ClientSocket socket(server.getSocket().getFd());
 			if (!socket.setup())
 				return -3;
@@ -73,7 +71,7 @@ int const Poll::polling(Server &server) {
 			if (it->revents & POLLIN) {
                 if (!server.receiveData(client))
                     server.disconnect(client);
-                else
+                else if (client.getRequestParser().isRequestParsed())
                     modFd(it->fd, POLLOUT);
             } else if (it->revents & POLLOUT) {
 				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
@@ -100,7 +98,7 @@ int const Poll::polling(Server &server) {
 
 
 int const Poll::clientEvents() const {
-	return POLLIN | POLLOUT;
+	return POLLIN;
 } // Uniquement pour les clients
 
 int const Poll::listenerEvents() const {
