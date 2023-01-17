@@ -75,8 +75,7 @@ const int EPoll::polling(Server &server) {
 			else
 				deleteFd(events[i].data.fd);
 			continue ;
-		}
-        if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
+		} else if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
             ClientSocket socket(server.getSocket().getFd());
             if (!socket.setup())
                 return -3;
@@ -88,8 +87,12 @@ const int EPoll::polling(Server &server) {
             if (events[i].events & EPOLLIN) {
                 if (!server.receiveData(client))
                     server.disconnect(client);
+				else if (client.getRequestParser().isRequestParsed())
+                    modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
+				std::cout << "parsed: " << std::endl;
 				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
+				std::cout << "end" << std::endl;
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 
@@ -102,7 +105,7 @@ const int EPoll::polling(Server &server) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();
-                    modFd(events[i].data.fd, EPOLLIN);
+                    modFd(events[i].data.fd, clientEvents());
                 }
             } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);

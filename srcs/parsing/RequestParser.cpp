@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-RequestParser::RequestParser() : _headersReceived(false) {}
+RequestParser::RequestParser() : _headersReceived(false), _requestParsed(false) {}
 RequestParser::RequestParser(RequestParser const &request) { *this = request; }
 RequestParser::~RequestParser() {}
 
@@ -49,8 +49,12 @@ IMessageBody *RequestParser::getAccordingBodyType() {
     else if (_httpRequest.headersHasKey("Content-Type")
                 && _httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos)
         return new FileBody();
-    else
-        return new RegularBody();
+    else {
+		if (_httpRequest.headersHasKey("Content-Length"))
+			return new RegularBody(ws::stoi(_httpRequest.getHeader("Content-Length")));
+		else
+			return new RegularBody(-1);
+	}
 }
 
 // ############## PUBLIC ##############
@@ -73,7 +77,8 @@ bool RequestParser::parseRequest(std::string request) {
             if (fileBody != NULL && fileBody->getBoundary().empty())
                 fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
         }
-        _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
+		int ret = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
+        _requestParsed =  ret == 1;
     }
 	return true;
 }
@@ -82,6 +87,7 @@ void RequestParser::clear() {
     HttpRequest empty;
     _headersReceived = false;
     _httpRequest = empty;
+	_requestParsed = false;
     _inReceive.str("");
 }
 
@@ -91,6 +97,10 @@ HttpRequest &RequestParser::getHttpRequest() {
 	return _httpRequest;
 }
 
+const bool RequestParser::isRequestParsed() const {
+	return _requestParsed;
+}
+
 // ############## OPERATORS ##############
 
 RequestParser &RequestParser::operator=(RequestParser const &rhs) {
@@ -98,6 +108,7 @@ RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 		_inReceive << rhs._inReceive.str();
 		_headersReceived = rhs._headersReceived;
 		_httpRequest = rhs._httpRequest;
+		_requestParsed = rhs._requestParsed;
 	}
 	return *this;
 }
