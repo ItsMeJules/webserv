@@ -22,9 +22,10 @@ class Socket {
 		virtual ~Socket();
 
 		virtual bool setup() = 0;
-		
-		int getFd() const;
-		sockaddr_in &getAddress();
+        virtual bool close() const;
+
+		const int &getFd() const;
+		const sockaddr_in &getAddress() const;
 
 		Socket &operator=(Socket const &rhs);
 };

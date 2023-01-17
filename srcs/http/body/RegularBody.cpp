@@ -19,13 +19,18 @@ void RegularBody::append(std::string str, int size) {
 	_size += str.size();
 }
 
+int RegularBody::parse(std::string body, std::stringstream &inReceive) {
+    append(body);
+    return 1;
+}
+
 // ############## GETTERS / SETTERS ##############
 
-std::string RegularBody::getBody() const {
+const std::string RegularBody::getBody() const {
 	return _body.str();
 }
 
-int RegularBody::getSize() const {
+const int &RegularBody::getSize() const {
 	return _size;
 }
 

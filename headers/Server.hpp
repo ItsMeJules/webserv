@@ -7,41 +7,44 @@
 
 # include "ServerSocket.hpp"
 # include "IPoll.hpp"
-# include "Poll.hpp"
 # include "Client.hpp"
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
+# include "ServerInfo.hpp"
 
 # define BUFFER_SIZE 1000
 
 class IPoll;
 
-typedef std::vector<struct pollfd>::iterator poll_it;
-
 class Server {
 	private:
 		ServerSocket _socket;
-		IPoll *_poller;
+        ServerInfo _serverInfo;
 
 		std::map<int, Client> _clients;
 
 		bool startListening(int backlog);
+    public:
+        static IPoll *poller;
+        static std::vector<Server*> servers;
 	public:
 		Server();
-		Server(ServerSocket &socket, IPoll *_poller);
+		Server(ServerSocket &socket);
 		Server(Server const &server);
 		~Server();
 
-		void	receiveData(Client &client);
-		void	sendData(Client &client, HttpResponse &response);
-        bool 	connect(Client &client);
-		poll_it connect(Client &client, poll_it it);
-        bool 	disconnect(Client &client);
+        bool setup();
 
-		Client &getClient(int fd);
+		bool receiveData(Client &client);
+		void sendData(Client &client, HttpResponse &response);
+        bool connect(Client &client);
+        bool disconnect(Client &client);
+		bool isConnected(int const fd);
 
-		ServerSocket getSocket();
-		IPoll *getPoller();
+		Client &getClient(int const fd);
+
+		const ServerSocket &getSocket() const;
+        ServerInfo &getServerInfo();
 
 		Server &operator=(Server const &rhs);
 };

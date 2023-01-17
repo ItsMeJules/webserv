@@ -1,12 +1,14 @@
 #include "utils.hpp"
 
-int ws::stoi(std::string str) {
+#include <iostream>
+
+int ws::stoi(std::string const &str) {
 	int nbr;
 	std::stringstream(str) >> nbr;
 	return nbr;
 }
 
-unsigned int ws::hextoi(std::string str) {
+unsigned int ws::hextoi(std::string const &str) {
 	unsigned int x;
 	std::stringstream ss;
 	ss << std::hex << str;
@@ -14,14 +16,22 @@ unsigned int ws::hextoi(std::string str) {
 	return x;
 }
 
-std::string ws::itos(int nbr) {
+std::string ws::itos(int const &nbr) {
 	std::stringstream ss;
 	ss << nbr;
-	return ss.str();	
+	return ss.str();
 }
 
-bool ws::string_in_range(std::string const &range, std::string const &str) {
-    for (int i = 0; str[i]; i++) {
+std::string &ws::skip_chars(std::string &str, std::string const &toSkip) {
+    int i = 0;
+    while (toSkip.find(str[i]) != std::string::npos)
+        i++;
+    str.erase(0, i);
+    return str;
+}
+
+bool ws::string_in_range(std::string const &range, std::string const &str, size_t npos) {
+    for (int i = 0; i < str.size() && npos != 0; i++, npos--) {
         if (range.find(str[i]) == std::string::npos)
             return false;
     }

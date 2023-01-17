@@ -9,85 +9,101 @@ Poll::~Poll() {}
 // ############## PRIVATE ##############
 // ############## PUBLIC ##############
 
-bool Poll::init() {
+bool const Poll::init() {
 	return true;
 } // Not needed for classic polling
 
-bool Poll::pollFd(int fd, int events) {
+bool const Poll::pollFd(int fd, int events) {
 	struct pollfd event;
 	event.fd = fd;
     event.events = events;
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
-    _pollfd.push_back(event); // to add to the vector
+    _pollFd.push_back(event); // to add to the vector
 	std::cout << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
 	return true;
 }
 
-bool Poll::deleteFd(int fd) {
+bool const Poll::deleteFd(int fd) {
 	return true;
 }
 
-int Poll::polling(Server &server) {
+const bool Poll::modFd(int fd, int events) {
+	// pas ouf je reitere dans les fd co. 
+	// il faudrait que je change l'interface IPoll
+    for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
+		if (it->fd == fd) {
+			it->revents = events;
+			std::cout << "successfully modified fd: " << fd << std::endl;
+			return true;
+		}
+	}
+	return false;
+}
 
-	int readyFdAmount = poll(_pollfd.data(), _pollfd.size(), -1);
+int const Poll::polling(Server &server) {
+	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
-		std::cerr << "epoll_wait failed! error: " << strerror(errno) << std::endl;
+		std::cerr << "poll failed! error: " << strerror(errno) << std::endl;
 		return -1;
 	}
 
-    for (poll_it it = _pollfd.begin(); it != _pollfd.end(); it++) {
-        reset:
-		if (it->revents != 0) {
-			if (it->revents & (POLLERR | POLLHUP)) {
-				if (close(it->fd) < 0) {
-					std::cerr << "closer error on fd: " << std::endl;
-					//TO DO 
-				}
-				it = _pollfd.erase(it);
-				if (it == _pollfd.end())
-					break;
-				goto reset;
-			}
-			// Dans le cas du Serveur
-			if (server.getSocket().getFd() == it->fd) {
-				ClientSocket socket(server.getSocket().getFd());
-            	if (!socket.setup())
-                	return -3;
+	std::vector<pollfd_t> pollFdCopy = _pollFd;
+    for (std::vector<pollfd_t>::iterator it = pollFdCopy.begin(); it != pollFdCopy.end(); it++) {
+		if (it->revents == 0)
+			continue ;
+		if (it->revents & POLLERR) {
+			std::cerr << "poll error on fd: " << it->fd << " with events " << it->revents << std::endl;
+			if (server.isConnected(it->fd))
+				server.disconnect(server.getClient(it->fd));
+			else
+				deleteFd(it->fd);
+			continue ;
+		}
+		// Dans le cas du Serveur
+		if (server.getSocket().getFd() == it->fd) {
+			ClientSocket socket(server.getSocket().getFd());
+			if (!socket.setup())
+				return -3;
 
-           		Client client(socket);
-            	server.connect(client, it);
-			} else { /* Dans le cas du Client */
-				Client	&client = server.getClient(it->fd);
-				if (it->revents & POLLIN) {
-					server.receiveData(client);
-				} else if (it->revents & POLLOUT) {
-					std::cout << client.getRequestParser().getHttpRequest().build();
-					HttpResponse	response("HTTP/1.1", 200, "OK");
-					RegularBody		*body = new RegularBody();
+			Client client(socket);
+			server.connect(client);
+		} else { /* Dans le cas du Client */
+			Client	&client = server.getClient(it->fd);
+			if (it->revents & POLLIN) {
+                if (!server.receiveData(client))
+                    server.disconnect(client);
+                else
+                    modFd(it->fd, POLLOUT);
+            } else if (it->revents & POLLOUT) {
+				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
+                HttpResponse response("HTTP/1.1", 200, "OK");
+                RegularBody *body = new RegularBody();
 
-					body->append("Hello World!");
-					response.addHeader("Content-Type", "text/plain");
-					response.addHeader("Content-Length", ws::itos(body->getSize()));
-					response.setMessageBody(body);
-					server.sendData(client, response);
-					server.disconnect(client);
-				}
-			}
-        }
-        else
-            continue;
+				body->append("Hello World!");
+                response.addHeader("Content-Type", "text/plain");
+                response.addHeader("Content-Length", ws::itos(body->getSize()));
+                response.setMessageBody(body);
+                server.sendData(client, response);
+                if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
+                    server.disconnect(client);
+                } else {  // if there's no connection header we assume that the connection is keep-alive
+                    client.getRequestParser().clear();
+                    modFd(it->fd, POLLIN);
+                }
+            } else if (it->revents & POLLRDHUP)
+                server.disconnect(client);
+		}
     }
-
 	return 1;
 }
 
 
-int Poll::clientEvents() {
+int const Poll::clientEvents() const {
 	return POLLIN | POLLOUT;
 } // Uniquement pour les clients
 
-int Poll::listenerEvents() {
+int const Poll::listenerEvents() const {
     return POLLIN;
 } // Uniquement pour le server
 

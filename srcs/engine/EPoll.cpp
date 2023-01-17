@@ -12,17 +12,17 @@ EPoll::~EPoll() {
 // ############## PRIVATE ##############
 // ############## PUBLIC ##############
 
-bool EPoll::init() {
+const bool EPoll::init() {
 	std::cout << "creating poll instance" << std::endl;
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
 		std::cerr << "failed to create poll instance error: " << strerror(errno) << std::endl;
-	else
+	else                                                                                                                                                                
 		std::cout << "epoll created with fd: " << _epollFd << std::endl;
 	return _epollFd != -1;
 }
 
-bool EPoll::pollFd(int fd, int events) {
+const bool EPoll::pollFd(int fd, int events) {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
@@ -31,11 +31,11 @@ bool EPoll::pollFd(int fd, int events) {
 	if (ret == -1)
 		std::cerr << "failed to add fd: " << fd << " to polling list!" << std::endl;
 	else
-		std::cout << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
+		std::cerr << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
 	return ret != -1;
 }
 
-bool EPoll::deleteFd(int fd) {
+const bool EPoll::deleteFd(int fd) {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
 		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
@@ -44,8 +44,20 @@ bool EPoll::deleteFd(int fd) {
 	return ret != -1;
 }
 
+const bool EPoll::modFd(int fd, int events) {
+    struct epoll_event event;
+    event.events = events;
+    event.data.fd = fd;
 
-int EPoll::polling(Server &server) {
+    int ret = epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &event);
+    if (ret == -1)
+        std::cerr << "failed to mod fd: " << fd << std::endl;
+    else
+        std::cerr << "successfully modified fd: " << fd << std::endl;
+    return ret != -1;
+}
+
+const int EPoll::polling(Server &server) {
 	struct epoll_event events[EVENTS_SIZE];
 
 	int readyFdAmount = epoll_wait(_epollFd, events, MAX_EVENTS, POLL_WAIT_TIMEOUT);
@@ -55,10 +67,13 @@ int EPoll::polling(Server &server) {
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
-		if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
-			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events" << events[i].events << std::endl;
-			close(events[i].data.fd);
-			return -2;
+		if (events[i].events & EPOLLERR) {
+			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
+			if (server.isConnected(events[i].data.fd))
+				server.disconnect(server.getClient(events[i].data.fd));
+			else
+				deleteFd(events[i].data.fd);
+			continue ;
 		}
         if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
             ClientSocket socket(server.getSocket().getFd());
@@ -70,9 +85,12 @@ int EPoll::polling(Server &server) {
         } else {
             Client &client = server.getClient(events[i].data.fd);
             if (events[i].events & EPOLLIN) {
-                server.receiveData(client);
+                if (!server.receiveData(client))
+                    server.disconnect(client);
+                else
+                    modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-                std::cout << client.getRequestParser().getHttpRequest().build();
+				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 
@@ -81,19 +99,25 @@ int EPoll::polling(Server &server) {
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
+                if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
+                    server.disconnect(client);
+                } else { // if there's no connection header we assume that the connection is keep-alive
+                    client.getRequestParser().clear();
+                    modFd(events[i].data.fd, EPOLLIN);
+                }
+            } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);
-            }
         }
  	}
 	return 1;
 }
 
 
-int EPoll::clientEvents() {
-	return EPOLLIN | EPOLLOUT;
+const int EPoll::clientEvents() const {
+	return EPOLLIN;
 }
 
-int EPoll::listenerEvents() {
+const int EPoll::listenerEvents() const {
     return EPOLLIN;
 }
 

@@ -5,6 +5,8 @@
 
 # include "IMessageBody.hpp"
 
+# define HEX_VALUES "0123456789abcdef"
+
 class ChunkedBody : public IMessageBody {
     private:
         typedef struct s_block {
@@ -13,6 +15,7 @@ class ChunkedBody : public IMessageBody {
         } t_block;
 
         std::vector<t_block> _blocks;
+        int _totalSize;
     public:
         ChunkedBody();
         ChunkedBody(ChunkedBody const &chunkedBody);
@@ -20,10 +23,10 @@ class ChunkedBody : public IMessageBody {
 
         void append(std::string str);
         void append(std::string str, int size);
-//        void parse(std::string body);
+        int parse(std::string body, std::stringstream &inReceive);
 
-        std::string getBody() const;
-        int getSize() const;
+        const std::string getBody() const;
+        const int &getSize() const;
         ChunkedBody &operator=(ChunkedBody const &rhs);
 };
 

@@ -6,22 +6,31 @@
 #else
 # include "Poll.hpp"
 #endif
+# include "config_parser.hpp"
 
-int main() {
-	ServerSocket serverSocket;
-	serverSocket.setup();
-	
 #ifdef __linux__
-	IPoll *poller = new EPoll(); // EPOLL_LINUX
+	IPoll *Server::poller = new EPoll(); // EPOLL_LINUX
 #else
-	IPoll *poller = new Poll(); // POLL_MAC
+	IPoll *Server::poller = new Poll(); // POLL_MAC
 #endif
 
-	Server server(serverSocket, poller);
+std::vector<Server*> Server::servers = std::vector<Server*>();
 
-	while (poller->polling(server) > 0) {
-	}
-    poller->deleteFd(serverSocket.getFd());
-    close(serverSocket.getFd());
-	delete poller;
+int main(int ac, char **av) {
+    if (ac < 2) {
+        ServerSocket serverSocket;
+        serverSocket.setup();
+
+        Server server(serverSocket);
+        server.setup();
+
+        while (Server::poller->polling(server) > 0) {
+        }
+        serverSocket.close();
+        delete Server::poller;
+    } else {
+        ws::parse_config(std::string(av[1]), Server::servers);
+        for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++)
+            delete *it;
+    }
 }

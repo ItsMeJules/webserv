@@ -1,13 +1,14 @@
-#ifndef EPOLL_HPP
-# define EPOLL_HPP
+#ifdef __linux__
+# ifndef EPOLL_HPP
+#  define EPOLL_HPP
 
-# include <vector>
+#  include <vector>
 
-# include <sys/epoll.h>
+#  include <sys/epoll.h>
 
-# include "IPoll.hpp"
-# include "Server.hpp"
-# include "Client.hpp"
+#  include "IPoll.hpp"
+#  include "Server.hpp"
+#  include "Client.hpp"
 
 class EPoll : public IPoll {
 	private:
@@ -17,14 +18,17 @@ class EPoll : public IPoll {
 		EPoll(EPoll const &ePoll);
 		~EPoll();
 
-		bool init();
-		bool pollFd(int fd, int event);
-		bool deleteFd(int fd);
-		int polling(Server &server);
-		int clientEvents();
-        int listenerEvents();
+		bool const init();
+		bool const pollFd(int fd, int event);
+		bool const deleteFd(int fd);
+        bool const modFd(int fd, int event);
+		int const polling(Server &server);
+		
+		int const clientEvents() const;
+        int const listenerEvents() const;
 
 		EPoll &operator=(EPoll const &rhs);
 };
 
+# endif
 #endif

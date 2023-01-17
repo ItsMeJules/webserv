@@ -2,6 +2,7 @@
 # define IPOLL_HPP
 
 # include <vector>
+
 # include "Server.hpp"
 # include "utils.hpp"
 
@@ -14,13 +15,15 @@ class Server;
 class IPoll {
 	public:
 		virtual ~IPoll() {};
-		virtual bool init() = 0;
-		virtual bool pollFd(int fd, int event) = 0;
-		virtual bool deleteFd(int fd) = 0;
-		virtual int polling(Server &server) = 0;
+		
+		virtual const bool init() = 0;
+		virtual const bool pollFd(int fd, int event) = 0;
+		virtual const bool deleteFd(int fd) = 0;
+        virtual const bool modFd(int fd, int event) = 0;
+		virtual const int polling(Server &server) = 0;
 
-        virtual int clientEvents() = 0;
-        virtual int listenerEvents() = 0;
+        virtual const int clientEvents() const = 0;
+        virtual const int listenerEvents() const = 0;
 };
 
 #endif

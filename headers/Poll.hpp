@@ -11,18 +11,22 @@
 
 class Poll : public IPoll {
 	private:
-        std::vector<struct pollfd>  _pollfd;
+		typedef struct pollfd pollfd_t;
+
+        std::vector<pollfd_t> _pollFd;
     public:
 		Poll();
 		Poll(Poll const &Poll);
 		~Poll();
 
-		bool init();
-		bool pollFd(int fd, int event);
-		bool deleteFd(int fd);
-		int polling(Server &server);
-		int clientEvents();
-        int listenerEvents();
+		bool const init();
+		bool const pollFd(int fd, int event);
+		bool const deleteFd(int fd);
+        bool const modFd(int fd, int event);
+		int const polling(Server &server);
+
+		int const clientEvents() const;
+        int const listenerEvents() const;
 
 		Poll &operator=(Poll const &rhs);
 };

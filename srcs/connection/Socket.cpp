@@ -8,14 +8,16 @@ Socket::~Socket() {}
 
 // ############## PUBLIC ##############
 
-
+bool Socket::close() const {
+    return ::close(_fd) == 0;
+}
 
 // ############## GETTERS / SETTERS ##############
-int Socket::getFd() const {
+const int &Socket::getFd() const {
 	return _fd;
 }
 
-sockaddr_in &Socket::getAddress() {
+const sockaddr_in &Socket::getAddress() const {
 	return _address;
 }
 
