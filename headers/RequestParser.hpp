@@ -29,7 +29,7 @@ class RequestParser {
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
-		bool parseRequest(std::string request);
+		void parseRequest(std::string request);
         void clear();
 
 		HttpRequest &getHttpRequest();

@@ -59,15 +59,19 @@ IMessageBody *RequestParser::getAccordingBodyType() {
 
 // ############## PUBLIC ##############
 
-bool RequestParser::parseRequest(std::string request) {
+void RequestParser::parseRequest(std::string request) {
 	if (!_headersReceived) {
 		if (request.find("\r\n\r\n") != std::string::npos) {
 			std::string str = emptyAndClearStream() + request;
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
-			request = emptyAndClearStream(); // contains the possible body following headers
-			if (!request.empty())
-				parseRequest(request);
+			if (_httpRequest.getMethod() == "GET") // there's no body as it's GET
+				_requestParsed = true;
+			else {
+				request = emptyAndClearStream(); // contains the possible body following headers
+				if (!request.empty())
+					parseRequest(request);
+			}
 		} else
 			_inReceive << request;
 	} else {
@@ -77,10 +81,8 @@ bool RequestParser::parseRequest(std::string request) {
             if (fileBody != NULL && fileBody->getBoundary().empty())
                 fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
         }
-		int ret = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
-        _requestParsed =  ret == 1;
+        _requestParsed = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive) == 1;
     }
-	return true;
 }
 
 void RequestParser::clear() {

@@ -67,7 +67,6 @@ const int EPoll::polling(Server &server) {
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
-		std::cout << i << std::endl;
 		if (events[i].events & EPOLLERR) {
 			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
 			if (server.isConnected(events[i].data.fd))
@@ -90,9 +89,7 @@ const int EPoll::polling(Server &server) {
 				else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-				std::cout << "parsed: " << std::endl;
 				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
-				std::cout << "end" << std::endl;
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 
