@@ -89,7 +89,7 @@ int const Poll::polling(Server &server) {
                     client.getRequestParser().clear();
                     modFd(it->fd, POLLIN);
                 }
-            } else if (it->revents & POLLRDHUP)
+            } else if (it->revents & POLLHUP)
                 server.disconnect(client);
 		}
     }
