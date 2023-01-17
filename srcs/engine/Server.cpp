@@ -2,15 +2,8 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Server::Server() : _socket(), _poller(NULL) {
-}
-
-Server::Server(ServerSocket &socket, IPoll *poller) : _socket(socket), _poller(poller) {
-	startListening(10);
-	poller->init();
-	poller->pollFd(socket.getFd(), poller->listenerEvents());
-}
-
+Server::Server() : _socket() {}
+Server::Server(ServerSocket &socket) : _socket(socket) {}
 Server::Server(Server const &server) { *this = server; }
 Server::~Server() {}
 
@@ -22,13 +15,16 @@ bool Server::startListening(int backlog) {
 		std::cerr << "failed to listen on fd: " << _socket.getFd() << " " << strerror(errno) << std::endl;
 	else
 		std::cout << "successfully listening on fd: " << _socket.getFd() << std::endl;
-	return ret;
+	return !ret;
 }
-
 
 // ############## PUBLIC ##############
 
-void Server::receiveData(Client &client) {
+bool Server::setup() {
+    return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->listenerEvents());
+}
+
+bool Server::receiveData(Client &client) {
 	char buffer[BUFFER_SIZE + 1];
 	memset(buffer, 0, BUFFER_SIZE);
 
@@ -38,9 +34,10 @@ void Server::receiveData(Client &client) {
         buffer[byteCount] = 0;
         client.getRequestParser().parseRequest(buffer);
     } else if (byteCount == 0)
-        disconnect(client); // if header Connection: keep-alive don't close
+        return false;
 	else
 		std::cout << "recv returned an error with fd " << clientFd << ": " << strerror(errno) << std::endl;
+    return true;
 }
 
 void Server::sendData(Client &client, HttpResponse &response) {
@@ -49,11 +46,11 @@ void Server::sendData(Client &client, HttpResponse &response) {
 
 bool Server::connect(Client &client) {
     _clients.insert(std::make_pair(client.getSocket().getFd(), client));
-    return _poller->pollFd(client.getSocket().getFd(), _poller->clientEvents());
+    return poller->pollFd(client.getSocket().getFd(), poller->clientEvents());
 }
 
 bool Server::disconnect(Client &client) {
-    bool ret = client.getSocket().close(_poller);
+    bool ret = client.getSocket().close();
     _clients.erase(client.getSocket().getFd());
     return ret;
 }
@@ -68,8 +65,8 @@ const ServerSocket &Server::getSocket() const {
 	return _socket;
 }
 
-const IPoll *Server::getPoller() const {
-	return _poller;
+ServerInfo &Server::getServerInfo() {
+    return _serverInfo;
 }
 
 std::string Server::getName() const
@@ -82,7 +79,6 @@ std::string Server::getName() const
 Server &Server::operator=(Server const &rhs) {
 	if (this != &rhs) {
 		_socket = rhs._socket;
-		_poller = rhs._poller;
 		_clients = rhs._clients;
 	}
 	return *this;

@@ -23,17 +23,14 @@ class Cgi {
 		Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target);
 		~Cgi() {}
 
-		std::string getBinary() const {}
+		std::string getBinary() const;
 
-		std::string getTarget() const {}
-
-		std::string	int_to_string(int i);
-
+		std::string getTarget() const;
 		int	execute(int clientSocket);
 
-		void	setInputBody(std::string inputBody){};
+		void	setInputBody(std::string inputBody);
 
-		void	setEnv(std::map<std::string, std::string> env){};
+		void	setEnv(std::map<std::string, std::string> env);
 };
 
 #endif

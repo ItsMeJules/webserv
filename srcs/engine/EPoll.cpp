@@ -30,7 +30,7 @@ const bool EPoll::pollFd(int fd, int events) const {
 	if (ret == -1)
 		std::cerr << "failed to add fd: " << fd << " to polling list!" << std::endl;
 	else
-		std::cerr << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
+		std::cerr << "successfully added fd: " << fd << " to polling list!" << std::endl;
 	return ret != -1;
 }
 
@@ -39,8 +39,21 @@ const bool EPoll::deleteFd(int fd) const {
 	if (ret == -1)
 		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
 	else
-		std::cerr << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
+		std::cerr << "successfully deleted fd: " << fd << " from polling list!" << std::endl;
 	return ret != -1;
+}
+
+const bool EPoll::modFd(int fd, int events) const {
+    struct epoll_event event;
+    event.events = events;
+    event.data.fd = fd;
+
+    int ret = epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &event);
+    if (ret == -1)
+        std::cerr << "failed to mod fd: " << fd << std::endl;
+    else
+        std::cerr << "successfully modified fd: " << fd << std::endl;
+    return ret != -1;
 }
 
 const int EPoll::polling(Server &server) const {
@@ -53,8 +66,8 @@ const int EPoll::polling(Server &server) const {
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
-		if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP)) {
-			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events" << events[i].events << std::endl;
+		if (events[i].events & EPOLLERR) {
+			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
 			close(events[i].data.fd);
 			return -2;
 		}
@@ -68,9 +81,11 @@ const int EPoll::polling(Server &server) const {
         } else {
             Client &client = server.getClient(events[i].data.fd);
             if (events[i].events & EPOLLIN) {
-                server.receiveData(client);
+                if (!server.receiveData(client))
+                    server.disconnect(client);
+                else
+                    modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-                std::cout << client.getRequestParser().getHttpRequest().build();
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 				body->append("Hello World!");
@@ -78,8 +93,14 @@ const int EPoll::polling(Server &server) const {
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
+                if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
+                    server.disconnect(client);
+                } else if (client.getRequestParser().getHttpRequest().headersContains("Connection", "keep-alive")) {
+                    client.getRequestParser().clear();
+                    modFd(events[i].data.fd, EPOLLIN);
+                }
+            } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);
-            }
         }
  	}
 	return 1;
@@ -87,7 +108,7 @@ const int EPoll::polling(Server &server) const {
 
 
 const int EPoll::clientEvents() const {
-	return EPOLLIN | EPOLLOUT;
+	return EPOLLIN;
 }
 
 const int EPoll::listenerEvents() const {

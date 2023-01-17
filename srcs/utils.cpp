@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+#include <iostream>
+
 int ws::stoi(std::string const &str) {
 	int nbr;
 	std::stringstream(str) >> nbr;
@@ -20,8 +22,16 @@ std::string ws::itos(int const &nbr) {
 	return ss.str();
 }
 
-bool ws::string_in_range(std::string const &range, std::string const &str) {
-    for (int i = 0; str[i]; i++) {
+std::string &ws::skip_chars(std::string &str, std::string const &toSkip) {
+    int i = 0;
+    while (toSkip.find(str[i]) != std::string::npos)
+        i++;
+    str.erase(0, i);
+    return str;
+}
+
+bool ws::string_in_range(std::string const &range, std::string const &str, size_t npos) {
+    for (int i = 0; i < str.size() && npos != 0; i++, npos--) {
         if (range.find(str[i]) == std::string::npos)
             return false;
     }

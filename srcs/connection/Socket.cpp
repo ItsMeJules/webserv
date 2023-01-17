@@ -9,8 +9,8 @@ Socket::~Socket() {}
 
 // ############## PUBLIC ##############
 
-bool Socket::close(IPoll *poller) const {
-    return poller->deleteFd(_fd) && ::close(_fd) == 0;
+bool Socket::close() const {
+    return Server::poller->deleteFd(_fd) && ::close(_fd) == 0;
 }
 
 // ############## GETTERS / SETTERS ##############

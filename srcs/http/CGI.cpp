@@ -29,7 +29,7 @@ Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, s
 	// }
 
 	char **arg;
-	
+
 
 }
 
@@ -57,6 +57,11 @@ std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server con
 	return env;
 }
 
+int	Cgi::execute(int clientSocket)
+{
+	int pid = fork();
+}
+
 void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
 {
 	std::string binary = getCGIExecutable(request.getPath());
@@ -68,12 +73,6 @@ void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
 	cgi.setEnv(env);
 
 	int response = cgi.execute(clientSocket);
-}
-
-std::string	executeCGI(void)
-{
-	std::string _body;
-
 }
 
 std::string	Cgi::getBinary() const

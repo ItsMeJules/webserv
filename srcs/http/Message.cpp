@@ -5,7 +5,9 @@
 Message::Message() : _messageBody(NULL) {}
 Message::Message(std::string httpVersion) : _httpVersion(httpVersion), _messageBody(NULL) {}
 Message::Message(Message const &message) { *this = message; }
-Message::~Message() {}
+Message::~Message() {
+    delete _messageBody;
+}
 
 // ############## PRIVATE ##############
 
@@ -49,6 +51,10 @@ void Message::setHttpVersion(std::string httpVersion) {
 
 IMessageBody *Message::getMessageBody() {
 	return _messageBody;
+}
+
+const std::map<std::string, std::string> Message::getHeaders() const {
+    return _headers;
 }
 
 const std::string &Message::getHttpVersion() const {
