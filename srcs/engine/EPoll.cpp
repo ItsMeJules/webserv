@@ -31,7 +31,7 @@ bool EPoll::pollFd(int fd, int events) {
 	if (ret == -1)
 		std::cerr << "failed to add fd: " << fd << " to polling list!" << std::endl;
 	else
-		std::cerr << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
+		std::cout << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
 	return ret != -1;
 }
 
@@ -40,7 +40,7 @@ bool EPoll::deleteFd(int fd) {
 	if (ret == -1)
 		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
 	else
-		std::cerr << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
+		std::cout << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
 	return ret != -1;
 }
 

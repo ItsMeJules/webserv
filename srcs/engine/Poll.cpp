@@ -20,16 +20,8 @@ bool Poll::pollFd(int fd, int events) {
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
     _pollfd.push_back(event); // to add to the vector
+	std::cout << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
 	return true;
-}
-
-poll_it	Poll::addClient(int fd, int events, poll_it it) {
-	struct pollfd event;
-	event.fd = fd;
-    event.events = events;
-    bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
-
-    return (_pollfd.insert(it, event));
 }
 
 bool Poll::deleteFd(int fd) {

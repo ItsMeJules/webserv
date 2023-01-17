@@ -9,8 +9,6 @@
 # define EVENTS_SIZE 10
 # define POLL_WAIT_TIMEOUT 60 * 1000
 
-typedef std::vector<struct pollfd>::iterator poll_it;
-
 class Server;
 
 class IPoll {
@@ -20,7 +18,6 @@ class IPoll {
 		virtual bool pollFd(int fd, int event) = 0;
 		virtual bool deleteFd(int fd) = 0;
 		virtual int polling(Server &server) = 0;
-		virtual poll_it	addClient(int fd, int events, poll_it it) = 0;
 
         virtual int clientEvents() = 0;
         virtual int listenerEvents() = 0;

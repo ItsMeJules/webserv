@@ -2,6 +2,7 @@
 # define POLL_HPP
 
 # include <vector>
+
 # include <poll.h>
 
 # include "IPoll.hpp"
@@ -11,7 +12,6 @@
 class Poll : public IPoll {
 	private:
         std::vector<struct pollfd>  _pollfd;
-
     public:
 		Poll();
 		Poll(Poll const &Poll);
@@ -23,8 +23,6 @@ class Poll : public IPoll {
 		int polling(Server &server);
 		int clientEvents();
         int listenerEvents();
-
-        poll_it	addClient(int fd, int events, poll_it it);
 
 		Poll &operator=(Poll const &rhs);
 };
