@@ -57,10 +57,6 @@ std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server con
 	return env;
 }
 
-int	Cgi::execute(int clientSocket)
-{
-	int pid = fork();
-}
 
 void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
 {
@@ -93,4 +89,23 @@ void	Cgi::setInputBody(std::string inputBody)
 void	Cgi::setEnv(std::map<std::string, std::string> env)
 {
 	_env = env;
+}
+
+int	Cgi::execute(int clientSocket)
+{
+	std::string _body;
+	pid_t	pid;
+	char	tmp[BUFFER_SIZE];
+	int		ret = 1;
+	int		fd[2];
+
+	fd[0] = dup(STDIN_FILENO);
+	fd[1] = dup(STDOUT_FILENO);
+
+	FILE *input_file = tmpfile();
+	FILE *output_file = tmpfile();
+
+	int	input_fd = fileno(input_file);
+	int	output_fd = fileno(output_file);
+
 }

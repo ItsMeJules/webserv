@@ -4,6 +4,8 @@
 # include <map>
 # include <vector>
 # include <cctype>
+# include <unistd.h>
+# include <stdio.h>
 
 #include "HttpRequest.hpp"
 #include "Server.hpp"

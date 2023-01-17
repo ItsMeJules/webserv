@@ -74,6 +74,11 @@ std::string Server::getName() const
 	return _name;
 }
 
+void	Server::setName(std::string name)
+{
+	_name = name;
+}
+
 // ############## OPERATORS ##############
 
 Server &Server::operator=(Server const &rhs) {
