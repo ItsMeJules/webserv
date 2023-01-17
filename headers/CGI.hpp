@@ -29,7 +29,17 @@ class Cgi {
 
 		std::string	int_to_string(int i);
 
-		int	execute(Client &client);
+		int	execute(int clientSocket);
+
+		void	setInputBody(std::string inputBody)
+		{
+			_inputBody = inputBody;
+		}
+
+		void Cgi::setEnv(std::map<std::string, std::string> env)
+		{
+			_env = env;
+		}
 };
 
 #endif

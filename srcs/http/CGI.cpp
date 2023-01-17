@@ -5,40 +5,68 @@ Cgi::Cgi(){}
 
 Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target)
 {
+	// std::vector<std::string> tmp = request.getData();
+
+	// for (std::vector<std::string>::iterator it = tmp.begin(); it != tmp.end() ; it++)
+	// {
+	// 	if (it->find("Content-type: ") != std::string::npos)
+	// 	{
+	// 		content_type = it->substr(14, it->length() - 14);
+	// 		break;
+	// 	}
+	// }
+
+
+	// std::vector<std::string> tmp1 = request.getData();
+	// for (std::vector<std::string>::iterator it = tmp1.begin(); it != tmp1.end(); it++)
+	// {
+	// 	if (it->find(":") != std::string::npos)
+	// 	{
+	// 		// std::vector<std::string> split = ft_split(*it, ": ");
+	// 		// ft_to_upper(split[0]);
+	// 		// split[0] = rep
+	// 	}
+	// }
+
+
+}
+
+std::string getCGIExecutable(std::string uri) {
+	std::string cgiPath = "/usr/local/bin/";
+	std::string cgiExecutable = cgiPath + uri + ".cgi";
+	return cgiExecutable;
+}
+
+std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server const &server)
+{
 	std::string content_type = "text/html";
-	std::vector<std::string> tmp = request.getData();
+	std::map<std::string, std::string> env;
+	std::string _binary;
 
-	for (std::vector<std::string>::iterator it = tmp.begin(); it != tmp.end() ; it++)
-	{
-		if (it->find("Content-type: ") != std::string::npos)
-		{
-			content_type = it->substr(14, it->length() - 14);
-			break;
-		}
-	}
+	env["STATUS_CODE"] = "200";
+	env["CGI"] = "CGI/1.1";
+	env["SCRIPT_NAME"] = _binary;
+	env["REQUEST_METHOD"] = request.getMethod();
+	env["CONTENT_TYPE"] = content_type;
+	env["SERVER_PROTOCOL"] = "HTTP/1.1";
+	env["SERVER_NAME"] = server.getName();
+	env["REMOTE_USER"] = "user";
 
-	_binary = binary;
-	_target = target;
+	return env;
+}
 
-	std::vector<std::string> tmp1 = request.getData();
-	for (std::vector<std::string>::iterator it = tmp1.begin(); it != tmp1.end(); it++)
-	{
-		if (it->find(":") != std::string::npos)
-		{
-			// std::vector<std::string> split = ft_split(*it, ": ");
-			// ft_to_upper(split[0]);
-			// split[0] = rep
-		}
-	}
+void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
+{
+	std::string binary = getCGIExecutable(request.getHttpVersion());
+	std::string target = request.getHttpVersion();
+	std::string inputBody = request.getMessageBody();
+	std::map<std::string, std::string> env = createCGIMap(request, server);
+	Cgi cgi(server, request, binary, target);
+	cgi.setInputBody(inputBody);
+	cgi.setEnv(env);
 
-	_env["STATUS_CODE"] = "200";
-	_env["CGI"] = "CGI/1.1";
-	_env["SCRIPT_NAME"] = _binary;
-	_env["REQUEST_METHOD"] = request.getMethod();
-	_env["CONTENT_TYPE"] = content_type;
-	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
-	_env["SERVER_NAME"] = server.getName();
-	_env["REMOTE_USER"] = "user";
+	int response = cgi.execute(clientSocket);
+
 
 }
 
