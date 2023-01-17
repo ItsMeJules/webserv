@@ -3,7 +3,7 @@
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target)
+Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target) : _binary(binary), _target(target), _httpRequest(request)
 {
 	// std::vector<std::string> tmp = request.getData();
 
@@ -28,6 +28,8 @@ Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, s
 	// 	}
 	// }
 
+	char **arg;
+	
 
 }
 
@@ -66,8 +68,6 @@ void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
 	cgi.setEnv(env);
 
 	int response = cgi.execute(clientSocket);
-
-
 }
 
 std::string	executeCGI(void)
