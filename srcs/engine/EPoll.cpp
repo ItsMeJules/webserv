@@ -38,7 +38,7 @@ const bool EPoll::pollFd(int fd, int events) {
 const bool EPoll::deleteFd(int fd) {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
-		std::cerr << "failed to delete fd: " << fd << " from polling list!" << std::endl;
+		std::cerr << "failed to delete fd: " << fd << " from polling list! " << strerror(errno) << std::endl;
 	else
 		std::cout << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
 	return ret != -1;
@@ -67,6 +67,7 @@ const int EPoll::polling(Server &server) {
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
+		std::cout << i << std::endl;
 		if (events[i].events & EPOLLERR) {
 			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
 			if (server.isConnected(events[i].data.fd))
@@ -87,8 +88,6 @@ const int EPoll::polling(Server &server) {
             if (events[i].events & EPOLLIN) {
                 if (!server.receiveData(client))
                     server.disconnect(client);
-                else
-                    modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
 				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
                 HttpResponse response("HTTP/1.1", 200, "OK");

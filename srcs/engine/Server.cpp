@@ -32,7 +32,6 @@ bool Server::receiveData(Client &client) {
 	int byteCount = recv(clientFd, buffer, BUFFER_SIZE, 0);
 	if (byteCount > 0) {
         buffer[byteCount] = 0;
-		std::cout << buffer << std::endl;
         client.getRequestParser().parseRequest(buffer);
     } else if (byteCount == 0)
         return false;
@@ -51,8 +50,7 @@ bool Server::connect(Client &client) {
 }
 
 bool Server::disconnect(Client &client) {
-    bool ret = client.getSocket().close();
-	poller->deleteFd(client.getSocket().getFd());
+    bool ret = poller->deleteFd(client.getSocket().getFd()) && client.getSocket().close();
     _clients.erase(client.getSocket().getFd());
     return ret;
 }
