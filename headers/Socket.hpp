@@ -24,7 +24,7 @@ class Socket {
 		virtual ~Socket();
 
 		virtual bool setup() = 0;
-        virtual bool close(IPoll *poller) const;
+        virtual bool close() const;
 
 		const int &getFd() const;
 		const sockaddr_in &getAddress() const;

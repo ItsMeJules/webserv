@@ -24,9 +24,9 @@ all				:	init $(NAME)
 
 bonus			:	all
 
-init			:	
+init			:
 					@ $(shell mkdir -p $(OBJ_DIR))
-					
+
 $(NAME)			:	$(OBJ) $(INC)
 					@ echo "$(_INFO) Initialize $(NAME)"
 				 	@ $(CC) $(CFLAGS) $(IFLAGS) -o $(NAME) $(OBJ)

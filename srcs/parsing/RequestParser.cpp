@@ -82,6 +82,13 @@ bool RequestParser::parseRequest(std::string request) {
 	return true;
 }
 
+void RequestParser::clear() {
+    HttpRequest empty;
+    _headersReceived = false;
+    _httpRequest = empty;
+    _inReceive.str("");
+}
+
 // ############## GETTERS / SETTERS ##############
 
 HttpRequest &RequestParser::getHttpRequest() {

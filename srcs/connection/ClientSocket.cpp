@@ -17,7 +17,7 @@ bool ClientSocket::setup() {
 		std::cerr << "error in accept: " << strerror(errno) << std::endl;
 		return false;		
 	} else
-		std::cout << "client sucessfully connected with fd: " << _fd << std::endl;
+		std::cout << "client successfully connected with fd: " << _fd << std::endl;
 	return true;
 }
 
