@@ -34,6 +34,10 @@ bool RequestParser::parseHeaders(std::string headers) {
 			break;
 		}
 	}
+	if (true)
+		std::cout << "HEADER IS OKAY" << std::endl;
+	else
+		std::cout << "HEADER IS NOT OKAY" << std::endl;
 	return true;
 }
 

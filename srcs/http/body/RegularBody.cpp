@@ -30,6 +30,11 @@ const std::string RegularBody::getBody() const {
 	return _body.str();
 }
 
+
+std::string RegularBody::getMessage() const {
+	return _msg.c_str();
+}
+
 const int &RegularBody::getSize() const {
 	return _size;
 }

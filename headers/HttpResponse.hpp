@@ -12,6 +12,7 @@ class HttpResponse : public Message {
 	private:
 		int _statusCode;
 		std::string _reasonPhrase;
+
 	public:
 		HttpResponse();
 		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);

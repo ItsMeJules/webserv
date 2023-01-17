@@ -1,5 +1,5 @@
 #include "EPoll.hpp"
-
+#include <cstdio>
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 EPoll::EPoll() {}
@@ -58,6 +58,7 @@ const bool EPoll::modFd(int fd, int events) const {
 
 const int EPoll::polling(Server &server) const {
 	struct epoll_event events[EVENTS_SIZE];
+	int error_code = -1;
 
 	int readyFdAmount = epoll_wait(_epollFd, events, MAX_EVENTS, POLL_WAIT_TIMEOUT);
 	if (readyFdAmount == -1) {
@@ -89,9 +90,22 @@ const int EPoll::polling(Server &server) const {
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 				body->append("Hello World!");
+				std::cout << "parsed request : " << std::endl;
+                std::cout << client.getRequestParser().getHttpRequest().build();
+				StatusCode status_code(client.getRequestParser().getHttpRequest());
+				HttpRequest http_request = client.getRequestParser().getHttpRequest();
+
+				StatusCode statusCode;
+				if (fopen("./test.txt", "r"))
+					error_code = 200;
+				else
+					error_code = 404;
+                response = statusCode.createResponse(error_code, body);
+				body->append("Hello World!\n");
                 response.addHeader("Content-Type", "text/plain");
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
+
                 server.sendData(client, response);
                 if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);

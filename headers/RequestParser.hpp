@@ -18,12 +18,12 @@ class RequestParser {
 		HttpRequest _httpRequest;
 
 		void parseFirstLine(std::string firstLine);
-		bool parseHeaders(std::string headers);
 
 		std::string emptyAndClearStream();
         IMessageBody *getAccordingBodyType();
 
 	public:
+		bool parseHeaders(std::string headers);
 		RequestParser();
 		RequestParser(RequestParser const &request);
 		~RequestParser();
@@ -34,6 +34,8 @@ class RequestParser {
 		HttpRequest &getHttpRequest();
 
 		RequestParser &operator=(RequestParser const &rhs);
+		// void	returnParse(std::string headers);
+
 };
 
     #endif
