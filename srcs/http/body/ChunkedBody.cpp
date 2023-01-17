@@ -28,7 +28,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         return 0;
     }
 
-    if (hexSize < 0) {
+    if (hexSize == -1) {
         std::string hexStr = body.substr(0, pos);
         if (!ws::string_in_range(HEX_VALUES, hexStr)) {
             std::cerr << "error while reading chunk size. \"" << hexStr << "\" isn't a valid hex value." << std::endl;
@@ -38,7 +38,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         if (hexSize != 0 && !body.erase(0, pos + 2).empty()) // deletes up to \r\n
             parse(body, inReceive);
         else if (hexSize == 0)
-            hexSize = -2;
+            hexSize = -1;
     } else {
         std::string chunkContent = body.substr(0, pos);
         if (chunkContent.size() > hexSize) {
@@ -52,7 +52,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         if (body.find("\r\n\r\n") != std::string::npos)
             parse(body, inReceive);
     }
-    return hexSize == -2;
+    return hexSize == 0;
 }
 
 // ############## GETTERS / SETTERS ##############

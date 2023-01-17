@@ -12,7 +12,7 @@
 # include "HttpResponse.hpp"
 # include "ServerInfo.hpp"
 
-# define BUFFER_SIZE 100
+# define BUFFER_SIZE 1000
 
 class IPoll;
 
