@@ -86,3 +86,12 @@ std::string Cgi::getTarget() const
 	return _target;
 }
 
+void	Cgi::setInputBody(std::string inputBody)
+{
+	_inputBody = inputBody;
+}
+
+void	Cgi::setEnv(std::map<std::string, std::string> env)
+{
+	_env = env;
+}

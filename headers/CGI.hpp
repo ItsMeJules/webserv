@@ -31,15 +31,9 @@ class Cgi {
 
 		int	execute(int clientSocket);
 
-		void	setInputBody(std::string inputBody)
-		{
-			_inputBody = inputBody;
-		}
+		void	setInputBody(std::string inputBody){};
 
-		void Cgi::setEnv(std::map<std::string, std::string> env)
-		{
-			_env = env;
-		}
+		void	setEnv(std::map<std::string, std::string> env){};
 };
 
 #endif
