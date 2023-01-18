@@ -11,8 +11,7 @@
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
 # include "ServerInfo.hpp"
-
-# define BUFFER_SIZE 1000
+# include "Constants.hpp"
 
 class IPoll;
 
@@ -39,8 +38,9 @@ class Server {
 		void sendData(Client &client, HttpResponse &response);
         bool connect(Client &client);
         bool disconnect(Client &client);
+		bool isConnected(int const fd);
 
-		Client &getClient(int fd);
+		Client &getClient(int const fd);
 
 		const ServerSocket &getSocket() const;
         ServerInfo &getServerInfo();

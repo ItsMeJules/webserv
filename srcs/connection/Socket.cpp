@@ -1,5 +1,4 @@
 # include "Socket.hpp"
-# include "IPoll.hpp" // the code doesn't work if i put this header in the hpp
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -10,7 +9,12 @@ Socket::~Socket() {}
 // ############## PUBLIC ##############
 
 bool Socket::close() const {
-    return Server::poller->deleteFd(_fd) && ::close(_fd) == 0;
+	bool ret = ::close(_fd) == 0;
+	if (ret)
+		ws::log(ws::LOG_LVL_SUCCESS, "[SOCKET] -", "successfully closed socket with fd: " + ws::itos(_fd));
+	else
+		ws::log(ws::LOG_LVL_ERROR, "[SOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!", true);
+    return ret;
 }
 
 // ############## GETTERS / SETTERS ##############
