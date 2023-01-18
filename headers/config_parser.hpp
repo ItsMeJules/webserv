@@ -7,10 +7,9 @@
 
 # include "Server.hpp"
 # include "ServerInfo.hpp"
+# include "Constants.hpp"
 
 namespace ws {
-    const std::string INFO_LETTERS = LETTERS + '_';
-    const std::string PATH_LETTERS = LETTERS + "/_0123456789";
 
     typedef struct config_parsing_s {
         std::ifstream file;
@@ -34,7 +33,6 @@ namespace ws {
     void check_location_path(std::string const &path);
     void check_opening_bracket(config_parsing_t const &cpt, std::string const &line);
     int check_closing_bracket(config_parsing_t const &cpt);
-
 
 };
 

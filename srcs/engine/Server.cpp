@@ -25,11 +25,11 @@ bool Server::setup() {
 }
 
 bool Server::receiveData(Client &client) {
-	char buffer[BUFFER_SIZE + 1];
-	memset(buffer, 0, BUFFER_SIZE);
+	char buffer[ws::RECV_BUFFER_SIZE + 1];
+	memset(buffer, 0, ws::RECV_BUFFER_SIZE);
 
 	int clientFd = client.getSocket().getFd();
-	int byteCount = recv(clientFd, buffer, BUFFER_SIZE, 0);
+	int byteCount = recv(clientFd, buffer, ws::RECV_BUFFER_SIZE, 0);
 	if (byteCount > 0) {
         buffer[byteCount] = 0;
         client.getRequestParser().parseRequest(buffer);

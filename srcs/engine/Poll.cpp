@@ -58,7 +58,7 @@ const bool Poll::modFd(int fd, int events) {
 }
 
 int const Poll::polling(Server &server) {
-	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), POLL_WAIT_TIMEOUT);
+	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), ws::POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
 		std::cerr << "(POLL) - waiting failed! error: " << strerror(errno) << std::endl;
 		return -1;

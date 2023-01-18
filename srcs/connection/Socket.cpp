@@ -9,7 +9,12 @@ Socket::~Socket() {}
 // ############## PUBLIC ##############
 
 bool Socket::close() const {
-    return ::close(_fd) == 0;
+	bool ret = ::close(_fd) == 0;
+	if (ret)
+		std::cout << "[SOCKET] - successfully closed socket with fd: " << _fd << std::endl;
+	else
+		std::cout << "[SOCKET] - failed to close socket with fd: " << _fd << std::endl;
+    return ret;
 }
 
 // ############## GETTERS / SETTERS ##############

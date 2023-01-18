@@ -11,8 +11,7 @@
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
 # include "ServerInfo.hpp"
-
-# define BUFFER_SIZE 100
+# include "Constants.hpp"
 
 class IPoll;
 

@@ -5,10 +5,7 @@
 
 # include "Server.hpp"
 # include "utils.hpp"
-
-# define MAX_EVENTS 10
-# define EVENTS_SIZE 10
-# define POLL_WAIT_TIMEOUT 60 * 1000
+# include "Constants.hpp"
 
 class Server;
 
