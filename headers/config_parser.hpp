@@ -26,6 +26,7 @@ namespace ws {
 
     enum confValues {
 	ERROR,
+    NAME,
 	LISTEN,
 	CLIENT_MAX_BODY,
 	AUTOINDEX,

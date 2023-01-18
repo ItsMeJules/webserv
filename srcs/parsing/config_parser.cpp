@@ -44,6 +44,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     char *p = std::strtok (cstr, " ");
 	std::string str = std::string(p);
 	std::map<std::string, confValues> matchValues;
+	matchValues["name"] = NAME;
 	matchValues["listen"] = LISTEN;
 	matchValues["client_max_body_size"] = CLIENT_MAX_BODY;
 	matchValues["autoindex"] = AUTOINDEX;
@@ -52,6 +53,19 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["index"] = INDEX;
 	switch (matchValues[str])
 	{
+		case NAME:
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				ServerInfo serverInfo = server.getServerInfo();
+				serverInfo.setServerName(p);
+				std::string test = serverInfo.getServerName();
+				std::cout << "test name: " << test << std::endl;
+				p = std::strtok(NULL," ,|;");
+			}
+			break;
+
 		case LISTEN:
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)

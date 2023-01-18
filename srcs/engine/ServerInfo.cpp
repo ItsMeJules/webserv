@@ -64,6 +64,10 @@ void  ServerInfo::setAutoIndex(bool AutoIndex) {
 	this->_autoindex = AutoIndex;
 }
 
+void  ServerInfo::setServerName(std::string ServerName) {
+	this->_serverName = ServerName;
+}
+
 // ############## OPERATORS ##############
 
 ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {

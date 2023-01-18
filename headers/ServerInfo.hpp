@@ -47,6 +47,7 @@ class ServerInfo {
 		const std::map<std::string, ServerInfo::Location*> &getLocations() const;
 		void  setMaxBodySize(uint32_t MaxBodySize);
 		void  setAutoIndex(bool AutoIndex);
+		void  setServerName(std::string ServerName);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };
