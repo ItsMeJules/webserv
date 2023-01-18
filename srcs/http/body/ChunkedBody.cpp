@@ -36,7 +36,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
             return -1;
         }
         hexSize = ws::hextoi(hexStr);
-        ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of size " + ws::itos(hexSize) + " is about to be parsed");
+        ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of " + ws::itos(hexSize) + " chars is about to be parsed");
 
         if (hexSize != 0 && !body.erase(0, pos + 2).empty()) // deletes up to \r\n
             parse(body, inReceive);
@@ -53,7 +53,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
             return -2;
         }
         append(chunkContent, hexSize);
-        ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of size " + ws::itos(hexSize) + " was parsed");
+        ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of " + ws::itos(hexSize) + " chars was parsed");
         ws::log(ws::LOG_LVL_DEBUG, "", "contents:\n" + chunkContent);
 
         inReceive << body.erase(0, pos + 2);
