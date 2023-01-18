@@ -37,8 +37,67 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
     throw std::invalid_argument("Block line \"" + line + "\" could not be recognized!");
 }
 
+enum confValues {
+	ERROR,
+	LISTEN,
+	CLIENT_MAX_BODY,
+	AUTOINDEX,
+	METHOD,
+	CGI,
+	INDEX,
+};
+
 void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     std::cout << "\tserver line: " << cpt.line << std::endl;
+    char *cstr = new char [cpt.line.length()+1];
+    std::strcpy (cstr, cpt.line.c_str());
+    char *p = std::strtok (cstr, " ");
+	std::string str = std::string(p);
+	std::map<std::string, confValues> matchValues;
+	matchValues["listen"] = LISTEN;
+	matchValues["client_max_body_size"] = CLIENT_MAX_BODY;
+	matchValues["autoindex"] = AUTOINDEX;
+	matchValues["method"] = METHOD;
+	matchValues["cgi"] = CGI;
+	matchValues["index"] = INDEX;
+	std::cout << matchValues[str] << std::endl;
+	switch (matchValues[str])
+	{
+		case LISTEN:
+			std::cout << "Le Keyword est " << str << std::endl;
+			break;
+		
+		case CLIENT_MAX_BODY:
+			std::cout << "Le Keyword est " << str << std::endl;
+			break;
+
+		case AUTOINDEX:
+			std::cout << "Le Keyword est " << str << std::endl;
+			break;
+
+		case METHOD:
+			std::cout << "Le Keyword est " << str << std::endl;
+			break;
+		
+		case CGI:
+			std::cout << "Le Keyword est " << str << std::endl;
+			break;
+
+		case INDEX:
+			std::cout << "Le Keyword est " << str << std::endl;
+			break;
+	
+	default:
+		std::cout << "Error Value" << std::endl;
+		break;
+	}
+    while (p!=0)
+    {
+    	std::cout << "\t\tkeyword: "<< p << '\n';
+		p = std::strtok(NULL," ,|;");
+	}
+	
+	delete[] cstr;
 }
 
 void ws::parse_location_line(config_parsing_t &cpt, ServerInfo::Location &location) {
