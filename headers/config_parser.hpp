@@ -24,6 +24,16 @@ namespace ws {
         INFO,
     };
 
+    enum confValues {
+	ERROR,
+	LISTEN,
+	CLIENT_MAX_BODY,
+	AUTOINDEX,
+	METHOD,
+	CGI,
+	INDEX,
+};
+
     ConfigLineType get_block_type(config_parsing_t &cpt, std::string line);
 
     int parse_config(std::string const &name, std::vector<Server*> &servers);

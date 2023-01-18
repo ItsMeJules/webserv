@@ -37,16 +37,6 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
     throw std::invalid_argument("Block line \"" + line + "\" could not be recognized!");
 }
 
-enum confValues {
-	ERROR,
-	LISTEN,
-	CLIENT_MAX_BODY,
-	AUTOINDEX,
-	METHOD,
-	CGI,
-	INDEX,
-};
-
 void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     std::cout << "\tserver line: " << cpt.line << std::endl;
     char *cstr = new char [cpt.line.length()+1];
@@ -60,42 +50,70 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["method"] = METHOD;
 	matchValues["cgi"] = CGI;
 	matchValues["index"] = INDEX;
-	std::cout << matchValues[str] << std::endl;
 	switch (matchValues[str])
 	{
 		case LISTEN:
-			std::cout << "Le Keyword est " << str << std::endl;
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				p = std::strtok(NULL," ,|;");
+			}
 			break;
 		
 		case CLIENT_MAX_BODY:
-			std::cout << "Le Keyword est " << str << std::endl;
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				p = std::strtok(NULL," ,|;");
+			}
 			break;
 
 		case AUTOINDEX:
-			std::cout << "Le Keyword est " << str << std::endl;
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				p = std::strtok(NULL," ,|;");
+			}
 			break;
 
 		case METHOD:
-			std::cout << "Le Keyword est " << str << std::endl;
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				p = std::strtok(NULL," ,|;");
+			}
 			break;
 		
 		case CGI:
-			std::cout << "Le Keyword est " << str << std::endl;
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				p = std::strtok(NULL," ,|;");
+			}
 			break;
 
 		case INDEX:
-			std::cout << "Le Keyword est " << str << std::endl;
+			p = std::strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				std::cout << "\t\tvalue: "<< p << '\n';
+				p = std::strtok(NULL," ,|;");
+			}
 			break;
-	
-	default:
-		std::cout << "Error Value" << std::endl;
-		break;
+		default:
+			std::cout << "0 - Error Value" << std::endl;
+			break;
 	}
-    while (p!=0)
-    {
-    	std::cout << "\t\tkeyword: "<< p << '\n';
-		p = std::strtok(NULL," ,|;");
-	}
+    // while (p!=0)
+    // {
+    // 	std::cout << "\t\tkeyword: "<< p << '\n';
+	// 	p = std::strtok(NULL," ,|;");
+	// }
 	
 	delete[] cstr;
 }
