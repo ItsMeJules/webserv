@@ -10,15 +10,24 @@ EPoll::~EPoll() {
 }
 
 // ############## PRIVATE ##############
+
+void const EPoll::showEPollBits(int const &events) const {
+	std::cout << "EPOLLERR: " << (events & EPOLLERR) << std::endl;
+	std::cout << "EPOLLHUP: " << (events & EPOLLHUP) << std::endl;
+	std::cout << "EPOLLRDHUP: " << (events & EPOLLRDHUP) << std::endl;
+	std::cout << "EPOLLIN: " << (events & EPOLLIN) << std::endl;
+	std::cout << "EPOLLOUT: " << (events & EPOLLOUT) << std::endl;
+}
+
 // ############## PUBLIC ##############
 
 const bool EPoll::init() {
 	std::cout << "creating poll instance" << std::endl;
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
-		std::cerr << "failed to create poll instance error: " << strerror(errno) << std::endl;
+		std::cerr << "(EPOLL) - failed to create instance, error: " << strerror(errno) << std::endl;
 	else                                                                                                                                                                
-		std::cout << "epoll created with fd: " << _epollFd << std::endl;
+		std::cout << "(EPOLL) - instance created with fd: " << _epollFd << std::endl;
 	return _epollFd != -1;
 }
 
@@ -29,18 +38,18 @@ const bool EPoll::pollFd(int fd, int events) {
 
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &event);
 	if (ret == -1)
-		std::cerr << "failed to add fd: " << fd << " to polling list!" << std::endl;
+		std::cerr << "(EPOLL) - failed to add fd: " << fd << " to polling list!" << std::endl;
 	else
-		std::cerr << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
+		std::cerr << "(EPOLL) - sucessfully added fd: " << fd << " to polling list!" << std::endl;
 	return ret != -1;
 }
 
 const bool EPoll::deleteFd(int fd) {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
-		std::cerr << "failed to delete fd: " << fd << " from polling list! " << strerror(errno) << std::endl;
+		std::cerr << "(EPOLL) - failed to delete fd: " << fd << " from polling list! " << strerror(errno) << std::endl;
 	else
-		std::cout << "sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
+		std::cout << "(EPOLL) - sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
 	return ret != -1;
 }
 
@@ -51,9 +60,9 @@ const bool EPoll::modFd(int fd, int events) {
 
     int ret = epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &event);
     if (ret == -1)
-        std::cerr << "failed to mod fd: " << fd << std::endl;
+        std::cerr << "(EPOLL) - failed to modify fd: " << fd << std::endl;
     else
-        std::cerr << "successfully modified fd: " << fd << std::endl;
+        std::cerr << "(EPOLL) - successfully modified fd: " << fd << std::endl;
     return ret != -1;
 }
 
@@ -62,13 +71,14 @@ const int EPoll::polling(Server &server) {
 
 	int readyFdAmount = epoll_wait(_epollFd, events, MAX_EVENTS, POLL_WAIT_TIMEOUT);
 	if (readyFdAmount == -1) {
-		std::cerr << "epoll_wait failed! error: " << strerror(errno) << std::endl;
+		std::cerr << "(EPOLL) - waiting failed! error: " << strerror(errno) << std::endl;
 		return -1;
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
 		if (events[i].events & EPOLLERR) {
-			std::cerr << "epoll error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
+			std::cerr << "(EPOLL) - error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
+			showEPollBits(events[i].events);
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));
 			else

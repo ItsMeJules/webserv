@@ -14,6 +14,8 @@ class Poll : public IPoll {
 		typedef struct pollfd pollfd_t;
 
         std::vector<pollfd_t> _pollFd;
+
+		void const showPollBits(int const &events) const;
     public:
 		Poll();
 		Poll(Poll const &Poll);

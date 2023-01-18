@@ -7,6 +7,14 @@ Poll::Poll(Poll const &Poll) { *this = Poll; }
 Poll::~Poll() {}
 
 // ############## PRIVATE ##############
+
+void const Poll::showPollBits(int const &events) const {
+	std::cout << "POLLERR: " << (events & POLLERR) << std::endl;
+	std::cout << "POLLHUP: " << (events & POLLHUP) << std::endl;
+	std::cout << "POLLIN: " << (events & POLLIN) << std::endl;
+	std::cout << "POLLOUT: " << (events & POLLOUT) << std::endl;
+}
+
 // ############## PUBLIC ##############
 
 bool const Poll::init() {
@@ -20,11 +28,19 @@ bool const Poll::pollFd(int fd, int events) {
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
     _pollFd.push_back(event); // to add to the vector
-	std::cout << "sucessfully added fd: " << fd << " to polling list!" << std::endl;
+	std::cout << "(POLL) - sucessfully added fd: " << fd << " to polling list!" << std::endl;
 	return true;
 }
 
 bool const Poll::deleteFd(int fd) {
+	// pas ouf je reitere dans les fd co. 
+	// il faudrait que je change l'interface IPoll
+    for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
+		if (it->fd == fd) {
+			std::cout << "(POLL) - successfully deleted fd: " << fd << std::endl;
+			return true;
+		}
+	}
 	return true;
 }
 
@@ -34,7 +50,7 @@ const bool Poll::modFd(int fd, int events) {
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
 		if (it->fd == fd) {
 			it->revents = events;
-			std::cout << "successfully modified fd: " << fd << std::endl;
+			std::cout << "(POLL) - successfully modified fd: " << fd << std::endl;
 			return true;
 		}
 	}
@@ -44,7 +60,7 @@ const bool Poll::modFd(int fd, int events) {
 int const Poll::polling(Server &server) {
 	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
-		std::cerr << "poll failed! error: " << strerror(errno) << std::endl;
+		std::cerr << "(POLL) - waiting failed! error: " << strerror(errno) << std::endl;
 		return -1;
 	}
 
@@ -53,7 +69,7 @@ int const Poll::polling(Server &server) {
 		if (it->revents == 0)
 			continue ;
 		if (it->revents & POLLERR) {
-			std::cerr << "poll error on fd: " << it->fd << " with events " << it->revents << std::endl;
+			std::cerr << "(POLL) - error on fd: " << it->fd << " with events " << it->revents << std::endl;
 			if (server.isConnected(it->fd))
 				server.disconnect(server.getClient(it->fd));
 			else

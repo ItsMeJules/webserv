@@ -13,6 +13,8 @@
 class EPoll : public IPoll {
 	private:
 		int _epollFd;
+
+		void const showEPollBits(int const &events) const;
 	public:
 		EPoll();
 		EPoll(EPoll const &ePoll);
