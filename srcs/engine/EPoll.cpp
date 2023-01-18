@@ -83,7 +83,7 @@ const int EPoll::polling(Server &server) {
 
 	for (int i = 0; i < readyFdAmount; i++) {
 		if (events[i].events & EPOLLERR) {
-			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + " with events " + ws::itos(events[i].events) + "!", true);
+			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + "!");
 			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events[i].events));
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));

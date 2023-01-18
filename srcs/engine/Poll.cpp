@@ -75,7 +75,7 @@ int const Poll::polling(Server &server) {
 		if (it->revents == 0)
 			continue ;
 		if (it->revents & POLLERR) {
-			ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "error on fd: " + ws::itos(it->fd) + "!", true);
+			ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "error on fd: " + ws::itos(it->fd) + "!");
 			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(it->revents));
 			if (server.isConnected(it->fd))
 				server.disconnect(server.getClient(it->fd));
