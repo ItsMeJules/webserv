@@ -6,7 +6,7 @@
 ServerInfo::ServerInfo() {}
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
 ServerInfo::~ServerInfo() {
-    for (std::map<std::string, ServerInfo::Location*>::iterator it = _locations.begin(); it != _locations.end(); it++)
+    for (std::map<std::string, ServerInfo::Location *>::iterator it = _locations.begin(); it != _locations.end(); it++)
         delete it->second;
 }
 
@@ -66,6 +66,10 @@ void  ServerInfo::setAutoIndex(bool AutoIndex) {
 
 void  ServerInfo::setServerName(std::string ServerName) {
 	this->_serverName = ServerName;
+}
+
+void  ServerInfo::addToCGIS(std::string extension, std::string path) {
+	this->_cgis[extension] = path;
 }
 
 // ############## OPERATORS ##############

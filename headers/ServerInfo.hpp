@@ -48,6 +48,7 @@ class ServerInfo {
 		void  setMaxBodySize(uint32_t MaxBodySize);
 		void  setAutoIndex(bool AutoIndex);
 		void  setServerName(std::string ServerName);
+		void  addToCGIS(std::string extension, std::string path);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };

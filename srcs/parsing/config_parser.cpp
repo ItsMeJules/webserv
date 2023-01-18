@@ -51,17 +51,17 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["method"] = METHOD;
 	matchValues["cgi"] = CGI;
 	matchValues["index"] = INDEX;
+	ServerInfo serverInfo = server.getServerInfo();
+	ServerSocket socketInfo = server.getSocket();
+	std::string execution = "";
+	std::string path = "";
 	switch (matchValues[str])
 	{
 		case NAME:
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
-				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setServerName(p);
-				std::string test = serverInfo.getServerName();
-				std::cout << "test name: " << test << std::endl;
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -71,6 +71,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0)
 			{
 				std::cout << "\t\tvalue: "<< p << '\n';
+				socketInfo.setIp(p);
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -90,12 +91,10 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				if (strcmp(p, "on") == 0)
 					serverInfo.setAutoIndex(true);
 				else
 					serverInfo.setAutoIndex(false);
-				bool test = serverInfo.hasAutoindex();
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -113,9 +112,13 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
+				if (p[0] == '.')
+					execution = std::string(p);
+				else
+					path = std::string(p);
 				p = std::strtok(NULL," ,|;");
 			}
+			serverInfo.addToCGIS(execution, path);
 			break;
 
 		case INDEX:
@@ -126,6 +129,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
+
 		default:
 			std::cout << "0 - Error Value" << std::endl;
 			break;
