@@ -11,10 +11,15 @@
 
 class HttpResponse : public Message {
 	private:
+		typedef struct http_error_s {
+			std::string reasonPhrase;
+			std::string reasonExplanation;
+		} http_error_t;
+	private:
 		int _statusCode;
 		std::string _reasonPhrase;
 
-        static std::map<int, std::string> codes;
+        static std::map<int, http_error_t> codes;
 	public:
 		HttpResponse();
 		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);
@@ -27,7 +32,7 @@ class HttpResponse : public Message {
 		HttpResponse &operator=(HttpResponse const &rhs);
 
         static HttpResponse fromRequest(ServerInfo const &serverInfo, HttpRequest const &request);
-        static std::map<int, std::string> createCodes();
+        static std::map<int, http_error_t> createCodes();
 };
 
 #endif

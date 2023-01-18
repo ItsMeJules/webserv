@@ -1,6 +1,6 @@
 #include "HttpResponse.hpp"
 
-std::map<int, std::string> HttpResponse::codes = HttpResponse::createCodes();
+std::map<int, HttpResponse::http_error_t> HttpResponse::codes = HttpResponse::createCodes();
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -45,33 +45,26 @@ HttpResponse &HttpResponse::operator=(HttpResponse const &rhs) {
 }
 
 HttpResponse HttpResponse::fromRequest(ServerInfo const &serverInfo, HttpRequest const &request) {
-    return HttpResponse("HTTP/1.1", 200, codes[200]);
+    return HttpResponse("HTTP/1.1", 200, codes[200].reasonPhrase);
 }
 
-std::map<int, std::string> HttpResponse::createCodes() {
+std::map<int, HttpResponse::http_error_t> HttpResponse::createCodes() {
     std::map<int, std::string> codes;
-    codes[100] = "Continue";
-    codes[101] = "Switching Protocols";
 
-//succes
-    codes[200] = "OK";
-    codes[201] = "Created";
-    codes[202] = "Accepted";
-    codes[203] = "Non-Authoritative Information";
-    codes[204] = "No Content";
-    codes[205] = "Reset Content";
-    codes[206] = "Partial Content";
+    //succes
+    codes[200] = {"OK", ""};
+    codes[201] = {"Created", ""};
 
-//redirection
-    codes[300] = "Multiple Choices";
-    codes[301] = "Moved Permanently";
-    codes[302] = "Found";
+    //redirection
+    codes[300] = {"Multiple Choices", "The requested resource has multiple options available. Please choose one of the options below:"};
+    codes[301] = {"Moved Permanently", "The requested document you're looking for was moved permanently."};
+    codes[302] = {"Found", "The old requested document was moved, the new location was found."};
     codes[303] = "See Other";
     codes[304] = "Not Modified";
     codes[305] = "Use proxy";
     codes[307] = "Temporary redirect";
 
-//client error
+    //client error
     codes[400] = "Bad Request";
     codes[401] = "Unauthorized";
     codes[402] = "Payment Required";
