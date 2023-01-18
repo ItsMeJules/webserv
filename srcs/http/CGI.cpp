@@ -94,6 +94,23 @@ void	Cgi::setEnv(std::map<std::string, std::string> env)
 	_env = env;
 }
 
+char **Cgi::envToTab(void)
+{
+	char **env = new char *[_env.size() + 1];
+	std::string tmp;
+	int i;
+	i = 0;
+
+	for(std::map<std::string, std::string>::iterator it = _env.begin(); it != _env.end(); it++)
+	{
+		tmp = it->first + "=" + it->second;
+		env[i] = new char[tmp.size() + 1];
+		ft_strcpy(tmp.c_str(), env[i]);
+	}
+	env[i] = NULL;
+	return env;
+}
+
 int	Cgi::execute(int clientSocket)
 {
 	std::string _body;
@@ -124,10 +141,12 @@ int	Cgi::execute(int clientSocket)
 		ft_strcpy(_binary.c_str(), av[0]);
 		ft_strcpy(_target.c_str(), av[1]);
 		av[2] = NULL;
-		execve(_binary.c_str(), av, );//il faut crer une fonction qui retourne un tab
+		execve(_binary.c_str(), av, envToTab());//il faut crer une fonction qui retourne un tab
+		return 500;
 	}
 	else
 	{
+		waitpid(-1, NULL, 0);
 	}
 
 }

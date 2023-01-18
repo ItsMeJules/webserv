@@ -18,7 +18,6 @@ class Cgi {
 		std::string	_inputBody;
 		std::map<std::string, std::string> _env;
 		HttpRequest	_httpRequest;
-		char **_arg;
 
 	public:
 		Cgi();
@@ -31,6 +30,7 @@ class Cgi {
 		int	execute(int clientSocket);
 
 		void	setInputBody(std::string inputBody);
+		char **envToTab(void);
 
 		void	setEnv(std::map<std::string, std::string> env);
 };
