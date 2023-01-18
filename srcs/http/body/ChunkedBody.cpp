@@ -48,13 +48,13 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
             ws::log(ws::LOG_LVL_ERROR, "[CHUNKED BODY] -",
                 "error while reading a chunk, the chunk size is bigger (" + ws::itos(chunkContent.size()) + ")"
                 + "than the given size (" + ws::itos(hexSize));
-            ws::log(ws::LOG_LVL_DEBUG, "", "contents:\n" + chunkContent);
+            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "contents:\n" + chunkContent);
 
             return -2;
         }
         append(chunkContent, hexSize);
         ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of " + ws::itos(hexSize) + " chars was parsed");
-        ws::log(ws::LOG_LVL_DEBUG, "", "contents:\n" + chunkContent);
+        ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "contents:\n" + chunkContent);
 
         inReceive << body.erase(0, pos + 2);
         hexSize = -1;

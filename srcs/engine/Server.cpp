@@ -35,11 +35,11 @@ bool Server::receiveData(Client &client) {
 	int byteCount = recv(clientFd, buffer, ws::RECV_BUFFER_SIZE, 0);
 	if (byteCount > 0) {
         buffer[byteCount] = 0;
-		ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", ws::itos(byteCount) + " bytes were read from fd: " + ws::itos(clientFd));
+		ws::log(ws::LOG_LVL_INFO, "[SERVER] -", ws::itos(byteCount) + " bytes were read from fd: " + ws::itos(clientFd));
 		ws::log(ws::LOG_LVL_DEBUG, "", std::string("content:\n") + buffer);
         client.getRequestParser().parseRequest(buffer);
     } else if (byteCount == 0) {
-		ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "0 byte was read from fd: " + ws::itos(clientFd));
+		ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "0 byte was read from fd: " + ws::itos(clientFd));
         return false;
 	} else
 		ws::log(ws::LOG_LVL_ERROR, "[SERVER] -", "recv returned an error with fd " + ws::itos(clientFd), true);
@@ -56,7 +56,7 @@ bool Server::connect(Client &client) {
 }
 
 bool Server::disconnect(Client &client) {
-	ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "disconnecting client...");
+	ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "disconnecting client...");
     bool ret = poller->deleteFd(client.getSocket().getFd()) && client.getSocket().close();
     _clients.erase(client.getSocket().getFd());
     return ret;

@@ -45,7 +45,7 @@ const bool EPoll::pollFd(int fd, int events) {
 		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to add fd: " + ws::itos(fd) + " to polling list!", true);
 	else
 		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "sucessfully added fd: " + ws::itos(fd) + " to polling list");
-	ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
+	ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events));
 	return ret != -1;
 }
 
@@ -68,7 +68,7 @@ const bool EPoll::modFd(int fd, int events) {
         ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to modify fd: " + ws::itos(fd) + "!", true);
     else
         ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "successfully modified fd: " + ws::itos(fd));
-	ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
+	ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events));
     return ret != -1;
 }
 
@@ -84,7 +84,7 @@ const int EPoll::polling(Server &server) {
 	for (int i = 0; i < readyFdAmount; i++) {
 		if (events[i].events & EPOLLERR) {
 			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + "!");
-			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events[i].events));
+			ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events[i].events));
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));
 			else

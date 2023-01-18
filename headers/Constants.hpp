@@ -28,6 +28,13 @@ namespace ws {
 	const int POLL_WAIT_TIMEOUT = 60 * 1000;
 
 	const int RECV_BUFFER_SIZE = 1000;
+
+	const std::string C_AQUA = "\033[38;5;14m";
+	const std::string C_YELLOW = "\033[38;5;184m";
+	const std::string C_LIME = "\033[38;5;10m";
+	const std::string C_RED	= "\033[38;5;196m";
+	const std::string C_SILVER = "\033[38;5;7m";
+	const std::string C_RESET = "\033[0m";
 }
 
 #endif

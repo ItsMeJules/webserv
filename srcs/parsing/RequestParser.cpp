@@ -88,7 +88,7 @@ void RequestParser::parseRequest(std::string request) {
     }
 	if (_requestParsed) {
 		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
-		ws::log(ws::LOG_LVL_DEBUG, "", "contents:\n----------\n" + _httpRequest.build() + "----------");
+		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
 	}
 }
 
