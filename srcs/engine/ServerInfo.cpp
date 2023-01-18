@@ -56,6 +56,14 @@ bool ServerInfo::Location::hasAutoindex() const {
     return _autoindex;
 }
 
+void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
+	this->_maxBodySize = MaxBodySize;
+}
+
+void  ServerInfo::setAutoIndex(bool AutoIndex) {
+	this->_autoindex = AutoIndex;
+}
+
 // ############## OPERATORS ##############
 
 ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {

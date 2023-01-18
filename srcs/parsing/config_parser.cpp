@@ -66,6 +66,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0)
 			{
 				std::cout << "\t\tvalue: "<< p << '\n';
+				// ServerInfo serverInfo = server.getServerInfo();
+				// serverInfo.setMaxBodySize()
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -74,7 +76,12 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
+				ServerInfo serverInfo = server.getServerInfo();
+				if (strcmp(p, "on") == 0)
+					serverInfo.setAutoIndex(true);
+				else
+					serverInfo.setAutoIndex(false);
+				bool test = serverInfo.hasAutoindex();
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -109,12 +116,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "0 - Error Value" << std::endl;
 			break;
 	}
-    // while (p!=0)
-    // {
-    // 	std::cout << "\t\tkeyword: "<< p << '\n';
-	// 	p = std::strtok(NULL," ,|;");
-	// }
-	
 	delete[] cstr;
 }
 

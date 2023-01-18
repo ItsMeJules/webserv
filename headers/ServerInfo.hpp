@@ -45,6 +45,8 @@ class ServerInfo {
 		const std::string &getRootPath() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, ServerInfo::Location*> &getLocations() const;
+		void  setMaxBodySize(uint32_t MaxBodySize);
+		void  setAutoIndex(bool AutoIndex);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };
