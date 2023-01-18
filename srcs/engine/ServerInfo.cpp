@@ -40,6 +40,14 @@ const std::string &ServerInfo::getRootPath() const {
     return _rootPath;
 }
 
+const std::string &ServerInfo::getIndexPath() const {
+	return _indexPath;
+}
+
+const std::vector<std::string> &ServerInfo::getMethod() const {
+	return _method;
+}
+
 const std::map<std::string, std::string> &ServerInfo::getCgis() const {
     return _cgis;
 }
@@ -66,6 +74,14 @@ void  ServerInfo::setAutoIndex(bool AutoIndex) {
 
 void  ServerInfo::setServerName(std::string ServerName) {
 	this->_serverName = ServerName;
+}
+
+void  ServerInfo::setIndexPath(std::string path) {
+	this->_indexPath = path;
+}
+
+void  ServerInfo::addtoMethod(std::string method) {
+	this->_method.push_back(method);
 }
 
 void  ServerInfo::addToCGIS(std::string extension, std::string path) {

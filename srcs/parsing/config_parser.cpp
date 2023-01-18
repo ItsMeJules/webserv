@@ -43,6 +43,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     std::strcpy (cstr, cpt.line.c_str());
     char *p = std::strtok (cstr, " ");
 	std::string str = std::string(p);
+	// A mettre dans une autre fonction qui fera également les checks avant parsing
 	std::map<std::string, confValues> matchValues;
 	matchValues["name"] = NAME;
 	matchValues["listen"] = LISTEN;
@@ -51,6 +52,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["method"] = METHOD;
 	matchValues["cgi"] = CGI;
 	matchValues["index"] = INDEX;
+	// 
 	ServerInfo serverInfo = server.getServerInfo();
 	ServerSocket socketInfo = server.getSocket();
 	std::string execution = "";
@@ -63,6 +65,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			{
 				serverInfo.setServerName(p);
 				p = std::strtok(NULL," ,|;");
+				std::string test = serverInfo.getServerName();
+				std::cout << "Le nom est " << test << std::endl;
 			}
 			break;
 
@@ -70,9 +74,10 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
 				socketInfo.setIp(p);
 				p = std::strtok(NULL," ,|;");
+				std::string test1 = socketInfo.getIp();
+				std::cout << "L'IP est " << test1 << std::endl;
 			}
 			break;
 		
@@ -81,8 +86,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0)
 			{
 				std::cout << "\t\tvalue: "<< p << '\n';
-				// ServerInfo serverInfo = server.getServerInfo();
-				// serverInfo.setMaxBodySize()
+				// serverInfo.setMaxBodySize() // Créer un translateur de Mb ou Gb en Octet
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -96,6 +100,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				else
 					serverInfo.setAutoIndex(false);
 				p = std::strtok(NULL," ,|;");
+				bool test2 = serverInfo.hasAutoindex();
+				std::cout << "L'autoIndex est " << test2 << std::endl;
 			}
 			break;
 
@@ -103,7 +109,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
+				serverInfo.addtoMethod(p);
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
@@ -125,8 +131,10 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = std::strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
+				serverInfo.setIndexPath(p);
 				p = std::strtok(NULL," ,|;");
+				std::string test3 = serverInfo.getIndexPath();
+				std::cout << "L'index est " << test3 << std::endl;
 			}
 			break;
 

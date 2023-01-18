@@ -4,6 +4,7 @@
 # include <string>
 # include <map>
 # include <stdint.h>
+# include <vector>
 
 class ServerInfo {
 	public:
@@ -29,7 +30,9 @@ class ServerInfo {
 
 		std::string _serverName;
 		std::string _rootPath;
+		std::string _indexPath;
 		
+		std::vector<std::string> _method;
 		std::map<std::string, std::string> _cgis;
 		std::map<std::string, ServerInfo::Location*> _locations;
 	public:
@@ -43,11 +46,16 @@ class ServerInfo {
         bool hasAutoindex() const;
 		const std::string &getServerName() const;
 		const std::string &getRootPath() const;
+		const std::string &getIndexPath() const;
+		const std::vector<std::string> &getMethod() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, ServerInfo::Location*> &getLocations() const;
 		void  setMaxBodySize(uint32_t MaxBodySize);
 		void  setAutoIndex(bool AutoIndex);
 		void  setServerName(std::string ServerName);
+
+		void  setIndexPath(std::string path);
+		void  addtoMethod(std::string method);
 		void  addToCGIS(std::string extension, std::string path);
 
         ServerInfo &operator=(ServerInfo const &rhs);
