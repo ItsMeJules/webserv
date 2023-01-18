@@ -15,7 +15,7 @@ class Poll : public IPoll {
 
         std::vector<pollfd_t> _pollFd;
 
-		void const showPollBits(int const &events) const;
+		std::string const formatEvents(int const &events) const;
     public:
 		Poll();
 		Poll(Poll const &Poll);

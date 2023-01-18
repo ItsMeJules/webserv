@@ -18,21 +18,24 @@ ServerSocket::~ServerSocket() {}
 
 bool ServerSocket::setup() {
     if (_domain == -1) {
+		ws::log(ws::LOG_LVL_INFO, "[SERVER SOCKET] -", "setting up server socket with default values...");
         _domain = AF_INET;
         _type = SOCK_STREAM;
         _protocol = 0;
         if (_port == -1)
             _port = 9999;
-    }
+    } else
+		ws::log(ws::LOG_LVL_INFO, "[SERVER SOCKET] -", "Setting up server socket...");
+
     return generateFd() && setReusable() && setNonBlocking() && bindTo();
 }
 
 bool ServerSocket::generateFd() {
 	_fd = socket(_domain, _type, _protocol);
 	if (_fd == -1)
-		std::cerr << "[SERVER SOCKET] - error while creating a socket: " << std::endl << "error: " << strerror(errno) << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while creating a socket!", true);
 	else
-		std::cout << "[SERVER SOCKET] - successfully generated fd: " << _fd << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully generated fd: " + ws::itos(_fd));
 	return _fd != -1;
 }
 
@@ -40,10 +43,10 @@ bool ServerSocket::setReusable() {
 	const int enable = 1;
 	int ret = setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 	if (ret != -1) {
-		std::cout << "[SERVER SOCKET] - successfully set socket on fd: " << _fd << " reusable" << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully set socket on fd: " + ws::itos(_fd) + " reusable");
 		return true;
 	}
-	std::cerr << "[SERVER SOCKET] - error while binding fd: " << _fd << std::endl << "error: " << strerror(errno) << std::endl;
+	ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while binding fd: " + ws::itos(_fd) + "!", true);
 	return false;
 }
 
@@ -53,10 +56,10 @@ bool ServerSocket::setNonBlocking() {
 		flags = 0;
 	int ret = fcntl(_fd, F_SETFL, flags | O_NONBLOCK);
 	if (ret != -1) {
-		std::cout << "[SERVER SOCKET] - successfully set socket non blocking on fd: " << _fd << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully set socket non blocking on fd: " + ws::itos(_fd));
 		return true;
 	}
-	std::cerr << "[SERVER SOCKET] - error while setting socket non blocking on fd: " << _fd << std::endl << "error: " << strerror(errno) << std::endl;
+	ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while setting socket non blocking on fd: " + ws::itos(_fd) + "!", true);
 	return false;
 }
 
@@ -68,9 +71,9 @@ bool ServerSocket::bindTo() {
 
 	bool bound = bind(_fd, (struct sockaddr *)&_address, sizeof(_address)) == 0;
 	if (bound)
-		std::cout << "[SERVER SOCKET] - successfully bound fd: " << _fd << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully bound fd: " + ws::itos(_fd));
 	else
-		std::cerr << "[SERVER SOCKET] - error while binding fd: " << _fd << std::endl << "error: " << strerror(errno) << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while binding fd: " + ws::itos(_fd) + "!", true);
 	return bound;
 }
 

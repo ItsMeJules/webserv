@@ -5,6 +5,11 @@
 # include <sstream>
 # include <algorithm>
 
+# include <string.h>
+# include <errno.h>
+
+# include "Constants.hpp"
+
 namespace ws {
 
 	// CONVERSIONS
@@ -17,7 +22,7 @@ namespace ws {
 	bool string_in_range(std::string const &range, std::string const &str, size_t npos = std::string::npos);
 
     // LOGGING
-    void log(int const &level, std::string const &prefix, std::string const &message);
+    void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
 }
 
 #endif

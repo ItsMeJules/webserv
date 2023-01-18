@@ -11,9 +11,9 @@ Socket::~Socket() {}
 bool Socket::close() const {
 	bool ret = ::close(_fd) == 0;
 	if (ret)
-		std::cout << "[SOCKET] - successfully closed socket with fd: " << _fd << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[SOCKET] -", "successfully closed socket with fd: " + ws::itos(_fd));
 	else
-		std::cout << "[SOCKET] - failed to close socket with fd: " << _fd << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[SOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!", true);
     return ret;
 }
 

@@ -65,6 +65,7 @@ void RequestParser::parseRequest(std::string request) {
 			std::string str = emptyAndClearStream() + request;
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
+			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request metadata was parsed");
 			if (_httpRequest.getMethod() == "GET") // there's no body as it's GET
 				_requestParsed = true;
 			else {
@@ -72,8 +73,10 @@ void RequestParser::parseRequest(std::string request) {
 				if (!request.empty())
 					parseRequest(request);
 			}
-		} else
+		} else {
+			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "data stored in stringstream");
 			_inReceive << request;
+		}
 	} else {
         if (_httpRequest.getMessageBody() == NULL) {
             _httpRequest.setMessageBody(getAccordingBodyType());
@@ -83,6 +86,10 @@ void RequestParser::parseRequest(std::string request) {
         }
         _requestParsed = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive) == 1;
     }
+	if (_requestParsed) {
+		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
+		ws::log(ws::LOG_LVL_DEBUG, "contents:\n", _httpRequest.build());
+	}
 }
 
 void RequestParser::clear() {

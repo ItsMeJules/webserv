@@ -1,12 +1,12 @@
 #include "ServerSocket.hpp"
 #include "Server.hpp"
+#include "config_parser.hpp"
 
 #ifdef __linux__
 # include "EPoll.hpp"
 #else
 # include "Poll.hpp"
 #endif
-# include "config_parser.hpp"
 
 #ifdef __linux__
 	IPoll *Server::poller = new EPoll(); // EPOLL_LINUX

@@ -6,28 +6,32 @@
 EPoll::EPoll() {}
 EPoll::EPoll(EPoll const &ePoll) { *this = ePoll; }
 EPoll::~EPoll() {
+	ws::log(ws::LOG_LVL_INFO, "[EPOLL] -", "closing epoll instance");
     close(_epollFd);
 }
 
 // ############## PRIVATE ##############
 
-void const EPoll::showEPollBits(int const &events) const {
-	std::cout << "EPOLLERR: " << (events & EPOLLERR) << std::endl;
-	std::cout << "EPOLLHUP: " << (events & EPOLLHUP) << std::endl;
-	std::cout << "EPOLLRDHUP: " << (events & EPOLLRDHUP) << std::endl;
-	std::cout << "EPOLLIN: " << (events & EPOLLIN) << std::endl;
-	std::cout << "EPOLLOUT: " << (events & EPOLLOUT) << std::endl;
+std::string const EPoll::formatEvents(int const &events) const {
+	std::string str;
+
+	str += "\tEPOLLERR: " + ws::itos(events & EPOLLERR) + "\n";
+	str += "\tEPOLLHUP: " + ws::itos(events & EPOLLHUP) + "\n";
+	str += "\tEPOLLRDHUP: " + ws::itos(events & EPOLLRDHUP) + "\n";
+	str += "\tEPOLLIN: " + ws::itos(events & EPOLLIN) + "\n";
+	str += "\tEPOLLOUT: " + ws::itos(events & EPOLLOUT);
+	return str;
 }
 
 // ############## PUBLIC ##############
 
 const bool EPoll::init() {
-	std::cout << "[EPOLL] - creating poll instance" << std::endl;
+	ws::log(ws::LOG_LVL_INFO, "[EPOLL] -", "creating poll instance");
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
-		std::cerr << "[EPOLL] - failed to create instance, error: " << strerror(errno) << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to create instance!", true);
 	else                                                                                                                                                                
-		std::cout << "[EPOLL] - instance created with fd: " << _epollFd << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "instance created with fd: " + ws::itos(_epollFd));
 	return _epollFd != -1;
 }
 
@@ -38,18 +42,19 @@ const bool EPoll::pollFd(int fd, int events) {
 
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &event);
 	if (ret == -1)
-		std::cerr << "[EPOLL] - failed to add fd: " << fd << " to polling list!" << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to add fd: " + ws::itos(fd) + " to polling list!", true);
 	else
-		std::cerr << "[EPOLL] - sucessfully added fd: " << fd << " to polling list!" << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "sucessfully added fd: " + ws::itos(fd) + " to polling list");
+	ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
 	return ret != -1;
 }
 
 const bool EPoll::deleteFd(int fd) {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
-		std::cerr << "[EPOLL] - failed to delete fd: " << fd << " from polling list! " << strerror(errno) << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to delete fd: " + ws::itos(fd) + " from polling list!", true);
 	else
-		std::cout << "[EPOLL] - sucessfully deleted fd: " << fd << " from polling list!" << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "sucessfully deleted fd: " + ws::itos(fd) + " from polling list");
 	return ret != -1;
 }
 
@@ -60,9 +65,10 @@ const bool EPoll::modFd(int fd, int events) {
 
     int ret = epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &event);
     if (ret == -1)
-        std::cerr << "[EPOLL] - failed to modify fd: " << fd << std::endl;
+        ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to modify fd: " + ws::itos(fd) + "!", true);
     else
-        std::cerr << "[EPOLL] - successfully modified fd: " << fd << std::endl;
+        ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "successfully modified fd: " + ws::itos(fd));
+	ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
     return ret != -1;
 }
 
@@ -71,20 +77,21 @@ const int EPoll::polling(Server &server) {
 
 	int readyFdAmount = epoll_wait(_epollFd, events, ws::POLL_MAX_EVENTS, ws::POLL_WAIT_TIMEOUT);
 	if (readyFdAmount == -1) {
-		std::cerr << "[EPOLL] - waiting failed! error: " << strerror(errno) << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "waiting failed!", true);
 		return -1;
 	}
 
 	for (int i = 0; i < readyFdAmount; i++) {
 		if (events[i].events & EPOLLERR) {
-			std::cerr << "[EPOLL] - error on fd: " << events[i].data.fd << " with events " << events[i].events << std::endl;
-			showEPollBits(events[i].events);
+			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + " with events " + ws::itos(events[i].events) + "!", true);
+			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events[i].events));
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));
 			else
 				deleteFd(events[i].data.fd);
 			continue ;
 		} else if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
+			ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
             ClientSocket socket(server.getSocket().getFd());
             if (!socket.setup())
                 return -3;
@@ -99,7 +106,6 @@ const int EPoll::polling(Server &server) {
 				else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 

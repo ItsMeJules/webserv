@@ -22,7 +22,13 @@ void RegularBody::append(std::string str, int size) {
 
 int RegularBody::parse(std::string body, std::stringstream &inReceive) {
     append(body);
-	return _size >= _contentLength;
+	if (_size >= _contentLength) {
+		ws::log(ws::LOG_LVL_ALL, "[REGULAR BODY] -", ws::itos(body.size()) + " chars from body was parsed");
+		ws::log(ws::LOG_LVL_DEBUG, "", "contents:\n" + body);
+		return true;
+	} else
+		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "data stored in stringstream");
+	return false;
 }
 
 // ############## GETTERS / SETTERS ##############

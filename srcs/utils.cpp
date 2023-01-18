@@ -37,3 +37,16 @@ bool ws::string_in_range(std::string const &range, std::string const &str, size_
     }
 	return true;
 }
+
+void ws::log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno) {
+	const int lvl = ws::LOG_LVL & level;
+	if (ws::LOG_LVL & ws::LOG_LVL_NONE)
+		return ;
+
+	if (lvl == ws::LOG_LVL_ERROR || lvl == ws::LOG_LVL_INFO
+		|| lvl == ws::LOG_LVL_SUCCESS || lvl == ws::LOG_LVL_ALL
+		|| lvl == ws::LOG_LVL_DEBUG)
+			std::cout << "(LOGLVL: " << level << ") " << prefix << (prefix.empty() ? "" : " ") << message << std::endl;
+	if (_errno)
+		std::cout << "\n error: " << strerror(errno) << std::endl;
+}

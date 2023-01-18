@@ -10,6 +10,8 @@
 # include <sys/socket.h>
 # include <fcntl.h>
 
+# include "utils.hpp"
+
 class Socket {
 	private:
 	protected:

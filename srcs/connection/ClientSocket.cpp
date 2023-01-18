@@ -14,10 +14,10 @@ bool ClientSocket::setup() {
 	socklen_t addrlen = sizeof(_address); // important sinon segv
 	_fd = accept(_serverListeningFd, (struct sockaddr*)&_address, (socklen_t*)&addrlen);
 	if (_fd == -1) {
-		std::cerr << "[CLIENT SOCKET] - error in accept: " << strerror(errno) << std::endl;
-		return false;		
+		ws::log(ws::LOG_LVL_ERROR, "[CLIENT SOCKET] -", "accept failed!", true);
+		return false;
 	} else
-		std::cout << "[CLIENT SOCKET] - client successfully connected with fd: " << _fd << std::endl;
+		ws::log(ws::LOG_LVL_SUCCESS, "[CLIENT SOCKET] -", "client successfully connected with fd: " + ws::itos(_fd));
 	return true;
 }
 

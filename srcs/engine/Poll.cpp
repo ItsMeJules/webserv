@@ -8,11 +8,15 @@ Poll::~Poll() {}
 
 // ############## PRIVATE ##############
 
-void const Poll::showPollBits(int const &events) const {
-	std::cout << "POLLERR: " << (events & POLLERR) << std::endl;
-	std::cout << "POLLHUP: " << (events & POLLHUP) << std::endl;
-	std::cout << "POLLIN: " << (events & POLLIN) << std::endl;
-	std::cout << "POLLOUT: " << (events & POLLOUT) << std::endl;
+std::string const Poll::formatEvents(int const &events) const {
+	std::string str;
+
+	str += "\tPOLLERR: " + ws::itos(events & POLLERR) + "\n";
+	str += "\tPOLLERR: " + ws::itos(events & POLLERR) + "\n";
+	str += "\tPOLLHUP: " + ws::itos(events & POLLHUP) + "\n";
+	str += "\tPOLLIN: " + ws::itos(events & POLLIN) + "\n";
+	str += "\tPOLLOUT: " + ws::itos(events & POLLOUT) + "\n";
+	return str;
 }
 
 // ############## PUBLIC ##############
@@ -28,7 +32,8 @@ bool const Poll::pollFd(int fd, int events) {
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
     _pollFd.push_back(event); // to add to the vector
-	std::cout << "(POLL) - sucessfully added fd: " << fd << " to polling list!" << std::endl;
+	ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "sucessfully added fd: " + ws::itos(fd) + " to polling vector");
+	ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
 	return true;
 }
 
@@ -37,7 +42,7 @@ bool const Poll::deleteFd(int fd) {
 	// il faudrait que je change l'interface IPoll
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
 		if (it->fd == fd) {
-			std::cout << "(POLL) - successfully deleted fd: " << fd << std::endl;
+			ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "successfully deleted fd: " + ws::itos(fd) + " from polling vector");
 			return true;
 		}
 	}
@@ -50,7 +55,8 @@ const bool Poll::modFd(int fd, int events) {
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
 		if (it->fd == fd) {
 			it->revents = events;
-			std::cout << "(POLL) - successfully modified fd: " << fd << std::endl;
+			ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "successfully modified fd: " + ws::itos(fd));
+			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
 			return true;
 		}
 	}
@@ -60,7 +66,7 @@ const bool Poll::modFd(int fd, int events) {
 int const Poll::polling(Server &server) {
 	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), ws::POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
-		std::cerr << "(POLL) - waiting failed! error: " << strerror(errno) << std::endl;
+		ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "waiting failed!", true);
 		return -1;
 	}
 
@@ -69,7 +75,8 @@ int const Poll::polling(Server &server) {
 		if (it->revents == 0)
 			continue ;
 		if (it->revents & POLLERR) {
-			std::cerr << "(POLL) - error on fd: " << it->fd << " with events " << it->revents << std::endl;
+			ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "error on fd: " + ws::itos(it->fd) + "!", true);
+			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(it->revents));
 			if (server.isConnected(it->fd))
 				server.disconnect(server.getClient(it->fd));
 			else
@@ -90,7 +97,6 @@ int const Poll::polling(Server &server) {
                 else if (client.getRequestParser().isRequestParsed())
                     modFd(it->fd, POLLOUT);
             } else if (it->revents & POLLOUT) {
-				std::cout << client.getRequestParser().getHttpRequest().build() << std::endl;
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 
