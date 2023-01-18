@@ -14,7 +14,7 @@ def gen():
     yield "THIS TEXT IS NONSENSE".encode()
     yield "I USE IT ONLY FOR TESTING".encode()
 
-pload = {'username':'Olivia','password':'123'}
+# pload = {'username':'Olivia','password':'123'}
 headers = {'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate',
             'Connection': 'keep-alive',
@@ -33,7 +33,7 @@ elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
     r = requests.post(url, files=files)
 else:
     s = Session()
-    req = Request('POST', url, data=pload)
+    req = Request('POST', url, data="pload")
     prepped = req.prepare()
     r = s.send(prepped)
     prepped.headers['Content-Length'] = 30

@@ -1,17 +1,22 @@
 #include "HttpResponse.hpp"
 
-std::map<int, HttpResponse::http_error_t> HttpResponse::codes = HttpResponse::createCodes();
+std::map<int, ws::http_status_t> HttpResponse::codes = HttpResponse::createCodes();
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpResponse::HttpResponse() {}
 HttpResponse::HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase)
-	: Message(httpVersion), _statusCode(statusCode), _reasonPhrase(reasonPhrase) {}
-HttpResponse::HttpResponse(HttpResponse const &httpResponse) { *this = httpResponse; }
-
-HttpResponse::~HttpResponse() {
-
+	: Message(httpVersion), _statusCode(statusCode)
+{
+    _statusPhrase.reason = reasonPhrase;
 }
+
+HttpResponse::HttpResponse(int statusCode, ws::http_status_t statusPhrase)
+	: Message("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(statusPhrase) {}
+
+
+HttpResponse::HttpResponse() : _statusCode(200), _statusPhrase(codes[200]) {}
+HttpResponse::HttpResponse(HttpResponse const &httpResponse) { *this = httpResponse; }
+HttpResponse::~HttpResponse() {}
 
 // ############## PRIVATE ##############
 
@@ -21,7 +26,7 @@ std::string HttpResponse::build() {
 	std::stringstream ss;
 	ss << _httpVersion << " ";
 	ss << _statusCode << " ";
-	ss << _reasonPhrase << "\r\n";
+	ss << _statusPhrase.reason << "\r\n";
 	ss << Message::build();
 	return ss.str();
 }
@@ -40,17 +45,19 @@ void HttpResponse::send(Client &client) {
 HttpResponse &HttpResponse::operator=(HttpResponse const &rhs) {
 	if (this != &rhs) {
         _statusCode = rhs._statusCode;
-        _reasonPhrase = rhs._reasonPhrase;
+        _statusPhrase = rhs._statusPhrase;
 	}
 	return *this;
 }
 
 HttpResponse HttpResponse::fromRequest(ServerInfo const &serverInfo, HttpRequest const &request) {
-    return HttpResponse("HTTP/1.1", 200, codes[200].reasonPhrase);
+    ResponseBuilder builder(serverInfo, request);
+
+    return HttpResponse(builder.getStatusCode(), builder.getStatusPhrase());
 }
 
-std::map<int, HttpResponse::http_error_t> HttpResponse::createCodes() {
-    std::map<int, std::string> codes;
+std::map<int, ws::http_status_t> HttpResponse::createCodes() {
+    std::map<int, ws::http_status_t> codes;
 
     //succes
     codes[200] = {"OK", ""};

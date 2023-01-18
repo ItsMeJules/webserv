@@ -12,6 +12,12 @@
 
 namespace ws {
 
+	// HTTP
+	typedef struct http_status_s {
+		std::string reason;
+		std::string explanation;
+	} http_status_t;
+
 	// CONVERSIONS
 	int stoi(std::string const &str);
 	unsigned int hextoi(std::string const &str);
