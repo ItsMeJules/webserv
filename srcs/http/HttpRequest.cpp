@@ -24,7 +24,7 @@ std::string HttpRequest::build() {
 }
 
 void HttpRequest::execute() {
-	_messageBody->excecute();
+	_messageBody->excecute(_method, _path, _headers);
 }
 
 // ############## GETTERS / SETTERS ##############
