@@ -4,6 +4,7 @@
 # include <iostream>
 # include <vector>
 # include <fstream>
+# include <locale>
 
 # include "Server.hpp"
 # include "ServerInfo.hpp"
@@ -33,11 +34,13 @@ namespace ws {
 	METHOD,
 	CGI,
 	INDEX,
+    ERROR_PAGE
 };
 
     ConfigLineType get_block_type(config_parsing_t &cpt, std::string line);
 
     int parse_config(std::string const &name, std::vector<Server*> &servers);
+    int  check_error_page_key(std::string key);
     void parse_server_line(config_parsing_t &cpt, Server &server);
     void parse_location_line(config_parsing_t &cpt, ServerInfo::Location &location);
 

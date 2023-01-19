@@ -37,6 +37,15 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
     throw std::invalid_argument("Block line \"" + line + "\" could not be recognized!");
 }
 
+int ws::check_error_page_key(std::string key) {
+	int	tmp = std::stoi(key);
+	if (tmp >= 100 && tmp <= 999)
+		return 1;
+	else
+		return 0;
+
+}
+
 void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     std::cout << "\tserver line: " << cpt.line << std::endl;
     char *cstr = new char [cpt.line.length()+1];
@@ -52,8 +61,9 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["method"] = METHOD;
 	matchValues["cgi"] = CGI;
 	matchValues["index"] = INDEX;
+	matchValues["error_page"] = ERROR_PAGE;
 	// 
-	std::string execution = "";
+	std::string key = "";
 	std::string path = "";
 	switch (matchValues[str])
 	{
@@ -127,17 +137,17 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			{
 				ServerInfo serverInfo = server.getServerInfo();
 				if (p[0] == '.')
-					execution = std::string(p);
+					key = std::string(p);
 				else
 					path = std::string(p);
-				if (execution != "NULL" && path != "NULL")
-					serverInfo.addToCGIS(execution, path);
+				if (key != "NULL" && path != "NULL")
+					serverInfo.addToCGIS(key, path);
 				p = std::strtok(NULL," ,|;");
 			}
 			break;
 
 		case INDEX:
-			p = std::strtok(NULL," ,|;");
+			p = std::strtok(NULL, " ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
@@ -145,6 +155,25 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				p = std::strtok(NULL," ,|;");
 				std::string test4 = serverInfo.getIndexPath();
 				std::cout << "L'index est " << test4 << std::endl;
+			}
+			break;
+
+		case ERROR_PAGE:
+			p = std::strtok(NULL, " ,|;");
+			while (p!=0)
+			{
+				ServerInfo serverInfo = server.getServerInfo();
+				std::cout << "key: " << key << std::endl;
+				if (check_error_page_key(std::string(p))) {
+					key = std::string(p);
+				}
+				else {
+					path = std::string(p);
+					std::cout << "path: " << path << std::endl;
+				}
+				// if (key != "NULL" && path != "NULL")
+				// 	serverInfo.addToError(key, path);
+				p = std::strtok(NULL," ,|;");
 			}
 			break;
 
