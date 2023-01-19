@@ -46,6 +46,10 @@ const std::string &ServerInfo::getIndexPath() const {
 	return _indexPath;
 }
 
+const std::string &ServerInfo::getUploadPath() const {
+	return _uploadPath;
+}
+
 const std::vector<std::string> &ServerInfo::getMethod() const {
 	return _method;
 }
@@ -83,20 +87,28 @@ void  ServerInfo::setServerName(std::string ServerName) {
 	this->_serverName = ServerName;
 }
 
-void  ServerInfo::setIndexPath(std::string path) {
-	this->_indexPath = path;
+void  ServerInfo::setRootPath(std::string Path) {
+	this->_rootPath = Path;
 }
 
-void  ServerInfo::addtoMethod(std::string method) {
-	this->_method.push_back(method);
+void  ServerInfo::setIndexPath(std::string Path) {
+	this->_indexPath = Path;
 }
 
-void  ServerInfo::addToCGIS(std::string extension, std::string path) {
-	this->_cgis[extension] = path;
+void  ServerInfo::setUploadPath(std::string Path) {
+	this->_uploadPath = Path;
 }
 
-void  ServerInfo::addErrorPage(int key, std::string value) {
-	this->_errorPage[key] = value;
+void  ServerInfo::addtoMethod(std::string Method) {
+	this->_method.push_back(Method);
+}
+
+void  ServerInfo::addToCGIS(std::string Extension, std::string Path) {
+	this->_cgis[Extension] = Path;
+}
+
+void  ServerInfo::addErrorPage(int Key, std::string Value) {
+	this->_errorPage[Key] = Value;
 }
 
 // ############## OPERATORS ##############

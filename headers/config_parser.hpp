@@ -36,7 +36,9 @@ namespace ws {
 	METHOD,
 	CGI,
 	INDEX,
-    ERROR_PAGE
+    ERROR_PAGE,
+    UPLOAD,
+    ROOT
 };
 
     ConfigLineType get_block_type(config_parsing_t &cpt, std::string line);

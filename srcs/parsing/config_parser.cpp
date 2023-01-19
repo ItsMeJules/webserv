@@ -63,17 +63,19 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["cgi"] = CGI;
 	matchValues["index"] = INDEX;
 	matchValues["error_page"] = ERROR_PAGE;
+	matchValues["upload"] = UPLOAD;
+	matchValues["root"] = ROOT;
 	// 
 	int val;
 	std::string key = "NULL";
 	std::string path = "NULL";
+	ServerInfo serverInfo = server.getServerInfo();
 	switch (matchValues[str])
 	{
 		case NAME:
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setServerName(p);
 				p = strtok(NULL," ,|;");
 			}
@@ -84,7 +86,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				ServerSocket socketInfo = server.getSocket();
 				socketInfo.setIp(p);
 				p = strtok(NULL," ,|;");
@@ -97,7 +98,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0)
 			{
 				int p_tmp = atoi(p);
-				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setMaxBodySize(p_tmp); // Créer un translateur de Mb ou Gb en Octet
 				p = strtok(NULL," ,|;");
 			}
@@ -108,7 +108,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				if (strcmp(p, "on") == 0)
 					serverInfo.setAutoIndex(true);
 				else
@@ -122,7 +121,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.addtoMethod(p);
 				p = strtok(NULL," ,|;");
 			}
@@ -133,7 +131,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				if (p[0] == '.')
 					key = std::string(p);
 				else
@@ -149,7 +146,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL, " ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setIndexPath(p);
 				p = strtok(NULL," ,|;");
 			}
@@ -160,7 +156,6 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL, " ,|;");
 			while (p!=0)
 			{
-				ServerInfo serverInfo = server.getServerInfo();
 				if (check_error_page_key(std::string(p)))
 					val = atoi(p);
 				else
@@ -170,6 +165,27 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				p = strtok(NULL, " ,|;");
 			}
 			std::cout << "OK - ERROR_PAGE" << std::endl;
+			break;
+
+		case UPLOAD:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				serverInfo.setUploadPath(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - UPLOAD" << std::endl;
+			break;
+
+		case ROOT:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				serverInfo.setRootPath(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - ROOT" << std::endl;
+			break;
 			break;
 
 		default:

@@ -31,6 +31,7 @@ class ServerInfo {
 		std::string _serverName;
 		std::string _rootPath;
 		std::string _indexPath;
+		std::string _uploadPath;
 		
 		std::vector<std::string> _method;
 		std::map<std::string, std::string> _cgis;
@@ -49,6 +50,7 @@ class ServerInfo {
 		const std::string &getServerName() const;
 		const std::string &getRootPath() const;
 		const std::string &getIndexPath() const;
+		const std::string &getUploadPath() const;
 		const std::vector<std::string> &getMethod() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, ServerInfo::Location*> &getLocations() const;
@@ -57,10 +59,12 @@ class ServerInfo {
 		void  setMaxBodySize(uint32_t MaxBodySize);
 		void  setAutoIndex(bool AutoIndex);
 		void  setServerName(std::string ServerName);
-		void  setIndexPath(std::string path);
-		void  addtoMethod(std::string method);
-		void  addToCGIS(std::string extension, std::string path);
-		void  addErrorPage(int key, std::string value);
+		void  setRootPath(std::string Path);
+		void  setIndexPath(std::string Path);
+		void  setUploadPath(std::string Path);
+		void  addtoMethod(std::string Method);
+		void  addToCGIS(std::string Extension, std::string Path);
+		void  addErrorPage(int Key, std::string Value);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };
