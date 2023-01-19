@@ -14,7 +14,7 @@ class ResponseBuilder {
 		int _statusCode;
 
 		bool const handleResponse();
-		
+
 		bool const handleSuccess();
 		bool const handleRedirection();
 		bool const handleClientError();
@@ -25,6 +25,7 @@ class ResponseBuilder {
 		ResponseBuilder(ResponseBuilder const &responseBuilder);
 		~ResponseBuilder();
 
+		bool const generateResponse();
 		int const &getStatusCode() const;
 
 		ResponseBuilder &operator=(ResponseBuilder const &rhs);

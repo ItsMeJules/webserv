@@ -15,6 +15,8 @@ class HttpResponse : public Message {
 	private:
 		int _statusCode;
 		ws::http_status_t _statusPhrase;
+
+		static ws::http_status_t createStatus(std::string reason, std::string explanation);
 	public:
         static std::map<int, ws::http_status_t> codes;
 

@@ -14,6 +14,7 @@ ResponseBuilder::~ResponseBuilder() {}
 
 bool const ResponseBuilder::handleResponse() {
 	handleSuccess();
+	return true;
 }
 
 bool const ResponseBuilder::handleSuccess() {
@@ -38,6 +39,10 @@ bool const ResponseBuilder::handleServerError() {
 
 // ############## PUBLIC ##############
 
+
+bool const ResponseBuilder::generateResponse() {
+	return handleSuccess();
+}
 
 int const &ResponseBuilder::getStatusCode() const {
 	return _statusCode;

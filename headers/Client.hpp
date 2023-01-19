@@ -23,6 +23,7 @@ class Client {
 
 		ClientSocket &getSocket();
 		RequestParser &getRequestParser();
+		HttpRequest &getHttpRequest();
 
 		Client &operator=(Client const &rhs);
 		friend std::ostream &operator<<(std::ostream &os, const Client &client);

@@ -4,9 +4,9 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
+# include <unistd.h>
 
 # include "IMessageBody.hpp"
-# include "Server.hpp"
 
 class FileBody : public IMessageBody {
     private:
@@ -34,7 +34,7 @@ class FileBody : public IMessageBody {
         const std::string &getFileHeader() const;
 		const std::string &getFileName() const;
         const std::string &getBoundary() const;
-        const std::string &FileBody::getPath() const;
+        const std::string &getPath() const;
         const int &getSize() const;
 
         void setBoundary(std::string header);

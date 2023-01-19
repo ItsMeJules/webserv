@@ -23,8 +23,11 @@ std::string HttpRequest::build() {
 	return ss.str();
 }
 
-void HttpRequest::execute() {
-	_messageBody->excecute(_method, _path, _headers);
+void HttpRequest::execute(ServerInfo const &serverInfo) {
+	FileBody *fileBody = dynamic_cast<FileBody*>(_messageBody);
+	if (fileBody != NULL) {
+		fileBody->createFile(serverInfo.getRootPath() + serverInfo.getUploadPath());
+	}
 }
 
 // ############## GETTERS / SETTERS ##############

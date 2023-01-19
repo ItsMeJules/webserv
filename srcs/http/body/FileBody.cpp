@@ -37,7 +37,7 @@ int FileBody::parse(std::string body, std::stringstream &inReceive) { //TODO par
 }
 
 const bool FileBody::createFile(std::string const &path) {
-    _path = std::string(path + "/" + _fileName).c_str();
+    _path = std::string(path + (path.at(path.size() - 1) != '/' ? "" : "/") + _fileName).c_str();
     int fd = ::open(_path.c_str(), O_CREAT | O_RDWR);
 
     chmod(_path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);

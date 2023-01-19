@@ -97,7 +97,7 @@ int const Poll::polling(Server &server) {
                 else if (client.getRequestParser().isRequestParsed())
                     modFd(it->fd, POLLOUT);
             } else if (it->revents & POLLOUT) {
-                HttpResponse response("HTTP/1.1", 200, "OK");
+                HttpResponse response = HttpResponse::fromRequest(server.getServerInfo(), client.getHttpRequest());
                 RegularBody *body = new RegularBody();
 
 				body->append("Hello World!");
@@ -105,7 +105,7 @@ int const Poll::polling(Server &server) {
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
-                if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
+                if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else {  // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();

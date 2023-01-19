@@ -28,6 +28,11 @@ RequestParser &Client::getRequestParser() {
 	return _parser;
 }
 
+HttpRequest &Client::getHttpRequest() {
+	return _parser.getHttpRequest();
+}
+
+
 // ############## OPERATORS ##############
 
 Client &Client::operator=(Client const &rhs) {

@@ -44,6 +44,7 @@ class ServerInfo {
         bool hasAutoindex() const;
 		const std::string &getServerName() const;
 		const std::string &getRootPath() const;
+		const std::string &getUploadPath() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, ServerInfo::Location*> &getLocations() const;
 

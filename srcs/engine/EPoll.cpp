@@ -106,7 +106,8 @@ const int EPoll::polling(Server &server) {
 				else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-                HttpResponse response = HttpResponse::fromRequest(server.getServerInfo(), client.getRequestParser().getHttpRequest());
+				client.getHttpRequest().execute(server.getServerInfo());
+                HttpResponse response = HttpResponse::fromRequest(server.getServerInfo(), client.getHttpRequest());
                 RegularBody *body = new RegularBody();
 
 				body->append("Hello World!");
@@ -114,7 +115,7 @@ const int EPoll::polling(Server &server) {
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
-                if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
+                if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();

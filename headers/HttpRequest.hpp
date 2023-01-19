@@ -5,6 +5,8 @@
 # include <string>
 
 # include "Message.hpp"
+# include "FileBody.hpp"
+# include "ServerInfo.hpp"
 
 class HttpRequest : public Message {
 	private:
@@ -16,7 +18,7 @@ class HttpRequest : public Message {
 		~HttpRequest();
 
 		std::string build();
-		void execute();
+		void execute(ServerInfo const &serverInfo);
 
 		void setMethod(std::string method);
 		void setPath(std::string path);
