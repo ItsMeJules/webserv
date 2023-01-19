@@ -38,12 +38,13 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
 }
 
 int ws::check_error_page_key(std::string key) {
-	int	tmp = std::stoi(key);
-	if (tmp >= 100 && tmp <= 999)
+	int	check;
+	int count = 0;
+	const char* tmp_c = key.data();
+	if (isdigit(tmp_c[0]))
 		return 1;
 	else
 		return 0;
-
 }
 
 void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
@@ -63,8 +64,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["index"] = INDEX;
 	matchValues["error_page"] = ERROR_PAGE;
 	// 
-	std::string key = "";
-	std::string path = "";
+	std::string key = "NULL";
+	std::string path = "NULL";
 	switch (matchValues[str])
 	{
 		case NAME:
@@ -163,17 +164,17 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
-				std::cout << "key: " << key << std::endl;
-				if (check_error_page_key(std::string(p))) {
+				if (check_error_page_key(std::string(p)))
 					key = std::string(p);
-				}
-				else {
+				else
 					path = std::string(p);
+				if (key != "NULL" && path != "NULL") {
+					serverInfo.addToError(key, path);
+					std::cout << "key: "  << key << std::endl;
 					std::cout << "path: " << path << std::endl;
+					std::cout << "--TEST--" << std::endl;
 				}
-				// if (key != "NULL" && path != "NULL")
-				// 	serverInfo.addToError(key, path);
-				p = std::strtok(NULL," ,|;");
+				p = std::strtok(NULL, " ,|;");
 			}
 			break;
 

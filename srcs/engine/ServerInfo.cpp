@@ -6,8 +6,10 @@
 ServerInfo::ServerInfo() {}
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
 ServerInfo::~ServerInfo() {
-    for (std::map<std::string, ServerInfo::Location *>::iterator it = _locations.begin(); it != _locations.end(); it++)
-        delete it->second;
+    for (std::map<std::string, ServerInfo::Location *>::iterator it = _locations.begin(); it != _locations.end(); it++) {
+		if (it->second)
+			delete it->second;
+	}
 }
 
 ServerInfo::Location::Location() {}
@@ -106,8 +108,12 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_serverName = rhs._serverName;
 		_rootPath = rhs._rootPath;
 		_cgis = rhs._cgis;
-		_locations = rhs._locations;
+		for (std::map<std::string, ServerInfo::Location *>::iterator const it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
+			
+		}
+		
 	}
+
 	return *this;
 }
 

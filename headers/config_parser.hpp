@@ -5,6 +5,7 @@
 # include <vector>
 # include <fstream>
 # include <locale>
+# include <string>
 
 # include "Server.hpp"
 # include "ServerInfo.hpp"
