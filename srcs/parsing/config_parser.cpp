@@ -197,13 +197,101 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
     std::cout << "\t\tlocation line: " << cpt.line << std::endl;
+	std::cout << "\tserver line: " << cpt.line << std::endl;
+    char *cstr = new char [cpt.line.length()+1];
+    strcpy (cstr, cpt.line.c_str());
+    char *p = ::strtok (cstr, " ");
+	std::string str = std::string(p);
+	// A mettre dans une autre fonction qui fera également les checks avant parsing
+	std::map<std::string, confValues> matchValues;
+	matchValues["autoindex"] = AUTOINDEX;
+	matchValues["method"] = METHOD;
+	matchValues["index"] = INDEX;
+	matchValues["upload"] = UPLOAD;
+	matchValues["root"] = ROOT;
+	matchValues["rewrite"] = REWRITE;
+
+	Location loc = location;
+	switch (matchValues[str])
+	{
+		case INDEX:
+			p = strtok(NULL, " ,|;");
+			while (p!=0)
+			{
+				loc.setIndexPath(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - INDEX" << std::endl;
+			break;
+
+		case AUTOINDEX:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				if (strcmp(p, "on") == 0)
+					loc.setAutoIndex(true);
+				else
+					loc.setAutoIndex(false);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - AUTOINDEX" << std::endl;
+			break;
+
+		case METHOD:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				loc.addtoMethod(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - METHOD" << std::endl;
+			break;
+
+		case UPLOAD:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				loc.setUploadPath(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - UPLOAD" << std::endl;
+			break;
+
+		case REWRITE:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				loc.setRewritePath(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - REWRITE" << std::endl;
+			break;
+
+		case ROOT:
+			p = strtok(NULL," ,|;");
+			while (p!=0)
+			{
+				loc.setRootPath(p);
+				p = strtok(NULL," ,|;");
+			}
+			std::cout << "OK - ROOT" << std::endl;
+			break;
+
+		default:
+			std::cout << "0 - Error Value" << std::endl;
+			break;
+	}
+	delete[] cstr;
+
+
+
 }
 
 void ws::check_location_path(std::string const &path) {
-	std::cout << "\t\tpath: " << path << std::endl;
-	std::ifstream test(path);
-	if (!test)
-    	std::cout << "The file doesn't exist" << std::endl;
+	// std::cout << "\t\tpath: " << path << std::endl;
+	// std::ifstream test(path);
+	// if (!test)
+    // 	std::cout << "The file doesn't exist" << std::endl;
 	// Simple Check à implémenter plus tard
 }
 

@@ -39,6 +39,7 @@ namespace ws {
         ERROR_PAGE,
         UPLOAD,
         ROOT,
+        REWRITE
 };
 
     ConfigLineType get_block_type(config_parsing_t &cpt, std::string line);
