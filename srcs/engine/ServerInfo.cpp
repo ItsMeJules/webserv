@@ -6,21 +6,21 @@
 ServerInfo::ServerInfo() {}
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
 ServerInfo::~ServerInfo() {
-    for (std::map<std::string, ServerInfo::Location *>::iterator it = _locations.begin(); it != _locations.end(); it++) {
+    for (std::map<std::string, Location *>::iterator it = _locations.begin(); it != _locations.end(); it++) {
 		if (it->second)
 			delete it->second;
 	}
 }
 
-ServerInfo::Location::Location() {}
-ServerInfo::Location::Location(Location const &location) { *this = location; }
-ServerInfo::Location::~Location() {}
+// Location::Location() {}
+// Location::Location(Location const &location) { *this = location; }
+// Location::~Location() {}
 
 // ############## PRIVATE ##############
 
 // ############## PUBLIC ##############
 
-void ServerInfo::addLocation(std::string path, ServerInfo::Location *location) {
+void ServerInfo::addLocation(std::string path, Location *location) {
     _locations.insert(std::make_pair(path, location));
 }
 
@@ -58,7 +58,7 @@ const std::map<std::string, std::string> &ServerInfo::getCgis() const {
     return _cgis;
 }
 
-const std::map<std::string, ServerInfo::Location*> &ServerInfo::getLocations() const {
+const std::map<std::string, Location *> &ServerInfo::getLocations() const {
     return _locations;
 }
 
@@ -67,13 +67,13 @@ const std::map<int, std::string> &ServerInfo::getError() const {
 }
 
 
-const std::string &ServerInfo::Location::getIndexPath() const {
-    return _indexPath;
-}
+// const std::string &Location::getIndexPath() const {
+//     return _indexPath;
+// }
 
-bool ServerInfo::Location::hasAutoindex() const {
-    return _autoindex;
-}
+// bool Location::hasAutoindex() const {
+//     return _autoindex;
+// }
 
 void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
 	this->_maxBodySize = MaxBodySize;
@@ -120,7 +120,7 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_serverName = rhs._serverName;
 		_rootPath = rhs._rootPath;
 		_cgis = rhs._cgis;
-		for (std::map<std::string, ServerInfo::Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
+		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
 			
 		}
 		
@@ -129,10 +129,10 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 	return *this;
 }
 
-ServerInfo::Location &ServerInfo::Location::operator=(ServerInfo::Location const &rhs) {
-	if (this != &rhs) {
-		_indexPath = rhs._indexPath;
-		_autoindex = rhs._autoindex;
-	}
-	return *this;
-}
+// ServerInfo::Location &ServerInfo::Location::operator=(ServerInfo::Location const &rhs) {
+// 	if (this != &rhs) {
+// 		_indexPath = rhs._indexPath;
+// 		_autoindex = rhs._autoindex;
+// 	}
+// 	return *this;
+// }

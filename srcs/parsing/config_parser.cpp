@@ -195,18 +195,18 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	delete[] cstr;
 }
 
-void ws::parse_location_line(config_parsing_t &cpt, ServerInfo::Location &location) {
+void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
     std::cout << "\t\tlocation line: " << cpt.line << std::endl;
 }
 
 void ws::check_location_path(std::string const &path) {
-
+	std::cout << "\t\tpath: " << path << std::endl;
 }
 
 int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
     config_parsing_t cpt;
     Server *server = NULL;
-    ServerInfo::Location *location = NULL;
+    Location *location = NULL;
     ConfigLineType lineType;
 
     cpt.file.open(name.c_str());
@@ -250,7 +250,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                     if (server->getServerInfo().getLocations().count(cpt.line) != 0)
                         throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", location block \"" + cpt.line + "\" already declared.");
 
-                    location = new ServerInfo::Location();
+                    location = new Location();
                     server->getServerInfo().addLocation(cpt.line, location);
                     cpt.blockLevel++;
                 } else if (lineType == INFO)

@@ -1,28 +1,14 @@
 #ifndef SERVERINFO_HPP
 # define SERVERINFO_HPP
 
+# include "Location.hpp"
+
 # include <string>
 # include <map>
 # include <stdint.h>
 # include <vector>
 
 class ServerInfo {
-	public:
-		class Location {
-			private:
-				std::string _indexPath;
-
-				bool _autoindex;
-			public:
-				Location();
-				Location(Location const &location);
-				~Location();
-		
-				Location &operator=(Location const &rhs);
-
-                const std::string &getIndexPath() const;
-                bool hasAutoindex() const;
-        };
 	private:
 		uint32_t _maxBodySize;
 		
@@ -35,7 +21,7 @@ class ServerInfo {
 		
 		std::vector<std::string> _method;
 		std::map<std::string, std::string> _cgis;
-		std::map<std::string, ServerInfo::Location*> _locations;
+		std::map<std::string, Location*> _locations;
 		std::map<int, std::string> _errorPage;
 
 	public:
@@ -43,7 +29,7 @@ class ServerInfo {
 		ServerInfo(ServerInfo const &serverInfo);
 		~ServerInfo();
 
-        void addLocation(std::string path, ServerInfo::Location *location);
+        void addLocation(std::string path, Location *location);
 
 		const uint32_t &getMaxBodySize() const;
         bool hasAutoindex() const;
@@ -53,7 +39,7 @@ class ServerInfo {
 		const std::string &getUploadPath() const;
 		const std::vector<std::string> &getMethod() const;
 		const std::map<std::string, std::string> &getCgis() const;
-		const std::map<std::string, ServerInfo::Location*> &getLocations() const;
+		const std::map<std::string, Location*> &getLocations() const;
 		const std::map<int, std::string> &getError() const;
 
 		void  setMaxBodySize(uint32_t MaxBodySize);

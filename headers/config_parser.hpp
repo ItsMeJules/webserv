@@ -28,17 +28,17 @@ namespace ws {
     };
 
     enum confValues {
-	ERROR,
-    NAME,
-	LISTEN,
-	CLIENT_MAX_BODY,
-	AUTOINDEX,
-	METHOD,
-	CGI,
-	INDEX,
-    ERROR_PAGE,
-    UPLOAD,
-    ROOT
+        ERROR,
+        NAME,
+        LISTEN,
+        CLIENT_MAX_BODY,
+        AUTOINDEX,
+        METHOD,
+        CGI,
+        INDEX,
+        ERROR_PAGE,
+        UPLOAD,
+        ROOT,
 };
 
     ConfigLineType get_block_type(config_parsing_t &cpt, std::string line);
@@ -46,7 +46,7 @@ namespace ws {
     int parse_config(std::string const &name, std::vector<Server*> &servers);
     int  check_error_page_key(std::string key);
     void parse_server_line(config_parsing_t &cpt, Server &server);
-    void parse_location_line(config_parsing_t &cpt, ServerInfo::Location &location);
+    void parse_location_line(config_parsing_t &cpt, Location &location);
 
     void check_location_path(std::string const &path);
     void check_opening_bracket(config_parsing_t const &cpt, std::string const &line);
