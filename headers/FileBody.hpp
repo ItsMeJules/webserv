@@ -10,7 +10,6 @@
 
 class FileBody : public IMessageBody {
     private:
-        std::stringstream _inReceive;
 		std::stringstream _contents;
 
         std::string _fileHeader;

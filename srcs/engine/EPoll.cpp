@@ -85,6 +85,7 @@ const int EPoll::polling(Server &server) {
 		if (events[i].events & EPOLLERR) {
 			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + "!");
 			ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events[i].events));
+			
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));
 			else
@@ -92,6 +93,7 @@ const int EPoll::polling(Server &server) {
 			continue ;
 		} else if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
 			ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
+
             ClientSocket socket(server.getSocket().getFd());
             if (!socket.setup())
                 return -3;
@@ -107,7 +109,7 @@ const int EPoll::polling(Server &server) {
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
 				client.getHttpRequest().execute(server.getServerInfo());
-                HttpResponse response = HttpResponse::fromRequest(server.getServerInfo(), client.getHttpRequest());
+                HttpResponse response = client.getHttpRequest().getMethod()->execute();
                 RegularBody *body = new RegularBody();
 
 				body->append("Hello World!");
@@ -119,7 +121,7 @@ const int EPoll::polling(Server &server) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();
-                    modFd(events[i].data.fd, pollInEvent());
+                    modFd(events[i].data.fd, EPOLLIN);
                 }
             } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);

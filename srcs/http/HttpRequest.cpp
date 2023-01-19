@@ -14,12 +14,12 @@ HttpRequest::~HttpRequest() {}
 
 // ############## PUBLIC ##############
 
-std::string HttpRequest::build() {
+const std::string HttpRequest::build() const {
 	std::stringstream ss;
 	ss << _method << " ";
 	ss << _path << " ";
 	ss << _httpVersion << "\r\n";
-	ss << Message::build();
+	ss << HttpMessage::build();
 	return ss.str();
 }
 
@@ -32,7 +32,7 @@ void HttpRequest::execute(ServerInfo const &serverInfo) {
 
 // ############## GETTERS / SETTERS ##############
 
-void HttpRequest::setMethod(std::string method) {
+void HttpRequest::setMethod(HttpMethod *method) {
 	_method = method;
 }
 
@@ -40,7 +40,7 @@ void HttpRequest::setPath(std::string path) {
 	_path = path;
 }
 
-std::string HttpRequest::getMethod() const {
+HttpMethod *HttpRequest::getMethod() const {
 	return _method;
 }
 
@@ -54,7 +54,7 @@ HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 	if (this != &rhs) {
 		_method = rhs._method;
 		_path = rhs._path;
-		Message::operator=(rhs);
+		HttpMessage::operator=(rhs);
 	}
 	return *this;
 }

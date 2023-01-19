@@ -5,13 +5,11 @@
 
 # include <unistd.h>
 
-# include "Message.hpp"
+# include "HttpMessage.hpp"
 # include "Client.hpp"
-# include "ServerInfo.hpp"
-# include "ResponseBuilder.hpp"
 # include "utils.hpp"
 
-class HttpResponse : public Message {
+class HttpResponse : public HttpMessage {
 	private:
 		int _statusCode;
 		ws::http_status_t _statusPhrase;
@@ -23,16 +21,14 @@ class HttpResponse : public Message {
 	public:
 		HttpResponse();
 		HttpResponse(int statusCode);
-		HttpResponse(std::string httpVersion, int statusCode);
 		HttpResponse(HttpResponse const &htttpResponse);
 		~HttpResponse();
 
-		std::string build();
+		const std::string build() const;
 		void send(Client &client);
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 
-        static HttpResponse fromRequest(ServerInfo const &serverInfo, HttpRequest const &request);
         static std::map<int, ws::http_status_t> createCodes();
 };
 

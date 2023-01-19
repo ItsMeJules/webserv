@@ -89,6 +89,7 @@ FileBody &FileBody::operator=(FileBody const &rhs) {
         _fileHeader = rhs._fileHeader;
         _fileName = rhs._fileName;
         _boundary = rhs._boundary;
+        _path = rhs._path;
         _size = rhs._size;
 	}
 	return *this;

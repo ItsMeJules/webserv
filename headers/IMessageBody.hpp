@@ -8,6 +8,8 @@
 
 class IMessageBody {
 	public:
+		virtual ~IMessageBody() {};
+
 		virtual void append(std::string str) = 0;
         virtual void append(std::string str, int size) = 0;
         virtual int parse(std::string body, std::stringstream &inReceive) = 0;

@@ -4,12 +4,8 @@ std::map<int, ws::http_status_t> HttpResponse::codes = HttpResponse::createCodes
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpResponse::HttpResponse(std::string httpVersion, int statusCode)
-	: Message(httpVersion), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
-
 HttpResponse::HttpResponse(int statusCode)
-	: Message("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
-
+	: HttpMessage("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
 
 HttpResponse::HttpResponse() : _statusCode(200), _statusPhrase(codes[200]) {}
 HttpResponse::HttpResponse(HttpResponse const &httpResponse) { *this = httpResponse; }
@@ -19,12 +15,12 @@ HttpResponse::~HttpResponse() {}
 
 // ############## PUBLIC ##############
 
-std::string HttpResponse::build() {
+const std::string HttpResponse::build() const {
 	std::stringstream ss;
 	ss << _httpVersion << " ";
 	ss << _statusCode << " ";
 	ss << _statusPhrase.reason << "\r\n";
-	ss << Message::build();
+	ss << HttpMessage::build();
 	return ss.str();
 }
 
@@ -53,13 +49,6 @@ ws::http_status_t HttpResponse::createStatus(std::string reason, std::string exp
     status.reason = reason;
     status.explanation = explanation;
     return status;
-}
-
-HttpResponse HttpResponse::fromRequest(ServerInfo const &serverInfo, HttpRequest const &request) {
-    ResponseBuilder builder(serverInfo, request);
-
-    builder.generateResponse();
-    return HttpResponse(builder.getStatusCode());
 }
 
 std::map<int, ws::http_status_t> HttpResponse::createCodes() {

@@ -4,26 +4,27 @@
 # include <vector>
 # include <string>
 
-# include "Message.hpp"
+# include "HttpMessage.hpp"
+# include "HttpMethod.hpp"
 # include "FileBody.hpp"
 # include "ServerInfo.hpp"
 
-class HttpRequest : public Message {
+class HttpRequest : public HttpMessage {
 	private:
-		std::string _method;
+		HttpMethod *_method;
 		std::string _path;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
 		~HttpRequest();
 
-		std::string build();
+		const std::string build() const;
 		void execute(ServerInfo const &serverInfo);
 
-		void setMethod(std::string method);
+		void setMethod(HttpMethod *method);
 		void setPath(std::string path);
 
-		std::string getMethod() const;
+		HttpMethod *getMethod() const;
 		std::string getPath() const;
 
 		HttpRequest &operator=(HttpRequest const &rhs);
