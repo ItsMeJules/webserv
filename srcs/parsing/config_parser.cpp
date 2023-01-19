@@ -50,8 +50,8 @@ int ws::check_error_page_key(std::string key) {
 void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     std::cout << "\tserver line: " << cpt.line << std::endl;
     char *cstr = new char [cpt.line.length()+1];
-    std::strcpy (cstr, cpt.line.c_str());
-    char *p = std::strtok (cstr, " ");
+    strcpy (cstr, cpt.line.c_str());
+    char *p = ::strtok (cstr, " ");
 	std::string str = std::string(p);
 	// A mettre dans une autre fonction qui fera également les checks avant parsing
 	std::map<std::string, confValues> matchValues;
@@ -69,46 +69,46 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	switch (matchValues[str])
 	{
 		case NAME:
-			p = std::strtok(NULL," ,|;");
+			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setServerName(p);
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 				std::string test = serverInfo.getServerName();
 				std::cout << "Le nom est " << test << std::endl;
 			}
 			break;
 
 		case LISTEN:
-			p = std::strtok(NULL," ,|;");
+			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
 				ServerSocket socketInfo = server.getSocket();
 				socketInfo.setIp(p);
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 				std::string test1 = socketInfo.getIp();
 				std::cout << "L'IP est " << test1 << std::endl;
 			}
 			break;
 		
 		case CLIENT_MAX_BODY:
-			p = std::strtok(NULL," ,|;");
+			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
 				std::cout << "\t\tvalue: "<< p << '\n';
 				int p_tmp = atoi(p);
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setMaxBodySize(p_tmp); // Créer un translateur de Mb ou Gb en Octet
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 				uint32_t test2 = serverInfo.getMaxBodySize();
 				std::cout << "Le Client_Max_Body est " << test2 << std::endl;
 			}
 			break;
 
 		case AUTOINDEX:
-			p = std::strtok(NULL," ,|;");
+			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
@@ -116,24 +116,24 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					serverInfo.setAutoIndex(true);
 				else
 					serverInfo.setAutoIndex(false);
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 				bool test3 = serverInfo.hasAutoindex();
 				std::cout << "L'autoIndex est " << test3 << std::endl;
 			}
 			break;
 
 		case METHOD:
-			p = std::strtok(NULL," ,|;");
+			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.addtoMethod(p);
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 			}
 			break;
 		
 		case CGI:
-			p = std::strtok(NULL," ,|;");
+			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
@@ -143,24 +143,24 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					path = std::string(p);
 				if (key != "NULL" && path != "NULL")
 					serverInfo.addToCGIS(key, path);
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 			}
 			break;
 
 		case INDEX:
-			p = std::strtok(NULL, " ,|;");
+			p = strtok(NULL, " ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setIndexPath(p);
-				p = std::strtok(NULL," ,|;");
+				p = strtok(NULL," ,|;");
 				std::string test4 = serverInfo.getIndexPath();
 				std::cout << "L'index est " << test4 << std::endl;
 			}
 			break;
 
 		case ERROR_PAGE:
-			p = std::strtok(NULL, " ,|;");
+			p = strtok(NULL, " ,|;");
 			while (p!=0)
 			{
 				ServerInfo serverInfo = server.getServerInfo();
@@ -174,7 +174,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					std::cout << "path: " << path << std::endl;
 					std::cout << "--TEST--" << std::endl;
 				}
-				p = std::strtok(NULL, " ,|;");
+				p = strtok(NULL, " ,|;");
 			}
 			break;
 

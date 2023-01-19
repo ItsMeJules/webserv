@@ -108,7 +108,7 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_serverName = rhs._serverName;
 		_rootPath = rhs._rootPath;
 		_cgis = rhs._cgis;
-		for (std::map<std::string, ServerInfo::Location *>::iterator const it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
+		for (std::map<std::string, ServerInfo::Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
 			
 		}
 		
