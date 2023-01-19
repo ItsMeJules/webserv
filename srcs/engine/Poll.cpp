@@ -109,7 +109,7 @@ int const Poll::polling(Server &server) {
                     server.disconnect(client);
                 } else {  // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();
-                    modFd(it->fd, POLLIN);
+                    modFd(it->fd, pollInEvent());
                 }
             } else if (it->revents & POLLHUP)
                 server.disconnect(client);
@@ -119,11 +119,11 @@ int const Poll::polling(Server &server) {
 }
 
 
-int const Poll::clientEvents() const {
-	return POLLIN;
+int const Poll::pollOutEvent() const {
+	return POLLOUT;
 } // Uniquement pour les clients
 
-int const Poll::listenerEvents() const {
+int const Poll::pollInEvent() const {
     return POLLIN;
 } // Uniquement pour le server
 

@@ -4,14 +4,11 @@ std::map<int, ws::http_status_t> HttpResponse::codes = HttpResponse::createCodes
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpResponse::HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase)
-	: Message(httpVersion), _statusCode(statusCode)
-{
-    _statusPhrase.reason = reasonPhrase;
-}
+HttpResponse::HttpResponse(std::string httpVersion, int statusCode)
+	: Message(httpVersion), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
 
-HttpResponse::HttpResponse(int statusCode, ws::http_status_t statusPhrase)
-	: Message("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(statusPhrase) {}
+HttpResponse::HttpResponse(int statusCode)
+	: Message("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
 
 
 HttpResponse::HttpResponse() : _statusCode(200), _statusPhrase(codes[200]) {}
@@ -53,52 +50,33 @@ HttpResponse &HttpResponse::operator=(HttpResponse const &rhs) {
 HttpResponse HttpResponse::fromRequest(ServerInfo const &serverInfo, HttpRequest const &request) {
     ResponseBuilder builder(serverInfo, request);
 
-    return HttpResponse(builder.getStatusCode(), builder.getStatusPhrase());
+    return HttpResponse(builder.getStatusCode());
 }
 
 std::map<int, ws::http_status_t> HttpResponse::createCodes() {
     std::map<int, ws::http_status_t> codes;
 
-    //succes
+    // succes
     codes[200] = {"OK", ""};
     codes[201] = {"Created", ""};
 
-    //redirection
+    // redirection
     codes[300] = {"Multiple Choices", "The requested resource has multiple options available. Please choose one of the options below:"};
     codes[301] = {"Moved Permanently", "The requested document you're looking for was moved permanently."};
     codes[302] = {"Found", "The old requested document was moved, the new location was found."};
-    codes[303] = "See Other";
-    codes[304] = "Not Modified";
-    codes[305] = "Use proxy";
-    codes[307] = "Temporary redirect";
+    codes[303] = {"See Other", "The resource has been moved."};
 
-    //client error
-    codes[400] = "Bad Request";
-    codes[401] = "Unauthorized";
-    codes[402] = "Payment Required";
-    codes[403] = "Forbidden";
-    codes[404] = "Not Found";
-    codes[405] = "Method non allowed";
-    codes[406] = "Non Acceptable";
-    codes[407] = "Proxy Identification Required";
-    codes[408] = "Request Timeout";
-    codes[409] = "Conflict";
-    codes[410] = "Gone";
-    codes[411] = "Length Required";
-    codes[412] = "Precondition failed";
-    codes[413] = "Payload Too Large";
-    codes[414] = "URI too long";
-    codes[415] = "Unsupported Media Type";
-    codes[416] = "Range Not Satisfiable";
-    codes[417] = "Expectation Failed";
-    codes[426] = "Upgrade Required";
+    // client error
+    codes[400] = {"Bad Request", "The request received is invalid! Please review the request sent by your client."};
+    // codes[401] = {"Unauthorized", "Unauthorized request. Auth credentials not valid."};
+    codes[403] = {"Forbidden", "You are not authorized to access the requested resource."};
+    codes[404] = {"Not Found", "The page you are looking for was not found."};
+    codes[405] = {"Method not allowed", "You can't use this HTTP method on this resource."};
+    codes[413] = {"Payload Too Large", "The payload received exceeds the server's limit."};
 
-//server error
-    codes[500] = "Internal Server Error";
-    codes[501] = "Not Implemented";
-    codes[502] = "Bad Gateway";
-    codes[503] = "Service Unavailable";
-    codes[504] = "Gateway Timeout";
-    codes[505] = "HTTP Version Non supported";
+    // server error
+    codes[500] = {"Internal Server Error", "The server had some unexpected error."};
+    codes[501] = {"Not Implemented", "The HTTP method is not yet supported."};
+    codes[505] = {"HTTP Version Non supported", "The HTTP version is not yet supported."};
     return codes;
 }

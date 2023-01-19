@@ -24,7 +24,7 @@ bool Server::startListening(int backlog) {
 
 bool Server::setup() {
 	ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "setting up the server...");
-    return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->listenerEvents());
+    return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->pollInEvent());
 }
 
 bool Server::receiveData(Client &client) {
@@ -52,7 +52,7 @@ void Server::sendData(Client &client, HttpResponse &response) {
 
 bool Server::connect(Client &client) {
     _clients.insert(std::make_pair(client.getSocket().getFd(), client));
-    return poller->pollFd(client.getSocket().getFd(), poller->clientEvents());
+    return poller->pollFd(client.getSocket().getFd(), poller->pollInEvent());
 }
 
 bool Server::disconnect(Client &client) {

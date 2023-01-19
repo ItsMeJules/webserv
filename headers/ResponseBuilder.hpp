@@ -4,13 +4,16 @@
 # include "HttpRequest.hpp"
 # include "ServerInfo.hpp"
 # include "utils.hpp"
+# include "FileBody.hpp"
 
 class ResponseBuilder {
 	private:
-		ServerInfo const _serverInfo;
-		HttpRequest const _request;
-	public:
+		ServerInfo _serverInfo;
+		HttpRequest _request;
 
+		int _statusCode;
+
+		bool const handleResponse();
 	public:
 		ResponseBuilder();
 		ResponseBuilder(ServerInfo const &serverInfo, HttpRequest const &request);
@@ -18,7 +21,6 @@ class ResponseBuilder {
 		~ResponseBuilder();
 
 		int const &getStatusCode() const;
-		ws::http_status_t const &getStatusPhrase() const;
 
 		ResponseBuilder &operator=(ResponseBuilder const &rhs);
 };

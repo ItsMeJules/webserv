@@ -29,6 +29,7 @@ class ServerInfo {
 
 		std::string _serverName;
 		std::string _rootPath;
+		std::string _uploadPath;
 		
 		std::map<std::string, std::string> _cgis;
 		std::map<std::string, ServerInfo::Location*> _locations;

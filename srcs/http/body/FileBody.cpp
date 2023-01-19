@@ -36,6 +36,14 @@ int FileBody::parse(std::string body, std::stringstream &inReceive) { //TODO par
     return 1;
 }
 
+bool FileBody::createFile(std::string const &path) {
+    const char *filePath = std::string(path + "/" + _fileName).c_str();
+    int fd = ::open(filePath, O_CREAT | O_RDWR);
+
+    chmod(filePath, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    Server::poller->pollFd(fd, Server::poller->pollOutEvent());
+}
+
 // ############## GETTERS / SETTERS ##############
 
 const std::string FileBody::getBody() const {

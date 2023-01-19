@@ -118,7 +118,7 @@ const int EPoll::polling(Server &server) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();
-                    modFd(events[i].data.fd, clientEvents());
+                    modFd(events[i].data.fd, pollInEvent());
                 }
             } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);
@@ -128,11 +128,11 @@ const int EPoll::polling(Server &server) {
 }
 
 
-const int EPoll::clientEvents() const {
-	return EPOLLIN;
+const int EPoll::pollOutEvent() const {
+	return EPOLLOUT;
 }
 
-const int EPoll::listenerEvents() const {
+const int EPoll::pollInEvent() const {
     return EPOLLIN;
 }
 

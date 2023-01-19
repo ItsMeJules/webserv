@@ -1,7 +1,12 @@
 #ifndef FILEBODY_HPP
 # define FILEBODY_HPP
 
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+
 # include "IMessageBody.hpp"
+# include "Server.hpp"
 
 class FileBody : public IMessageBody {
     private:
@@ -20,6 +25,7 @@ class FileBody : public IMessageBody {
         void append(std::string str);
         void append(std::string str, int size);
         int parse(std::string body, std::stringstream &inReceive);
+        bool createFile(std::string const &path);
 
         const std::string getBody() const;
         const std::string &getFileHeader() const;

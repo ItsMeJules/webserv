@@ -20,8 +20,8 @@ class HttpResponse : public Message {
 
 	public:
 		HttpResponse();
-		HttpResponse(int statusCode, ws::http_status_t status);
-		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);
+		HttpResponse(int statusCode);
+		HttpResponse(std::string httpVersion, int statusCode);
 		HttpResponse(HttpResponse const &htttpResponse);
 		~HttpResponse();
 

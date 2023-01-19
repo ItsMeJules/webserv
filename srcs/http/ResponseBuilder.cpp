@@ -12,9 +12,18 @@ ResponseBuilder::~ResponseBuilder() {}
 
 // ############## PRIVATE ##############
 
+bool const ResponseBuilder::handleResponse() {
+	FileBody *fileBody = dynamic_cast<FileBody*>(_request.getMessageBody());
+		if (fileBody != NULL && fileBody->fileCreated())
+	_statusCode = 200;
+}
+
 // ############## PUBLIC ##############
 
 
+int const &ResponseBuilder::getStatusCode() const {
+	return _statusCode;
+}
 
 // ############## GETTERS / SETTERS ##############
 
