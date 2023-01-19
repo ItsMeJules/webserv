@@ -58,8 +58,8 @@ const std::map<std::string, ServerInfo::Location*> &ServerInfo::getLocations() c
     return _locations;
 }
 
-const std::map<std::string, std::string> &ServerInfo::geterror() const {
-	return _error_page;
+const std::map<int, std::string> &ServerInfo::getError() const {
+	return _errorPage;
 }
 
 
@@ -95,8 +95,8 @@ void  ServerInfo::addToCGIS(std::string extension, std::string path) {
 	this->_cgis[extension] = path;
 }
 
-void  ServerInfo::addToError(std::string key, std::string value) {
-	this->_error_page[key] = value;
+void  ServerInfo::addErrorPage(int key, std::string value) {
+	this->_errorPage[key] = value;
 }
 
 // ############## OPERATORS ##############

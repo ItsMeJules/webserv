@@ -64,6 +64,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["index"] = INDEX;
 	matchValues["error_page"] = ERROR_PAGE;
 	// 
+	int val;
 	std::string key = "NULL";
 	std::string path = "NULL";
 	switch (matchValues[str])
@@ -75,9 +76,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setServerName(p);
 				p = strtok(NULL," ,|;");
-				std::string test = serverInfo.getServerName();
-				std::cout << "Le nom est " << test << std::endl;
 			}
+			std::cout << "OK - NAME" << std::endl;
 			break;
 
 		case LISTEN:
@@ -88,23 +88,20 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				ServerSocket socketInfo = server.getSocket();
 				socketInfo.setIp(p);
 				p = strtok(NULL," ,|;");
-				std::string test1 = socketInfo.getIp();
-				std::cout << "L'IP est " << test1 << std::endl;
 			}
+			std::cout << "OK - IP" << std::endl;
 			break;
 		
 		case CLIENT_MAX_BODY:
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				std::cout << "\t\tvalue: "<< p << '\n';
 				int p_tmp = atoi(p);
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setMaxBodySize(p_tmp); // Créer un translateur de Mb ou Gb en Octet
 				p = strtok(NULL," ,|;");
-				uint32_t test2 = serverInfo.getMaxBodySize();
-				std::cout << "Le Client_Max_Body est " << test2 << std::endl;
 			}
+			std::cout << "OK - CLIENT_MAX_BODY" << std::endl;
 			break;
 
 		case AUTOINDEX:
@@ -117,9 +114,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				else
 					serverInfo.setAutoIndex(false);
 				p = strtok(NULL," ,|;");
-				bool test3 = serverInfo.hasAutoindex();
-				std::cout << "L'autoIndex est " << test3 << std::endl;
 			}
+			std::cout << "OK - AUTOINDEX" << std::endl;
 			break;
 
 		case METHOD:
@@ -130,6 +126,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				serverInfo.addtoMethod(p);
 				p = strtok(NULL," ,|;");
 			}
+			std::cout << "OK - METHOD" << std::endl;
 			break;
 		
 		case CGI:
@@ -145,6 +142,7 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					serverInfo.addToCGIS(key, path);
 				p = strtok(NULL," ,|;");
 			}
+			std::cout << "OK - CGI" << std::endl;
 			break;
 
 		case INDEX:
@@ -154,9 +152,8 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				ServerInfo serverInfo = server.getServerInfo();
 				serverInfo.setIndexPath(p);
 				p = strtok(NULL," ,|;");
-				std::string test4 = serverInfo.getIndexPath();
-				std::cout << "L'index est " << test4 << std::endl;
 			}
+			std::cout << "OK - INDEX" << std::endl;
 			break;
 
 		case ERROR_PAGE:
@@ -165,17 +162,14 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			{
 				ServerInfo serverInfo = server.getServerInfo();
 				if (check_error_page_key(std::string(p)))
-					key = std::string(p);
+					val = atoi(p);
 				else
 					path = std::string(p);
-				if (key != "NULL" && path != "NULL") {
-					serverInfo.addToError(key, path);
-					std::cout << "key: "  << key << std::endl;
-					std::cout << "path: " << path << std::endl;
-					std::cout << "--TEST--" << std::endl;
-				}
+				if (val != 0 && path != "NULL")
+					serverInfo.addErrorPage(val, path);
 				p = strtok(NULL, " ,|;");
 			}
+			std::cout << "OK - ERROR_PAGE" << std::endl;
 			break;
 
 		default:
