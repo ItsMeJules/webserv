@@ -36,12 +36,19 @@ int FileBody::parse(std::string body, std::stringstream &inReceive) { //TODO par
     return 1;
 }
 
-bool FileBody::createFile(std::string const &path) {
-    const char *filePath = std::string(path + "/" + _fileName).c_str();
-    int fd = ::open(filePath, O_CREAT | O_RDWR);
+const bool FileBody::createFile(std::string const &path) {
+    _path = std::string(path + "/" + _fileName).c_str();
+    int fd = ::open(_path.c_str(), O_CREAT | O_RDWR);
 
-    chmod(filePath, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH); 
-    Server::poller->pollFd(fd, Server::poller->pollOutEvent());
+    chmod(_path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    write(fd, getBody().c_str(), getSize());
+    // Server::poller->pollFd(fd, Server::poller->pollOutEvent());
+    return true;
+}
+
+const bool FileBody::fileExists() const {
+    struct stat buffer;   
+    return stat(_path.c_str(), &buffer) == 0; 
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -64,6 +71,10 @@ const std::string &FileBody::getFileName() const {
 
 const std::string &FileBody::getBoundary() const {
     return _boundary;
+}
+
+const std::string &FileBody::getPath() const {
+    return _path;
 }
 
 void FileBody::setBoundary(std::string header) {

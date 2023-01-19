@@ -14,6 +14,11 @@ class ResponseBuilder {
 		int _statusCode;
 
 		bool const handleResponse();
+		
+		bool const handleSuccess();
+		bool const handleRedirection();
+		bool const handleClientError();
+		bool const handleServerError();
 	public:
 		ResponseBuilder();
 		ResponseBuilder(ServerInfo const &serverInfo, HttpRequest const &request);
