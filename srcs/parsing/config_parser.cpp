@@ -201,6 +201,10 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 
 void ws::check_location_path(std::string const &path) {
 	std::cout << "\t\tpath: " << path << std::endl;
+	std::ifstream test(path);
+	if (!test)
+    	std::cout << "The file doesn't exist" << std::endl;
+	// Simple Check à implémenter plus tard
 }
 
 int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
