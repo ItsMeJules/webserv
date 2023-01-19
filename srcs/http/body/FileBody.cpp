@@ -19,8 +19,8 @@ void FileBody::append(std::string str, int size) {
 	_size += size;
 }
 
-int FileBody::parse(std::string body, std::stringstream &inReceive) { //TODO parse data sent via http (change python script to add data)
-    size_t endPos = body.find(_boundary + "--");
+int FileBody::parse(std::string body, std::stringstream &inReceive) { // TODO parse data sent via http (change python script to add data)
+    size_t endPos = body.find(_boundary + "--");                        // TODO parse files incoming as chunked body too
     if (endPos == std::string::npos) {
         inReceive << body;
         ws::log(ws::LOG_LVL_DEBUG, "[FILE BODY] -", "data stored in stringstream");
