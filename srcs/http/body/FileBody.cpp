@@ -40,7 +40,7 @@ bool FileBody::createFile(std::string const &path) {
     const char *filePath = std::string(path + "/" + _fileName).c_str();
     int fd = ::open(filePath, O_CREAT | O_RDWR);
 
-    chmod(filePath, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    chmod(filePath, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH); 
     Server::poller->pollFd(fd, Server::poller->pollOutEvent());
 }
 
