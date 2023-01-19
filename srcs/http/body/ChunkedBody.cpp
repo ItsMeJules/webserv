@@ -65,7 +65,9 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
     return hexSize == -2;
 }
 
-bool ChunkedBody::excecute() {}
+bool ChunkedBody::excecute() {
+    return true;
+}
 
 // ############## GETTERS / SETTERS ##############
 

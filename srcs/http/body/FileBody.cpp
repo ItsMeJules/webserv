@@ -36,7 +36,10 @@ int FileBody::parse(std::string body, std::stringstream &inReceive) { //TODO par
     return 1;
 }
 
-bool FileBody::excecute() {}
+bool FileBody::excecute() {
+    createFile();
+    return true;
+}
 
 const bool FileBody::createFile(std::string const &path) {
     _path = std::string(path + "/" + _fileName).c_str();

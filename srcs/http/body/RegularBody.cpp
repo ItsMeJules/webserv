@@ -31,7 +31,9 @@ int RegularBody::parse(std::string body, std::stringstream &inReceive) {
 	return false;
 }
 
-bool RegularBody::excecute() {}
+bool RegularBody::excecute() {
+	return true;
+}
 
 // ############## GETTERS / SETTERS ##############
 

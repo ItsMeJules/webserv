@@ -16,7 +16,6 @@ class FileBody : public IMessageBody {
         std::string _fileHeader;
 		std::string _fileName;
         std::string _boundary;
-        std::string _path;
 
 		int _size;
     public:
@@ -27,7 +26,7 @@ class FileBody : public IMessageBody {
         void append(std::string str);
         void append(std::string str, int size);
         int parse(std::string body, std::stringstream &inReceive);
-        bool excecute();
+        bool excecute(std::string const &method, std::string const &path, std::map<std::string, std::string> const &headers);
         const bool createFile(std::string const &path);
         const bool fileExists() const;
 

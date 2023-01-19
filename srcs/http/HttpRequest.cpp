@@ -24,8 +24,7 @@ std::string HttpRequest::build() {
 }
 
 void HttpRequest::execute() {
-	FileBody *fileBody = dynamic_cast<FileBody*>(_request.getMessageBody());
-	if (fileBody != NULL && fileBody->fileExists())
+	_messageBody->excecute();
 }
 
 // ############## GETTERS / SETTERS ##############
