@@ -7,7 +7,7 @@ std::map<int, ws::http_status_t> HttpResponse::codes = HttpResponse::createCodes
 HttpResponse::HttpResponse(int statusCode)
 	: HttpMessage("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
 
-HttpResponse::HttpResponse() : _statusCode(200), _statusPhrase(codes[200]) {}
+HttpResponse::HttpResponse() : HttpMessage("HTTP/1.1"), _statusCode(200), _statusPhrase(codes[200]) {}
 HttpResponse::HttpResponse(HttpResponse const &httpResponse) { *this = httpResponse; }
 HttpResponse::~HttpResponse() {}
 
@@ -25,6 +25,15 @@ const std::string HttpResponse::build() const {
 }
 
 // ############## GETTERS / SETTERS ##############
+
+void HttpResponse::setStatusCode(int statusCode) {
+    _statusCode = statusCode;
+    _statusPhrase = codes[_statusCode];
+}
+
+const int HttpResponse::getStatusCode() const {
+    return _statusCode;
+}
 
 // ############## OPERATORS ##############
 

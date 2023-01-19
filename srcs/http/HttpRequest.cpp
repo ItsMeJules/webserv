@@ -1,12 +1,14 @@
 #include "HttpRequest.hpp"
 
-#include <iostream>
+std::map<std::string, HttpMethod*> HttpRequest::methods = HttpRequest::initMethods();
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 HttpRequest::HttpRequest() : _method(NULL) {}
 HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
-HttpRequest::~HttpRequest() {}
+HttpRequest::~HttpRequest() {
+	delete _method;
+}
 
 // ############## PRIVATE ##############
 
@@ -23,20 +25,16 @@ const std::string HttpRequest::build() const {
 	return ss.str();
 }
 
-void HttpRequest::execute(ServerInfo const &serverInfo) {
-	FileBody *fileBody = dynamic_cast<FileBody*>(_messageBody);
-	if (fileBody != NULL) {
-		fileBody->createFile(serverInfo.getRootPath() + serverInfo.getUploadPath());
-	}
+HttpResponse HttpRequest::execute(ServerInfo const &serverInfo) {
+	return _method->execute(serverInfo, *this);
 }
 
 // ############## GETTERS / SETTERS ##############
 
 void HttpRequest::setMethod(std::string method) {
-	if (method == "GET")
-		_method = new HttpGet();
-	else
-		_method = NULL;
+	if (HttpRequest::methods.count(method) == 0)
+		return ;
+	_method = HttpRequest::methods.at(method)->clone();
 }
 
 void HttpRequest::setPath(std::string path) {
@@ -60,4 +58,18 @@ HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 		HttpMessage::operator=(rhs);
 	}
 	return *this;
+}
+
+std::map<std::string, HttpMethod*> HttpRequest::initMethods() {
+	std::map<std::string, HttpMethod*> map;
+	
+	map.insert(std::make_pair("GET", new HttpGet()));
+	map.insert(std::make_pair("POST", new HttpPost()));
+	map.insert(std::make_pair("DELETE", new HttpDelete()));
+	return map;
+}
+
+void HttpRequest::clearMethods() {
+    for (std::map<std::string, HttpMethod*>::const_iterator it = HttpRequest::methods.begin(); it != HttpRequest::methods.end(); it++)
+		delete it->second;
 }

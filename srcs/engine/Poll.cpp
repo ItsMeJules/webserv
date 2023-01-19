@@ -97,7 +97,7 @@ int const Poll::polling(Server &server) {
                 else if (client.getRequestParser().isRequestParsed())
                     modFd(it->fd, POLLOUT);
             } else if (it->revents & POLLOUT) {
-                HttpResponse response = client.getHttpRequest().getMethod()->execute();
+                HttpResponse response = client.getHttpRequest().execute(server.getServerInfo());
                 RegularBody *body = new RegularBody();
 
 				body->append("Hello World!");

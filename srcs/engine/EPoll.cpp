@@ -108,8 +108,7 @@ const int EPoll::polling(Server &server) {
 				else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-				client.getHttpRequest().execute(server.getServerInfo());
-                HttpResponse response = client.getHttpRequest().getMethod()->execute();
+                HttpResponse response = client.getHttpRequest().execute(server.getServerInfo());
                 RegularBody *body = new RegularBody();
 
 				body->append("Hello World!");

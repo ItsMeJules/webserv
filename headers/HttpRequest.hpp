@@ -7,20 +7,24 @@
 # include "HttpMessage.hpp"
 # include "HttpMethod.hpp"
 # include "HttpGet.hpp"
-# include "FileBody.hpp"
+# include "HttpPost.hpp"
+# include "HttpDelete.hpp"
+# include "HttpResponse.hpp"
 # include "ServerInfo.hpp"
 
 class HttpRequest : public HttpMessage {
 	private:
 		HttpMethod *_method;
 		std::string _path;
+
+		static std::map<std::string, HttpMethod*> methods;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
 		~HttpRequest();
 
 		const std::string build() const;
-		void execute(ServerInfo const &serverInfo);
+		HttpResponse execute(ServerInfo const &serverInfo);
 
 		void setMethod(std::string method);
 		void setPath(std::string path);
@@ -29,6 +33,9 @@ class HttpRequest : public HttpMessage {
 		std::string getPath() const;
 
 		HttpRequest &operator=(HttpRequest const &rhs);
+
+		static std::map<std::string, HttpMethod*> initMethods();
+		static void clearMethods();
 };
 
 #endif

@@ -11,9 +11,14 @@ HttpGet::~HttpGet() {}
 // ############## PUBLIC ##############
 
 
-HttpResponse HttpGet::execute() {
+HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	return HttpResponse();
 }
+
+HttpMethod *HttpGet::clone() {
+	return new HttpGet();
+}
+
 
 std::string HttpGet::getName() {
 	return "GET";

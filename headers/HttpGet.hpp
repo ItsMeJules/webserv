@@ -11,7 +11,8 @@ class HttpGet : public HttpMethod {
 		HttpGet(HttpGet const &httpGet);
 		~HttpGet();
 
-		HttpResponse execute();
+		HttpResponse execute(ServerInfo const &info, HttpRequest &request);
+		HttpMethod *clone();
 
 		std::string getName();
 
