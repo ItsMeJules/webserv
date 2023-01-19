@@ -47,7 +47,12 @@ bool Server::receiveData(Client &client) {
 }
 
 void Server::sendData(Client &client, HttpResponse &response) {
-    response.send(client);
+	std::string responseStr = response.build();
+
+	ws::log(ws::LOG_LVL_ALL, "[HTTP RESPONSE] -", ws::itos(responseStr.length()) + " chars were sent to fd: " + ws::itos(client.getSocket().getFd()));
+	ws::log(ws::LOG_LVL_DEBUG, "[HTTP RESPONSE] -", "contents:\n----------\n" + responseStr + "\n----------");
+
+	write(client.getSocket().getFd(), responseStr.c_str(), responseStr.length());
 }
 
 bool Server::connect(Client &client) {

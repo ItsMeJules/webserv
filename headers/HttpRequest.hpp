@@ -6,6 +6,7 @@
 
 # include "HttpMessage.hpp"
 # include "HttpMethod.hpp"
+# include "HttpGet.hpp"
 # include "FileBody.hpp"
 # include "ServerInfo.hpp"
 
@@ -21,7 +22,7 @@ class HttpRequest : public HttpMessage {
 		const std::string build() const;
 		void execute(ServerInfo const &serverInfo);
 
-		void setMethod(HttpMethod *method);
+		void setMethod(std::string method);
 		void setPath(std::string path);
 
 		HttpMethod *getMethod() const;

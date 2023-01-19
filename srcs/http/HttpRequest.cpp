@@ -4,7 +4,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpRequest::HttpRequest() {}
+HttpRequest::HttpRequest() : _method(NULL) {}
 HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
 HttpRequest::~HttpRequest() {}
 
@@ -32,8 +32,11 @@ void HttpRequest::execute(ServerInfo const &serverInfo) {
 
 // ############## GETTERS / SETTERS ##############
 
-void HttpRequest::setMethod(HttpMethod *method) {
-	_method = method;
+void HttpRequest::setMethod(std::string method) {
+	if (method == "GET")
+		_method = new HttpGet();
+	else
+		_method = NULL;
 }
 
 void HttpRequest::setPath(std::string path) {

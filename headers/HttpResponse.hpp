@@ -6,7 +6,6 @@
 # include <unistd.h>
 
 # include "HttpMessage.hpp"
-# include "Client.hpp"
 # include "utils.hpp"
 
 class HttpResponse : public HttpMessage {
@@ -25,7 +24,6 @@ class HttpResponse : public HttpMessage {
 		~HttpResponse();
 
 		const std::string build() const;
-		void send(Client &client);
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 

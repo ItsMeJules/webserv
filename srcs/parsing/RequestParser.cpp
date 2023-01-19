@@ -11,7 +11,7 @@ RequestParser::~RequestParser() {}
 void RequestParser::parseFirstLine(std::string firstLine) {
 	size_t pos = 0;
 	while ((pos = firstLine.find(' ')) != std::string::npos) {
-		if (_httpRequest.getMethod().empty())
+		if (_httpRequest.getMethod() == NULL)
 			_httpRequest.setMethod(firstLine.substr(0, pos));
 		else if (_httpRequest.getPath().empty())
 			_httpRequest.setPath(firstLine.substr(0, pos));
@@ -66,7 +66,7 @@ void RequestParser::parseRequest(std::string request) {
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
 			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request metadata was parsed");
-			if (_httpRequest.getMethod() == "GET") // there's no body as it's GET
+			if (_httpRequest.getMethod()->getName() == "GET") // there's no body as it's GET
 				_requestParsed = true;
 			else {
 				request = emptyAndClearStream(); // contains the possible body following headers
