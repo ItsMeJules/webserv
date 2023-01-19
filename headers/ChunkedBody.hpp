@@ -23,6 +23,7 @@ class ChunkedBody : public IMessageBody {
         void append(std::string str);
         void append(std::string str, int size);
         int parse(std::string body, std::stringstream &inReceive);
+        bool excecute();
 
         const std::string getBody() const;
         const int &getSize() const;

@@ -23,6 +23,11 @@ std::string HttpRequest::build() {
 	return ss.str();
 }
 
+void HttpRequest::execute() {
+	FileBody *fileBody = dynamic_cast<FileBody*>(_request.getMessageBody());
+	if (fileBody != NULL && fileBody->fileExists())
+}
+
 // ############## GETTERS / SETTERS ##############
 
 void HttpRequest::setMethod(std::string method) {

@@ -49,7 +49,8 @@ int const &ResponseBuilder::getStatusCode() const {
 
 ResponseBuilder &ResponseBuilder::operator=(ResponseBuilder const &rhs) {
 	if (this != &rhs) {
-		
+		_serverInfo = rhs._serverInfo;
+		_request = rhs._request;
 	}
 	return *this;
 }

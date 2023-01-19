@@ -16,6 +16,7 @@ class HttpRequest : public Message {
 		~HttpRequest();
 
 		std::string build();
+		void execute();
 
 		void setMethod(std::string method);
 		void setPath(std::string path);
