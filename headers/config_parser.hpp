@@ -46,7 +46,7 @@ namespace ws {
 
     int parse_config(std::string const &name, std::vector<Server*> &servers);
     int  check_error_page_key(std::string key);
-    void parse_server_line(config_parsing_t &cpt, Server &server);
+    int parse_server_line(config_parsing_t &cpt, Server &server);
     void parse_location_line(config_parsing_t &cpt, Location &location);
     int checkFileExtension(std::string file);
 

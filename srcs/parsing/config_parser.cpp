@@ -47,15 +47,15 @@ int ws::checkFileExtension(std::string file) {
 
 int ws::check_error_page_key(std::string key) {
 	int	check;
-	int count = 0;
+	int key_err = 0;
 	const char* tmp_c = key.data();
 	if (isdigit(tmp_c[0]))
-		return 1;
+		return (1);
 	else
 		return 0;
 }
 
-void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
+int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     std::cout << "\tserver line: " << cpt.line << std::endl;
     char *cstr = new char [cpt.line.length()+1];
     strcpy (cstr, cpt.line.c_str());
@@ -159,17 +159,21 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			}
 			std::cout << "OK - INDEX" << std::endl;
 			break;
-
+		
 		case ERROR_PAGE:
 			p = strtok(NULL, " ,|;");
 			while (p!=0)
 			{
-				if (check_error_page_key(std::string(p)))
+				std::string value = std::string(p);
+				int size = value.size();
+				if ((size == 3) && (check_error_page_key(value) == 1))
 					val = atoi(p);
-				else
+				if (val <= 600 && val >= 100)
 					path = std::string(p);
-				if (val != 0 && path != "NULL")
-					serverInfo.addErrorPage(val, path);
+				else {
+					std::cerr << "Problem Error_Page configuration" << std::endl;
+					return 1;
+				}
 				p = strtok(NULL, " ,|;");
 			}
 			std::cout << "OK - ERROR_PAGE" << std::endl;
@@ -194,13 +198,13 @@ void ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			}
 			std::cout << "OK - ROOT" << std::endl;
 			break;
-			break;
 
 		default:
 			std::cout << "0 - Error Value" << std::endl;
 			break;
 	}
 	delete[] cstr;
+	return 0;
 }
 
 void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
@@ -313,7 +317,6 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 		std::cerr << "File not authorised" << std::endl; 
 		return 1;
 	}
-
     cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
     cpt.blockLevel = 0;
@@ -358,8 +361,11 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                     location = new Location();
                     server->getServerInfo().addLocation(cpt.line, location);
                     cpt.blockLevel++;
-                } else if (lineType == INFO)
-                    parse_server_line(cpt, *server);
+                } else if (lineType == INFO) {
+					int i = parse_server_line(cpt, *server);
+					if (i == 1)
+						return 1;
+				}     
                 break ;
             case 2: //we are inside location block
                 if (lineType != INFO)
