@@ -37,6 +37,14 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
     throw std::invalid_argument("Block line \"" + line + "\" could not be recognized!");
 }
 
+int ws::checkFileExtension(std::string file) {
+	if (file.rfind(".conf") == -1)
+		return (1);
+	if (!(file.size() > 5))
+		return (1);
+	return (0);	
+}
+
 int ws::check_error_page_key(std::string key) {
 	int	check;
 	int count = 0;
@@ -300,6 +308,11 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
     Server *server = NULL;
     Location *location = NULL;
     ConfigLineType lineType;
+
+	if (ws::checkFileExtension(name)) {
+		std::cerr << "File not authorised" << std::endl; 
+		return 1;
+	}
 
     cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
