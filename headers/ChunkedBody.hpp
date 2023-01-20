@@ -4,8 +4,7 @@
 # include <vector>
 
 # include "IMessageBody.hpp"
-
-# define HEX_VALUES "0123456789abcdef"
+# include "Constants.hpp"
 
 class ChunkedBody : public IMessageBody {
     private:

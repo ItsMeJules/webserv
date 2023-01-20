@@ -8,8 +8,10 @@ class RegularBody : public IMessageBody {
         std::stringstream _body;
         std::string     _msg;
 	    int _size;
+        int _contentLength;
     public:
         RegularBody();
+        RegularBody(int contentLength);
         RegularBody(RegularBody const &regularBody);
         RegularBody(std::string msg) : _msg(msg) {}
         ~RegularBody();

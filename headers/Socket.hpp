@@ -10,7 +10,7 @@
 # include <sys/socket.h>
 # include <fcntl.h>
 
-class IPoll;
+# include "utils.hpp"
 
 class Socket {
 	private:

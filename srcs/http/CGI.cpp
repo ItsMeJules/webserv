@@ -2,6 +2,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#define BUFFER_SIZE 1000000
+
+
 Cgi::Cgi(){}
 
 Cgi::Cgi(Server const &server, HttpRequest &request, std::string binary, std::string target) : _binary(binary), _target(target), _httpRequest(request)
@@ -116,9 +119,8 @@ std::string	Cgi::execute(void)
 	lseek(input_fd, 0, SEEK_SET);
 
 
-	if (pid == -1)
-		return "500"; // ou alors faire un truc avec write response de status code idk
-	else if (pid == 0)
+	
+	if (pid == 0)
 	{
 		char **av = new char * [3];
 		av[0] = new char [_binary.length() + 1];

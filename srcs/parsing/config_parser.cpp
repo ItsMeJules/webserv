@@ -23,7 +23,7 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
     } else if (line.rfind("location", 0) != std::string::npos) {
         ws::skip_chars(line.erase(0, 8), ws::WHITE_SPACES); //skips the spaces before the path
         if (line[0] == '/') {
-            ws::skip_chars(line, ws::PATH_LETTERS); //skips the path
+            ws::skip_chars(line, ws::CONFIG_PATH_LETTERS); //skips the path
             ws::skip_chars(line, ws::WHITE_SPACES); //skips the spaces after the path
             ws::check_opening_bracket(cpt, line);
             return LOCATION;
@@ -31,7 +31,7 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
             throw std::invalid_argument("Location path must be absolute! String: \"" + cpt.line + "\" is invalid!");
     } else {
         size_t declarationEndPos = line.find_first_of(ws::WHITE_SPACES);
-        if (ws::string_in_range(ws::INFO_LETTERS, line, declarationEndPos))
+        if (ws::string_in_range(ws::CONFIG_INFO_LETTERS, line, declarationEndPos))
             return INFO;
     }
     throw std::invalid_argument("Block line \"" + line + "\" could not be recognized!");

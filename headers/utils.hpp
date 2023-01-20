@@ -8,11 +8,12 @@
 
 # include <algorithm>
 
+# include <string.h>
+# include <errno.h>
+
+# include "Constants.hpp"
+
 namespace ws {
-    const std::string WHITE_SPACES = " \t\n\v\f\r";
-    const std::string LOW_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-    const std::string UP_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const std::string LETTERS = LOW_LETTERS + UP_LETTERS;
 
 	// CONVERSIONS
 	int stoi(std::string const &str);
@@ -29,6 +30,8 @@ namespace ws {
 	bool string_in_range(std::string const &range, std::string const &str, size_t npos = std::string::npos);
 	void	ft_strcpy(const char *src, char *dest);
 
+    // LOGGING
+    void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
 }
 	std::string					replace(std::string src, std::string search, std::string replace);
 	std::vector<std::string> ft_split(const std::string &str, const std::string &charset);

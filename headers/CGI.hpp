@@ -22,7 +22,7 @@ class Cgi {
 	public:
 		Cgi();
 		Cgi(Server const &server, HttpRequest &request, std::string binary, std::string target);
-		~Cgi() {}
+		~Cgi();
 
 		std::string getBinary() const;
 

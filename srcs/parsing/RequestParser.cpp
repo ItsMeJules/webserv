@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-RequestParser::RequestParser() : _headersReceived(false) {}
+RequestParser::RequestParser() : _headersReceived(false), _requestParsed(false) {}
 RequestParser::RequestParser(RequestParser const &request) { *this = request; }
 RequestParser::~RequestParser() {}
 
@@ -53,23 +53,34 @@ IMessageBody *RequestParser::getAccordingBodyType() {
     else if (_httpRequest.headersHasKey("Content-Type")
                 && _httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos)
         return new FileBody();
-    else
-        return new RegularBody();
+    else {
+		if (_httpRequest.headersHasKey("Content-Length"))
+			return new RegularBody(ws::stoi(_httpRequest.getHeader("Content-Length")));
+		else
+			return new RegularBody();
+	}
 }
 
 // ############## PUBLIC ##############
 
-bool RequestParser::parseRequest(std::string request) {
+void RequestParser::parseRequest(std::string request) {
 	if (!_headersReceived) {
 		if (request.find("\r\n\r\n") != std::string::npos) {
 			std::string str = emptyAndClearStream() + request;
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			parseHeaders(str.substr(str.find("\r\n") + 2));
-			request = emptyAndClearStream(); // contains the possible body following headers
-			if (!request.empty())
-				parseRequest(request);
-		} else
+			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request metadata was parsed");
+			if (_httpRequest.getMethod() == "GET") // there's no body as it's GET
+				_requestParsed = true;
+			else {
+				request = emptyAndClearStream(); // contains the possible body following headers
+				if (!request.empty())
+					parseRequest(request);
+			}
+		} else {
+			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "data stored in stringstream");
 			_inReceive << request;
+		}
 	} else {
         if (_httpRequest.getMessageBody() == NULL) {
             _httpRequest.setMessageBody(getAccordingBodyType());
@@ -77,15 +88,19 @@ bool RequestParser::parseRequest(std::string request) {
             if (fileBody != NULL && fileBody->getBoundary().empty())
                 fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
         }
-        _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
+        _requestParsed = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive) == 1;
     }
-	return true;
+	if (_requestParsed) {
+		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
+		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
+	}
 }
 
 void RequestParser::clear() {
     HttpRequest empty;
     _headersReceived = false;
     _httpRequest = empty;
+	_requestParsed = false;
     _inReceive.str("");
 }
 
@@ -95,6 +110,10 @@ HttpRequest &RequestParser::getHttpRequest() {
 	return _httpRequest;
 }
 
+const bool RequestParser::isRequestParsed() const {
+	return _requestParsed;
+}
+
 // ############## OPERATORS ##############
 
 RequestParser &RequestParser::operator=(RequestParser const &rhs) {
@@ -102,6 +121,7 @@ RequestParser &RequestParser::operator=(RequestParser const &rhs) {
 		_inReceive << rhs._inReceive.str();
 		_headersReceived = rhs._headersReceived;
 		_httpRequest = rhs._httpRequest;
+		_requestParsed = rhs._requestParsed;
 	}
 	return *this;
 }
