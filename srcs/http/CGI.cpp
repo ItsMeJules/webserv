@@ -1,78 +1,62 @@
 #include "CGI.hpp"
-#include "utils.hpp"
 #include <sys/types.h>
 #include <sys/wait.h>
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target) : _binary(binary), _target(target), _httpRequest(request)
+Cgi::Cgi(Server const &server, HttpRequest &request, std::string binary, std::string target) : _binary(binary), _target(target), _httpRequest(request)
 {
-	// std::vector<std::string> tmp = request.getData();
+	std::vector<std::string> tmp = request.getData();
+	std::string content_type = "text/html";
 
-	// for (std::vector<std::string>::iterator it = tmp.begin(); it != tmp.end() ; it++)
-	// {
-	// 	if (it->find("Content-type: ") != std::string::npos)
-	// 	{
-	// 		content_type = it->substr(14, it->length() - 14);
-	// 		break;
-	// 	}
-	// }
+	for (std::vector<std::string>::iterator it = tmp.begin(); it != tmp.end() ; it++)
+	{
+		if (it->find("Content-type: ") != std::string::npos)
+		{
+			content_type = it->substr(14, it->length() - 14);
+			break;
+		}
+	}
+	_binary = binary;
+	_target = target;
+	_inputBody = request.getMessageBody()->getBody();
 
 
-	// std::vector<std::string> tmp1 = request.getData();
-	// for (std::vector<std::string>::iterator it = tmp1.begin(); it != tmp1.end(); it++)
-	// {
-	// 	if (it->find(":") != std::string::npos)
-	// 	{
-	// 		// std::vector<std::string> split = ft_split(*it, ": ");
-	// 		// ft_to_upper(split[0]);
-	// 		// split[0] = rep
-	// 	}
-	// }
+	std::vector<std::string> tmp1 = request.getData();
+	for (std::vector<std::string>::iterator it = tmp1.begin(); it != tmp1.end(); it++)
+	{
+		if (it->find(":") != std::string::npos)
+		{
+			std::vector<std::string> split = ft_split(*it, ": ");
+			ft_to_upper(split[0]);
+			split[0] = replace(split[0], "-", "_");
+			_env["HTTP_" + split[0]] = split[1];
+		}
 
-	char **arg;
-
+		_env["STATUS_CODE"] = "200";
+		_env["CGI"] = "CGI/1.1";
+		_env["SCRIPT_NAME"] = _binary;
+		_env["REQUEST_METHOD"] = request.getMethod();
+		_env["CONTENT_TYPE"] = content_type;
+		_env["SERVER_PROTOCOL"] = "HTTP/1.1";
+		_env["SERVER_NAME"] = server.getName();
+		_env["REMOTE_USER"] = "user";
+	}
 
 }
 
-std::string getCGIExecutable(std::string uri) {
-	std::string cgiPath = "/usr/local/bin/";
-	std::string cgiExecutable = cgiPath + uri + ".cgi";
-	return cgiExecutable;
-}
+Cgi::~Cgi() {}
 
 std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server const &server)
 {
 	std::string content_type = "text/html";
 	std::map<std::string, std::string> env;
 	std::string _binary;
-
-	env["STATUS_CODE"] = "200";
-	env["CGI"] = "CGI/1.1";
-	env["SCRIPT_NAME"] = _binary;
-	env["REQUEST_METHOD"] = request.getMethod();
-	env["CONTENT_TYPE"] = content_type;
-	env["SERVER_PROTOCOL"] = "HTTP/1.1";
-	env["SERVER_NAME"] = server.getName();
-	env["REMOTE_USER"] = "user";
 	//Pour GET, la seule variable est QUERY STRING
 
 	return env;
 }
 
-
-void handleCGIRequest(Server &server, HttpRequest &request, int clientSocket)
-{
-	std::string binary = getCGIExecutable(request.getPath());
-	std::string target = request.getPath();
-	std::string inputBody = request.getMessageBody()->getBody();
-	std::map<std::string, std::string> env = createCGIMap(request, server);
-	Cgi cgi(server, request, binary, target);
-	cgi.setInputBody(inputBody);
-	cgi.setEnv(env);
-
-	int response = cgi.execute(clientSocket);
-}
 
 std::string	Cgi::getBinary() const
 {
@@ -111,11 +95,12 @@ char **Cgi::envToTab(void)
 	return env;
 }
 
-int	Cgi::execute(int clientSocket)
+std::string	Cgi::execute(void)
 {
 	std::string _body;
 	pid_t	pid;
 	int		ret = 1;
+	char	tmp[BUFFER_SIZE + 1];
 	int		fd[2];
 
 	fd[0] = dup(STDIN_FILENO);
@@ -127,8 +112,12 @@ int	Cgi::execute(int clientSocket)
 	int	input_fd = fileno(input_file);
 	int	output_fd = fileno(output_file);
 
+	write(input_fd, _inputBody.c_str(), _inputBody.length());
+	lseek(input_fd, 0, SEEK_SET);
+
+
 	if (pid == -1)
-		return 500; // ou alors faire un truc avec write response de status code idk
+		return "500"; // ou alors faire un truc avec write response de status code idk
 	else if (pid == 0)
 	{
 		char **av = new char * [3];
@@ -142,11 +131,27 @@ int	Cgi::execute(int clientSocket)
 		ft_strcpy(_target.c_str(), av[1]);
 		av[2] = NULL;
 		execve(_binary.c_str(), av, envToTab());//il faut crer une fonction qui retourne un tab
-		return 500;
+		return "500";
 	}
 	else
 	{
 		waitpid(-1, NULL, 0);
+		lseek(output_fd, 0, SEEK_SET);
+		while (ret > 0)
+		{
+			ft_memset(tmp, 0, BUFFER_SIZE);
+			ret = read(output_fd, tmp, BUFFER_SIZE);
+			tmp[BUFFER_SIZE] = '\0';
+			_body += tmp;
+		}
+		close(output_fd);
+		close(input_fd);
+		dup2(fd[0], STDIN_FILENO);
+		dup2(fd[1], STDOUT_FILENO);
 	}
+	return _body;
 
 }
+
+
+

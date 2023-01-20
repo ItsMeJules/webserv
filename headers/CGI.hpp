@@ -21,13 +21,13 @@ class Cgi {
 
 	public:
 		Cgi();
-		Cgi(Server const &server, HttpRequest const &request, std::string binary, std::string target);
+		Cgi(Server const &server, HttpRequest &request, std::string binary, std::string target);
 		~Cgi() {}
 
 		std::string getBinary() const;
 
 		std::string getTarget() const;
-		int	execute(int clientSocket);
+		std::string	execute(void);
 
 		void	setInputBody(std::string inputBody);
 		char **envToTab(void);

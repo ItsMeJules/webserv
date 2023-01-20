@@ -23,8 +23,6 @@ namespace ws {
 	std::string					ft_to_upper(std::string &str);
 
 
-	std::vector<std::string> ft_split(const std::string &str, const std::string &charset);
-	std::string					replace(std::string src, std::string search, std::string replace);
 
     // STRING MANIPULATION
     std::string &skip_chars(std::string &str, std::string const &toSkip);
@@ -32,5 +30,13 @@ namespace ws {
 	void	ft_strcpy(const char *src, char *dest);
 
 }
+	std::string					replace(std::string src, std::string search, std::string replace);
+	std::vector<std::string> ft_split(const std::string &str, const std::string &charset);
+	std::string	ft_to_upper(std::string &str);
+	void	*ft_memset(void *b, int c, size_t len);
+	void	ft_strcpy(const char *src, char *dest);
+
+
+
 
 #endif
