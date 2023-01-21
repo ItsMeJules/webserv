@@ -52,6 +52,7 @@ namespace ws {
     int checkPort(int port, ServerSocket &socketInfo);
     int checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
     int checkAutoIndex(std::string index, ServerInfo &serverInfo);
+    int checkMethod(std::string method, ServerInfo &serverInfo);
 
 
     void check_location_path(std::string const &path);

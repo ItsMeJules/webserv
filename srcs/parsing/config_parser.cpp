@@ -98,6 +98,17 @@ int ws::checkAutoIndex(std::string index, ServerInfo &serverInfo) {
 	}
 }
 
+int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
+	if ((method.compare("GET") == 0) || (method.compare("POST") == 0) || (method.compare("DELETE") == 0)) {
+		serverInfo.addtoMethod(method);
+		return (0);
+	}
+	else {
+		std::cerr << "Problem Configuration Files - METHOD" << std::endl;
+		return (1);
+	}
+}
+
 int ws::check_error_page_key(std::string key) {
 	int	check;
 	int key_err = 0;
@@ -180,11 +191,13 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "OK - AUTOINDEX" << std::endl;
 			break;
 
-		case METHOD:
+		case METHOD: // Checker --> OK
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				serverInfo.addtoMethod(p);
+				std::string method = std::string(p);
+				if (checkMethod(method, serverInfo))
+					return (1);
 				p = strtok(NULL," ,|;");
 			}
 			std::cout << "OK - METHOD" << std::endl;
