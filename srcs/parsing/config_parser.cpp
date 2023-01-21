@@ -65,7 +65,7 @@ int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	for (; i < len; i++)
 		if (!std::isdigit(size[i]))
 			break;
-			
+
 	if (i != len)
 	{
 		if (size[i] == 'G' && i == len - 1)
@@ -129,7 +129,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "OK - NAME" << std::endl;
 			break;
 
-		case LISTEN:
+		case LISTEN: // Checker --> OK
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
@@ -141,7 +141,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "OK - IP" << std::endl;
 			break;
 		
-		case CLIENT_MAX_BODY:
+		case CLIENT_MAX_BODY: // Checker --> OK
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
@@ -153,7 +153,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "OK - CLIENT_MAX_BODY" << std::endl;
 			break;
 
-		case AUTOINDEX:
+		case AUTOINDEX: 
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
