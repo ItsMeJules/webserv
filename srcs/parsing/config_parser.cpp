@@ -83,6 +83,21 @@ int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	return (0);
 }
 
+int ws::checkAutoIndex(std::string index, ServerInfo &serverInfo) {
+	if (index.compare("on") == 0) {
+		serverInfo.setAutoIndex(true);
+		return (0);
+	}
+	else if (index.compare("off") == 0) {
+		serverInfo.setAutoIndex(false);
+		return (0);
+	}
+	else {
+		std::cerr << "Problem Configuration Files - AUTOINDEX" << std::endl;
+		return (1);
+	}
+}
+
 int ws::check_error_page_key(std::string key) {
 	int	check;
 	int key_err = 0;
@@ -153,14 +168,13 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "OK - CLIENT_MAX_BODY" << std::endl;
 			break;
 
-		case AUTOINDEX: 
+		case AUTOINDEX: // Checker --> OK
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				if (strcmp(p, "on") == 0)
-					serverInfo.setAutoIndex(true);
-				else
-					serverInfo.setAutoIndex(false);
+				std::string index = std::string(p);
+				if (checkAutoIndex(index, serverInfo))
+					return (1);
 				p = strtok(NULL," ,|;");
 			}
 			std::cout << "OK - AUTOINDEX" << std::endl;
