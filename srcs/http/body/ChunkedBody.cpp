@@ -20,7 +20,7 @@ void ChunkedBody::append(std::string str, int size) {
     _totalSize += size;
 }
 
-int ChunkedBody::parse(std::string body, std::stringstream &inReceive) { 
+int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
     static int hexSize = -1;
 
     if (hexSize < 0) {
