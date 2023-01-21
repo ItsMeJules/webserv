@@ -6,7 +6,17 @@
 
 class HttpPost : public HttpMethod {
 	private:
-		
+		typedef struct file_post_s {
+			std::string fileHeader;
+			std::string fileName;
+			std::string filePath;
+			std::string boundary;
+		} file_post_t;
+
+		file_post_t _fileInfo;
+
+		bool isFile(HttpRequest const &request) const;
+		void initFile(std::string const &header, std::string const &body);
 	public:
 		HttpPost();
 		HttpPost(HttpPost const &httpPost);

@@ -46,9 +46,6 @@ std::string RequestParser::emptyAndClearStream() {
 IMessageBody *RequestParser::getAccordingBodyType() {
     if (_httpRequest.headersHasKey("Transfer-Encoding") && _httpRequest.getHeader("Transfer-Encoding") == "chunked")
         return new ChunkedBody();
-    else if (_httpRequest.headersHasKey("Content-Type")
-                && _httpRequest.getHeader("Content-Type").rfind("multipart/form-data", 0) != std::string::npos)
-        return new FileBody();
     else {
 		if (_httpRequest.headersHasKey("Content-Length"))
 			return new RegularBody(ws::stoi(_httpRequest.getHeader("Content-Length")));
@@ -78,12 +75,8 @@ void RequestParser::parseRequest(std::string request) {
 			_inReceive << request;
 		}
 	} else {
-        if (_httpRequest.getMessageBody() == NULL) {
+        if (_httpRequest.getMessageBody() == NULL)
             _httpRequest.setMessageBody(getAccordingBodyType());
-            FileBody *fileBody = dynamic_cast<FileBody*>(_httpRequest.getMessageBody());
-            if (fileBody != NULL && fileBody->getBoundary().empty())
-                fileBody->setBoundary(_httpRequest.getHeader("Content-Type"));
-        }
         _requestParsed = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive) == 1;
     }
 	if (_requestParsed) {
