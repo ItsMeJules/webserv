@@ -49,7 +49,9 @@ namespace ws {
     int parse_server_line(config_parsing_t &cpt, Server &server);
     void parse_location_line(config_parsing_t &cpt, Location &location);
     int checkFileExtension(std::string file);
-    int checkPort(int port, ServerSocket socketInfo);
+    int checkPort(int port, ServerSocket &socketInfo);
+    int checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
+
 
     void check_location_path(std::string const &path);
     void check_opening_bracket(config_parsing_t const &cpt, std::string const &line);

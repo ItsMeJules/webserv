@@ -45,15 +45,42 @@ int ws::checkFileExtension(std::string file) {
 	return (0);	
 }
 
-int ws::checkPort(int port, ServerSocket socketInfo) {
+int ws::checkPort(int port, ServerSocket &socketInfo) {
 	if (port > 0 && port < 65535) {
 		socketInfo.setPort(port);
-		return (1);
-	}
-	else {
-		std::cerr << "Problem Error_Page configuration" << std::endl;
 		return (0);
 	}
+	else {
+		std::cerr << "Problem Configuration Files - LISTEN" << std::endl;
+		return (1);
+	}
+}
+
+int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
+	int len = size.size();
+	int i = 0;
+	int mult = 0;
+	int sizeBody = atoi(size.c_str());
+
+	for (; i < len; i++)
+		if (!std::isdigit(size[i]))
+			break;
+			
+	if (i != len)
+	{
+		if (size[i] == 'G' && i == len - 1)
+			sizeBody *= 1000000000;
+		else if (size[i] == 'M' && i == len - 1)
+			sizeBody *= 1000000;
+		else if (size[i] == 'K' && i == len - 1)
+			sizeBody *= 1000;
+		else {
+			std::cerr << "Problem Configuration Files - CLIENTMAXBODYSIZE" << std::endl;
+			return (1);
+		}
+	}
+	serverInfo.setMaxBodySize(sizeBody);
+	return (0);
 }
 
 int ws::check_error_page_key(std::string key) {
@@ -107,11 +134,8 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0)
 			{
 				int p_tmp = atoi(p);
-				int i = checkPort(p_tmp, socketInfo);
-				if (!checkPort(p_tmp, socketInfo)) {
-					std::cerr << "Problem Error_Page configuration" << std::endl;
-					return 1;
-				}
+				if (checkPort(p_tmp, socketInfo))
+					return (1);
 				p = strtok(NULL," ,|;");
 			}
 			std::cout << "OK - IP" << std::endl;
@@ -121,8 +145,9 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				int p_tmp = atoi(p);
-				serverInfo.setMaxBodySize(p_tmp); // Créer un translateur de Mb ou Gb en Octet
+				std::string size = std::string(p);
+				if (checkClientMaxBodySize(size, serverInfo))
+					return (1);
 				p = strtok(NULL," ,|;");
 			}
 			std::cout << "OK - CLIENT_MAX_BODY" << std::endl;
@@ -187,7 +212,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				if (val <= 600 && val >= 100)
 					path = std::string(p);
 				else {
-					std::cerr << "Problem Error_Page configuration" << std::endl;
+					std::cerr << "Problem Configuration Files - ERROR_PAGE" << std::endl;
 					return 1;
 				}
 				p = strtok(NULL, " ,|;");
@@ -216,7 +241,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			break;
 
 		default:
-			std::cout << "0 - Error Value" << std::endl;
+			std::cerr << "Problem Configuration Files - DEFAULT_ERROR" << std::endl;
 			break;
 	}
 	delete[] cstr;
