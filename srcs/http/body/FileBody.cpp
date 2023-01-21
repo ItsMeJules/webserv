@@ -41,8 +41,8 @@ const bool FileBody::createFile(std::string const &path) {
     int fd = ::open(_path.c_str(), O_CREAT | O_RDWR);
 
     chmod(_path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    write(fd, getBody().c_str(), getSize());
-    // Server::poller->pollFd(fd, Server::poller->pollOutEvent());
+    write(fd, getBody().c_str(), _size);
+    ::close(fd);
     return true;
 }
 

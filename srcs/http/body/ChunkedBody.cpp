@@ -20,21 +20,23 @@ void ChunkedBody::append(std::string str, int size) {
     _totalSize += size;
 }
 
-int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
+int ChunkedBody::parse(std::string body, std::stringstream &inReceive) { 
     static int hexSize = -1;
-    size_t pos = body.find("\r\n");
-    if (pos == std::string::npos) {
-        ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "data stored in stringstream");
-        inReceive << body;
-        return 0;
-    }
 
     if (hexSize < 0) {
+        size_t pos = body.find("\r\n");
+        if (pos == std::string::npos) {
+            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk size not complete. stored in stringstream.");
+            inReceive << body;
+            return 0;
+        }
+
         std::string hexStr = body.substr(0, pos);
         if (!ws::string_in_range(ws::HEX_VALUES, hexStr)) {
             ws::log(ws::LOG_LVL_ERROR, "[CHUNKED BODY] -", "error while reading chunk size. \"" + hexStr + "\" isn't a valid hex value!");
             return -1;
         }
+
         hexSize = ws::hextoi(hexStr);
         ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of " + ws::itos(hexSize) + " chars is about to be parsed");
 
@@ -43,7 +45,12 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         else if (hexSize == 0)
             hexSize = -2;
     } else {
-        std::string chunkContent = body.substr(0, pos);
+        if (body.size() < hexSize) {
+            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk contents not complete. stored in stringstream.");
+            inReceive << body;
+            return 0;
+        }
+        std::string chunkContent = body.substr(0, hexSize);
         if (chunkContent.size() > hexSize) {
             ws::log(ws::LOG_LVL_ERROR, "[CHUNKED BODY] -",
                 "error while reading a chunk, the chunk size is bigger (" + ws::itos(chunkContent.size()) + ")"
@@ -56,7 +63,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of " + ws::itos(hexSize) + " chars was parsed");
         ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "contents:\n" + chunkContent);
 
-        inReceive << body.erase(0, pos + 2);
+        inReceive << body.erase(0, hexSize + 2);
         hexSize = -1;
         // Recursively calls the function to parse the remaining body
         if (body.find("\r\n\r\n") != std::string::npos)

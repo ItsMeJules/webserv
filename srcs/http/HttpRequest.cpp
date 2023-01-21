@@ -18,7 +18,7 @@ HttpRequest::~HttpRequest() {
 
 const std::string HttpRequest::build() const {
 	std::stringstream ss;
-	ss << _method << " ";
+	ss << _method->getName() << " ";
 	ss << _path << " ";
 	ss << _httpVersion << "\r\n";
 	ss << HttpMessage::build();

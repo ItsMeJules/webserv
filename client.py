@@ -2,6 +2,7 @@ import socket
 import requests
 from requests import Session, Request
 import sys
+from requests_toolbelt import MultipartEncoder
 
 # ip = input("Entrez une adresse: ").split(':')
 host = "127.0.0.1"
@@ -27,10 +28,24 @@ r = ""
 files = {'upload_file': open('srcs/main.cpp','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
+m = MultipartEncoder(
+  fields = {
+    "file1": ("upload_file", open("srcs/main.cpp", "rb")),
+  }
+)
+
+def gen_file():
+  a = m.read(1024)
+  while a:
+    yield a
+    a = m.read(1024)
+
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
 elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
     r = requests.post(url, files=files)
+elif (len(sys.argv) > 1 and sys.argv[1] == "c_upload"):
+    r = requests.post(url, data=gen_file(), headers={'Content-Type': m.content_type})
 else:
     s = Session()
     req = Request('POST', url, data="pload")
