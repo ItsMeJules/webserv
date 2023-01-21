@@ -45,6 +45,17 @@ int ws::checkFileExtension(std::string file) {
 	return (0);	
 }
 
+int ws::checkPort(int port, ServerSocket socketInfo) {
+	if (port > 0 && port < 65535) {
+		socketInfo.setPort(port);
+		return (1);
+	}
+	else {
+		std::cerr << "Problem Error_Page configuration" << std::endl;
+		return (0);
+	}
+}
+
 int ws::check_error_page_key(std::string key) {
 	int	check;
 	int key_err = 0;
@@ -78,6 +89,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	std::string key = "NULL";
 	std::string path = "NULL";
 	ServerInfo serverInfo = server.getServerInfo();
+	ServerSocket socketInfo = server.getSocket();
 	switch (matchValues[str])
 	{
 		case NAME:
@@ -94,8 +106,12 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				ServerSocket socketInfo = server.getSocket();
-				socketInfo.setIp(p);
+				int p_tmp = atoi(p);
+				int i = checkPort(p_tmp, socketInfo);
+				if (!checkPort(p_tmp, socketInfo)) {
+					std::cerr << "Problem Error_Page configuration" << std::endl;
+					return 1;
+				}
 				p = strtok(NULL," ,|;");
 			}
 			std::cout << "OK - IP" << std::endl;
