@@ -33,7 +33,7 @@ void HttpResponse::send(Client &client) {
 
 void	HttpResponse::cgi(void)
 {
-
+	
 }
 
 // ############## GETTERS / SETTERS ##############
@@ -42,9 +42,7 @@ std::string	HttpResponse::setDate(void)
 {
 	struct timeval	time;
 	struct tm		*gmt;
-	char *buffer;
-
-	
+	char			*buffer;
 }
 
 // ############## OPERATORS ##############
