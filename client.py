@@ -30,7 +30,7 @@ values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
   fields = {
-    "file1": ("upload_file", open("srcs/main.cpp", "rb")),
+    "main.cpp": ("main.cpp", open("srcs/main.cpp", "rb")),
   }
 )
 

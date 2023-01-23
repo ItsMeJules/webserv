@@ -1,8 +1,13 @@
 #ifndef HTTPPOST_HPP
 # define HTTPPOST_HPP
 
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+# include <unistd.h>
+
 # include "HttpMethod.hpp"
-# include "FileBody.hpp"
+# include "IMessageBody.hpp"
 
 class HttpPost : public HttpMethod {
 	private:
@@ -15,8 +20,10 @@ class HttpPost : public HttpMethod {
 
 		file_post_t _fileInfo;
 
-		bool isFile(HttpRequest const &request) const;
-		void initFile(std::string const &header, std::string const &body);
+		const bool isFile(HttpRequest const &request) const;
+		const bool fileExists() const;
+		void getFileInfo(std::string const &header, std::string const &body);
+		const bool createFile(std::string const &path, const IMessageBody *const body);
 	public:
 		HttpPost();
 		HttpPost(HttpPost const &httpPost);
