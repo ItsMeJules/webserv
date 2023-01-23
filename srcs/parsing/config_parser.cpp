@@ -1,6 +1,4 @@
 #include "config_parser.hpp"
-#include <fstream>
-#include <iostream>
 
 void ws::check_opening_bracket(config_parsing_t const &cpt, std::string const &line) {
     if (line[0] != '{' || line.size() > 1)
@@ -139,7 +137,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
     strcpy (cstr, cpt.line.c_str());
     char *p = ::strtok (cstr, " ");
 	std::string str = std::string(p);
-	// A mettre dans une autre fonction qui fera également les checks avant parsing
+
 	std::map<std::string, confValues> matchValues;
 	matchValues["name"] = NAME;
 	matchValues["listen"] = LISTEN;
@@ -151,7 +149,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["error_page"] = ERROR_PAGE;
 	matchValues["upload"] = UPLOAD;
 	matchValues["root"] = ROOT;
-	// 
+
 	int val;
 	std::string key = "NULL";
 	std::string path = "NULL";
@@ -161,8 +159,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	{
 		case NAME:
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				serverInfo.setServerName(p);
 				p = strtok(NULL," ,|;");
 			}
@@ -170,8 +167,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 		case LISTEN: // Checker --> OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				int p_tmp = atoi(p);
 				if (checkPort(p_tmp, socketInfo))
 					return (1);
@@ -181,8 +177,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 		
 		case CLIENT_MAX_BODY: // Checker --> OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				std::string size = std::string(p);
 				if (checkClientMaxBodySize(size, serverInfo))
 					return (1);
@@ -192,8 +187,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 		case AUTOINDEX: // Checker --> OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				std::string index = std::string(p);
 				if (checkAutoIndex(index, serverInfo))
 					return (1);
@@ -203,8 +197,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 		case METHOD: // Checker --> OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				std::string method = std::string(p);
 				if (checkMethod(method, serverInfo))
 					return (1);
@@ -212,10 +205,9 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			}
 			break;
 		
-		case CGI:
+		case CGI: // OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				if (p[0] == '.')
 					key = std::string(p);
 				else
@@ -226,10 +218,9 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			}
 			break;
 
-		case INDEX:
+		case INDEX: // OK
 			p = strtok(NULL, " ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				serverInfo.setIndexPath(p);
 				p = strtok(NULL," ,|;");
 			}
@@ -237,8 +228,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 		
 		case ERROR_PAGE:
 			p = strtok(NULL, " ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				std::string value = std::string(p);
 				int size = value.size();
 				if ((size == 3) && (check_error_page_key(value) == 1))
@@ -253,19 +243,17 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			}
 			break;
 
-		case UPLOAD:
+		case UPLOAD: // OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				serverInfo.setUploadPath(p);
 				p = strtok(NULL," ,|;");
 			}
 			break;
 
-		case ROOT:
+		case ROOT: // OK
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
+			while (p!=0) {
 				serverInfo.setRootPath(p);
 				p = strtok(NULL," ,|;");
 			}
