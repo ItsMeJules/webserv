@@ -1,4 +1,6 @@
 #include "config_parser.hpp"
+#include <fstream>
+#include <iostream>
 
 void ws::check_opening_bracket(config_parsing_t const &cpt, std::string const &line) {
     if (line[0] != '{' || line.size() > 1)
@@ -38,6 +40,14 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
 }
 
 int ws::checkFileExtension(std::string file) {
+	std::ifstream path;
+	const char * str = file.c_str();
+
+	path.open(str);
+	if (!path) {
+		std::cerr << "Problem Configuration Files - Error: Can't open the file" << std::endl;
+		return (1); }
+	path.close();
 	if (file.rfind(".conf") == -1 || !(file.size() > 5)) {
 		std::cerr << "Problem Configuration Files - The File extension is not .conf" << std::endl;
 		return (1);
@@ -385,7 +395,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 		std::cerr << "File not authorised" << std::endl; 
 		return 1;
 	}
-    cpt.file.open(name.c_str());
+	cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
     cpt.blockLevel = 0;
 
