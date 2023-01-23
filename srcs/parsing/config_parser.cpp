@@ -18,7 +18,11 @@ int ws::check_closing_bracket(config_parsing_t const &cpt) {
 }
 
 ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
-    if (line.rfind("server", 0) != std::string::npos) {
+	if (line.rfind("html", 0) != std::string::npos) {
+		ws::skip_chars(line.erase(0, 4), ws::WHITE_SPACES); //skips the spaces after the block declaration
+        ws::check_opening_bracket(cpt, line);
+        return HTML;
+	} else if (line.rfind("server", 0) != std::string::npos) {
         ws::skip_chars(line.erase(0, 6), ws::WHITE_SPACES); //skips the spaces after the block declaration
         ws::check_opening_bracket(cpt, line);
         return SERVER;
@@ -162,7 +166,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				serverInfo.setServerName(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - NAME" << std::endl;
 			break;
 
 		case LISTEN: // Checker --> OK
@@ -174,7 +177,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					return (1);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - IP" << std::endl;
 			break;
 		
 		case CLIENT_MAX_BODY: // Checker --> OK
@@ -186,7 +188,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					return (1);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - CLIENT_MAX_BODY" << std::endl;
 			break;
 
 		case AUTOINDEX: // Checker --> OK
@@ -198,7 +199,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					return (1);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - AUTOINDEX" << std::endl;
 			break;
 
 		case METHOD: // Checker --> OK
@@ -210,7 +210,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					return (1);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - METHOD" << std::endl;
 			break;
 		
 		case CGI:
@@ -225,7 +224,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					serverInfo.addToCGIS(key, path);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - CGI" << std::endl;
 			break;
 
 		case INDEX:
@@ -235,7 +233,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				serverInfo.setIndexPath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - INDEX" << std::endl;
 			break;
 		
 		case ERROR_PAGE:
@@ -254,7 +251,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				}
 				p = strtok(NULL, " ,|;");
 			}
-			std::cout << "OK - ERROR_PAGE" << std::endl;
 			break;
 
 		case UPLOAD:
@@ -264,7 +260,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				serverInfo.setUploadPath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - UPLOAD" << std::endl;
 			break;
 
 		case ROOT:
@@ -274,7 +269,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				serverInfo.setRootPath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - ROOT" << std::endl;
 			break;
 
 		default:
@@ -311,7 +305,6 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 				loc.setIndexPath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - INDEX" << std::endl;
 			break;
 
 		case AUTOINDEX:
@@ -324,7 +317,6 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 					loc.setAutoIndex(false);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - AUTOINDEX" << std::endl;
 			break;
 
 		case METHOD:
@@ -334,7 +326,6 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 				loc.addtoMethod(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - METHOD" << std::endl;
 			break;
 
 		case UPLOAD:
@@ -344,7 +335,6 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 				loc.setUploadPath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - UPLOAD" << std::endl;
 			break;
 
 		case REWRITE:
@@ -354,7 +344,6 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 				loc.setRewritePath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - REWRITE" << std::endl;
 			break;
 
 		case ROOT:
@@ -364,7 +353,6 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 				loc.setRootPath(p);
 				p = strtok(NULL," ,|;");
 			}
-			std::cout << "OK - ROOT" << std::endl;
 			break;
 
 		default:
@@ -391,10 +379,8 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
     Location *location = NULL;
     ConfigLineType lineType;
 
-	if (ws::checkFileExtension(name)) {
-		std::cerr << "File not authorised" << std::endl; 
+	if (ws::checkFileExtension(name))
 		return 1;
-	}
 	cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
     cpt.blockLevel = 0;
@@ -405,11 +391,11 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
         if (cpt.line.empty())
             continue ;
         if (ws::check_closing_bracket(cpt)) {
-            if (cpt.blockLevel == 1)
+            if (cpt.blockLevel == 2)
                 server = NULL;
-            else if (cpt.blockLevel == 2)
+            else if (cpt.blockLevel == 3)
                 location = NULL;
-            std::cout << (cpt.blockLevel == 2 ? "\t" : "");
+            std::cout << (cpt.blockLevel == 3 ? "\t" : "");
             std::cout << "closing bracket" << std::endl;
             cpt.blockLevel--;
             continue ;
@@ -417,17 +403,23 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 
         lineType = get_block_type(cpt, cpt.line);
         switch (cpt.blockLevel) {
-            case 0: //we are not inside any block
+			case 0: // check if we are inside the HTML, else it's dead
+				if (lineType != HTML)
+                    throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only html blocks can be found at this level.");
+				std::cout << "html line: " << cpt.line <<std::endl;
+				cpt.blockLevel++;
+				break;
+            case 1: //we are inside the html block
                 if (lineType != SERVER)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only server blocks can be found at this level.");
-                std::cout << "new server line: " << cpt.line << std::endl;
+                std::cout << "\tnew server line: " << cpt.line << std::endl;
                 server = new Server();
                 servers.push_back(server);
                 cpt.blockLevel++;
                 break ;
-            case 1: //we are inside server block
+            case 2: //we are inside server block
                 if (lineType == LOCATION && location == NULL) {
-                    std::cout << "\tnew location line: " << cpt.line << std::endl;
+                    std::cout << "\t\tnew location line: " << cpt.line << std::endl;
 
                     ws::skip_chars(cpt.line.erase(0, 8), ws::WHITE_SPACES); //we erase "location", then we skip the spaces after location
                     cpt.line.erase(cpt.line.find_first_of(ws::WHITE_SPACES)); //we erase any trailing characters after the path
@@ -445,7 +437,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 						return 1;
 				}     
                 break ;
-            case 2: //we are inside location block
+            case 3: //we are inside location block
                 if (lineType != INFO)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ": \"" + cpt.line +
                                                 "\" is invalid. There can't be a location block inside another location block.");

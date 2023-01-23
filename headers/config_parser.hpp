@@ -23,6 +23,7 @@ namespace ws {
     } config_parsing_t;
 
     enum ConfigLineType {
+        HTML,
         SERVER,
         LOCATION,
         INFO,
