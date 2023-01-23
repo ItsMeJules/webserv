@@ -38,11 +38,11 @@ ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
 }
 
 int ws::checkFileExtension(std::string file) {
-	if (file.rfind(".conf") == -1)
+	if (file.rfind(".conf") == -1 || !(file.size() > 5)) {
+		std::cerr << "Problem Configuration Files - The File extension is not .conf" << std::endl;
 		return (1);
-	if (!(file.size() > 5))
-		return (1);
-	return (0);	
+	}
+	return (0);
 }
 
 int ws::checkPort(int port, ServerSocket &socketInfo) {
