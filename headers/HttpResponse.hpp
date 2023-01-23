@@ -4,6 +4,7 @@
 # include <string>
 
 # include <unistd.h>
+# include <sys/time.h>
 
 # include "Message.hpp"
 # include "Client.hpp"
@@ -13,6 +14,12 @@ class HttpResponse : public Message {
 		int _statusCode;
 		std::string _reasonPhrase;
 
+		std::string	_body;
+		std::string	_response;
+		std::string	_content_length;
+		std::string	_date;
+		std::string	_header;
+
 	public:
 		HttpResponse();
 		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);
@@ -21,6 +28,10 @@ class HttpResponse : public Message {
 
 		std::string build();
 		void send(Client &client);
+
+		std::string	setDate(void){}
+
+		void	cgi(void);
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 };

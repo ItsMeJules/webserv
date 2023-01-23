@@ -87,6 +87,11 @@ void ServerSocket::setIp(std::string ip) {
     _ip = ip;
 }
 
+int	ServerSocket::getPort() const
+{
+	return _port;
+}
+
 // ############## OPERATORS ##############
 
 ServerSocket &ServerSocket::operator=(ServerSocket const &rhs) {

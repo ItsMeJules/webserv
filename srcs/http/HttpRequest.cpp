@@ -46,6 +46,11 @@ std::vector<std::string> HttpRequest::getData() const
 	return _data;
 }
 
+std::string	HttpRequest::getQuery() const
+{
+	return _query;
+}
+
 // ############## OPERATORS ##############
 
 HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
