@@ -25,12 +25,12 @@ headers = {'Accept': '*/*',
             'User-Agent': 'python-requests/2.25.1'}
 r = ""
 
-files = {'upload_file': open('srcs/main.cpp','rb')}
+files = {'jpeyron.jpg': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
   fields = {
-    "main.cpp": ("main.cpp", open("srcs/main.cpp", "rb")),
+    "main.cpp": ("jpeyron.jpg", open("/home/jules/Pictures/Downloaded/moi/jpeyron.jpg", "rb")),
   }
 )
 

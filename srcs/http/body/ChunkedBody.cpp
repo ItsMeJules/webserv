@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ChunkedBody::ChunkedBody() {}
+ChunkedBody::ChunkedBody() : _totalSize(0) {}
 ChunkedBody::ChunkedBody(ChunkedBody const &chunkedBody) { *this = chunkedBody; }
 ChunkedBody::~ChunkedBody() {}
 
@@ -46,7 +46,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
             hexSize = -2;
     } else {
         if (body.size() < hexSize) {
-            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk contents not complete. stored in stringstream.");
+            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk contents not complete. stored in stringstream. " + ws::itos(hexSize - body.size()) + " chars needed.");
             inReceive << body;
             return 0;
         }

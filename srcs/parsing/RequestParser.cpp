@@ -56,7 +56,7 @@ IMessageBody *RequestParser::getAccordingBodyType() {
 
 // ############## PUBLIC ##############
 
-void RequestParser::parseRequest(std::string request) {
+const bool RequestParser::parseRequest(std::string request) {
 	if (!_headersReceived) {
 		if (request.find("\r\n\r\n") != std::string::npos) {
 			std::string str = emptyAndClearStream() + request;
@@ -77,12 +77,16 @@ void RequestParser::parseRequest(std::string request) {
 	} else {
         if (_httpRequest.getMessageBody() == NULL)
             _httpRequest.setMessageBody(getAccordingBodyType());
-        _requestParsed = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive) == 1;
+		int ret = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
+		if (ret < 0)
+			return false;
+        _requestParsed = ret == 1;
     }
 	if (_requestParsed) {
 		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
 		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
 	}
+	return true;
 }
 
 void RequestParser::clear() {

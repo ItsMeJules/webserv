@@ -7,7 +7,6 @@
 # include "utils.hpp"
 # include "HttpRequest.hpp"
 # include "ChunkedBody.hpp"
-# include "FileBody.hpp"
 # include "RegularBody.hpp"
 
 class RequestParser {
@@ -29,7 +28,7 @@ class RequestParser {
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
-		void parseRequest(std::string request);
+		const bool parseRequest(std::string request);
         void clear();
 
 		HttpRequest &getHttpRequest();

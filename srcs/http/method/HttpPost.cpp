@@ -68,7 +68,7 @@ std::string HttpPost::getName() {
 
 HttpPost &HttpPost::operator=(HttpPost const &rhs) {
 	if (this != &rhs) {
-		
+		_fileInfo = rhs._fileInfo;
 	}
 	return *this;
 }

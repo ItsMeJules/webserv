@@ -25,10 +25,10 @@ int RegularBody::parse(std::string body, std::stringstream &inReceive) {
 	if (_size >= _contentLength) {
 		ws::log(ws::LOG_LVL_ALL, "[REGULAR BODY] -", ws::itos(body.size()) + " chars from body was parsed");
 		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n" + body);
-		return true;
+		return 1;
 	} else
 		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "data stored in stringstream");
-	return false;
+	return 0;
 }
 
 // ############## GETTERS / SETTERS ##############
