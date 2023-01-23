@@ -11,7 +11,7 @@
 #include "Server.hpp"
 #include "utils.hpp"
 
-# define BUFFER_SIZE
+# define BUFFER_SIZE 100000 //temporaire
 
 class Cgi {
 	private:
