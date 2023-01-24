@@ -18,9 +18,7 @@ class HttpResponse : public Message {
 		std::string _reasonPhrase;
 		StatusCode	_status_code;
 
-		std::string	_body;
 		std::string	_response;
-		std::string	_content_length;
 		std::string	_date;
 		std::string	_header;
 		std::string _type;
@@ -34,6 +32,8 @@ class HttpResponse : public Message {
 		std::string build();
 		void send(Client &client);
 		void	get_response(HttpRequest &request, Server &server);
+		void	post_response(HttpRequest &request, Server &server);
+		void	showErrorPage();
 
 		//getter setter functions
 		std::string	setDate(void){}

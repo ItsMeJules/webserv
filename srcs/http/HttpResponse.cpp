@@ -41,19 +41,34 @@ void HttpResponse::get_response(HttpRequest &request, Server &server)
 
 		_response = cgi.execute(request.getIsCgi());
 	}
-	else if (_statusCode == 500)
+	else
 	{
-		_response = _status_code[_statusCode];
+		showErrorPage();
 	}
-
 }
 
-void	showErrorPage(StatusCode &status)
+void	HttpResponse::post_response(HttpRequest &request, Server &server)
 {
-	std::map<int, std::string> mapError = status.getStatusCode();
+	if (request.getIsCgi() != "")
+	{
+		Cgi cgi(request, server);
+		int i = 0;
+		int j = _response.size() - 2;
+		_response = cgi.execute(request.getIsCgi());
+	}
+	else
+	{
+		showErrorPage();
+	}
+}
+
+//cgi ne concerne pas delete method
+
+void	HttpResponse::showErrorPage()
+{
 	std::string page;
 
-	page = "www/error_page/" + ws::itos()
+	page = "www/error_page/" + ws::itos(500) + ".html"; // pour le test mais interer ca avec la map d'error.
 }
 
 // ############## GETTERS / SETTERS ##############
