@@ -44,7 +44,7 @@ def gen_file():
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
 elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
-    r = requests.post(url, files=files, data=values)
+    r = requests.post(url, files=filesPic, data=values)
 elif (len(sys.argv) > 1 and sys.argv[1] == "c_upload"):
     r = requests.post(url, data=gen_file(), headers={'Content-Type': m.content_type})
 else:

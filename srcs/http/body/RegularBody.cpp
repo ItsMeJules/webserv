@@ -23,7 +23,7 @@ int RegularBody::parse(std::string body, std::stringstream &inReceive, int const
 		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n" + body);
 		return 1;
 	} else
-		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "data stored in stringstream. Left to read " + ws::itos(_contentLength - _size));
+		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "data stored in string. Left to read " + ws::itos(_contentLength - _size));
 	return 0;
 }
 

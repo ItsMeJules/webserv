@@ -31,6 +31,7 @@ int FileBody::parse(std::string body, std::stringstream &inReceive, int const &b
 		while ((metadataPos = getBody().find("--" + _boundary + "\r\n")) != std::string::npos) {
 			size_t endHeaderPos = getBody().find("\r\n\r\n");
 			_fileHeader = getBody().substr(metadataPos + _boundary.size() + 4, endHeaderPos - _boundary.size() - 4);
+
 			if (_fileHeader.find("filename=") != std::string::npos) { // find 2x
 				size_t fileNamePos = _fileHeader.find("filename=") + 10;
 				_fileName = _fileHeader.substr(fileNamePos, _fileHeader.size() - fileNamePos - 1);
@@ -68,12 +69,12 @@ const bool FileBody::fileExists() const {
 }
 
 const bool FileBody::createFile(std::string const &path) {
-    _filePath = std::string(path + (path.at(path.size() - 1) != '/' ? "" : "/") + _fileName);
+    _filePath = std::string(path + (path.at(path.size() - 1) != '/' ? "/" : "") + _fileName);
     int fd = ::open(_filePath.c_str(), O_CREAT | O_RDWR);
 
     chmod(_filePath.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     write(fd, getBody().c_str(), getSize());
-	ws::log(ws::LOG_LVL_INFO, "[FILE BODY] -", ws::itos(getSize()) + " chars written.");
+	ws::log(ws::LOG_LVL_INFO, "[FILE BODY] -", ws::itos(getSize()) + " chars written at " + _filePath);
     ::close(fd);
     return true;
 }

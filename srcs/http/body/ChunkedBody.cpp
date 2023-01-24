@@ -21,7 +21,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive, int const
     if (hexSize < 0) {
         size_t pos = body.find("\r\n");
         if (pos == std::string::npos) {
-            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk size not complete. stored in stringstream.");
+            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk size not complete. stored in string.");
             inReceive << body;
             return 0;
         }
@@ -41,7 +41,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive, int const
             hexSize = -2;
     } else {
         if (body.size() < hexSize) {
-            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk contents not complete. stored in stringstream. " + ws::itos(hexSize - body.size()) + " chars needed.");
+            ws::log(ws::LOG_LVL_DEBUG, "[CHUNKED BODY] -", "chunk contents not complete. stored in string. " + ws::itos(hexSize - body.size()) + " chars needed.");
             inReceive << body;
             return 0;
         }
