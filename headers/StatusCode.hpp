@@ -29,6 +29,8 @@ class StatusCode : public RequestParser {
 		void	testCreateResponse();
 		void	writeResponse();
 
+		std::map<int, std::string> getStatusCode() const;
+
 		HttpResponse	createResponse(int errorCode, RegularBody * body);
 };
 

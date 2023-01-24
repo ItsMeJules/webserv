@@ -51,6 +51,11 @@ std::string	HttpRequest::getQuery() const
 	return _query;
 }
 
+std::string HttpRequest::getIsCgi() const
+{
+	return _isCgi;
+}
+
 // ############## OPERATORS ##############
 
 HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {

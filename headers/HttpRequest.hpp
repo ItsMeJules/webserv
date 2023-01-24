@@ -12,6 +12,7 @@ class HttpRequest : public Message {
 		std::string _path;
 		std::vector<std::string> _data;
 		std::string	_query;
+		std::string	_isCgi;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
@@ -26,6 +27,7 @@ class HttpRequest : public Message {
 		std::string getPath() const;
 		std::vector<std::string>	getData() const;
 		std::string getQuery() const;
+		std::string getIsCgi() const;
 
 		HttpRequest &operator=(HttpRequest const &rhs);
 };

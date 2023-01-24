@@ -84,7 +84,7 @@ char **Cgi::envToTab(void)
 	return env;
 }
 
-std::string	Cgi::execute(std::string	&_binary)
+std::string	Cgi::execute(const std::string	&_binary)
 {
 	std::string _body;
 	pid_t	pid;

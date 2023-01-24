@@ -25,7 +25,7 @@ class Cgi {
 		Cgi(HttpRequest &request, Server &server);
 		~Cgi();
 
-		std::string	execute(std::string &_binary);
+		std::string	execute(const std::string &_binary);
 
 		void	setInputBody(std::string inputBody);
 		char **envToTab(void);

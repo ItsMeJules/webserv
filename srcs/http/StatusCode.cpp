@@ -92,6 +92,11 @@ std::string &StatusCode::operator[](int status_code) {
   return _statusCode[status_code];
 }
 
+std::map<int, std::string> StatusCode::getStatusCode() const
+{
+	return _statusCode;
+}
+
 StatusCode	&StatusCode::operator=(StatusCode const &rhs)
 {
 	if (this != &rhs)

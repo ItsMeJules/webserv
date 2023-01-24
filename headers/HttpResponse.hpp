@@ -8,17 +8,22 @@
 
 # include "Message.hpp"
 # include "Client.hpp"
+# include "Server.hpp"
+# include "StatusCode.hpp"
+# include "CGI.hpp"
 
 class HttpResponse : public Message {
 	private:
 		int _statusCode;
 		std::string _reasonPhrase;
+		StatusCode	_status_code;
 
 		std::string	_body;
 		std::string	_response;
 		std::string	_content_length;
 		std::string	_date;
 		std::string	_header;
+		std::string _type;
 
 	public:
 		HttpResponse();
@@ -28,10 +33,11 @@ class HttpResponse : public Message {
 
 		std::string build();
 		void send(Client &client);
+		void	get_response(HttpRequest &request, Server &server);
 
+		//getter setter functions
 		std::string	setDate(void){}
-
-		void	cgi(void);
+		std::string	getResponse() const;
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 };
