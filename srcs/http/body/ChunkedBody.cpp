@@ -10,17 +10,12 @@ ChunkedBody::~ChunkedBody() {}
 
 // ############## PUBLIC ##############
 
-void ChunkedBody::append(std::string str) {
-	append(str, str.size());
-}
-
 void ChunkedBody::append(std::string str, int size) {
-    t_block block = {size, str};
-    _blocks.push_back(block);
     _totalSize += size;
+    _body.append(str);
 }
 
-int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
+int ChunkedBody::parse(std::string body, std::stringstream &inReceive, int const &bodySize) {
     static int hexSize = -1;
 
     if (hexSize < 0) {
@@ -41,7 +36,7 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         ws::log(ws::LOG_LVL_ALL, "[CHUNKED BODY] -", "a chunk of " + ws::itos(hexSize) + " chars is about to be parsed");
 
         if (hexSize != 0 && !body.erase(0, pos + 2).empty()) // deletes up to \r\n
-            parse(body, inReceive);
+            parse(body, inReceive, bodySize);
         else if (hexSize == 0)
             hexSize = -2;
     } else {
@@ -67,18 +62,20 @@ int ChunkedBody::parse(std::string body, std::stringstream &inReceive) {
         hexSize = -1;
         // Recursively calls the function to parse the remaining body
         if (body.find("\r\n\r\n") != std::string::npos)
-            parse(body, inReceive);
+            parse(body, inReceive, bodySize);
     }
     return hexSize == -2;
 }
 
+void ChunkedBody::truncBody(int pos, int npos) {
+    _body.erase(pos, npos);
+    _totalSize -= npos;
+}
+
 // ############## GETTERS / SETTERS ##############
 
-const std::string ChunkedBody::getBody() const {
-	std::stringstream s;
-	for (std::vector<t_block>::const_iterator it = _blocks.begin(); it != _blocks.end(); it++)
-		s << it->content;
-	return s.str();
+const std::string &ChunkedBody::getBody() const {
+	return _body;
 }
 
 const int &ChunkedBody::getSize() const {
@@ -89,7 +86,8 @@ const int &ChunkedBody::getSize() const {
 
 ChunkedBody &ChunkedBody::operator=(ChunkedBody const &rhs) {
 	if (this != &rhs) {
-		_blocks = rhs._blocks;
+		_body = rhs._body;
+		_totalSize = rhs._totalSize;
 	}
 	return *this;
 }

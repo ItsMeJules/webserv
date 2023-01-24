@@ -8,6 +8,7 @@
 # include "HttpRequest.hpp"
 # include "ChunkedBody.hpp"
 # include "RegularBody.hpp"
+# include "FileBody.hpp"
 
 class RequestParser {
 	private:
@@ -22,13 +23,12 @@ class RequestParser {
 
 		std::string emptyAndClearStream();
         IMessageBody *getAccordingBodyType();
-
 	public:
 		RequestParser();
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
-		const bool parseRequest(std::string request);
+		const bool parseRequest(std::string request, int const &byteCount);
         void clear();
 
 		HttpRequest &getHttpRequest();

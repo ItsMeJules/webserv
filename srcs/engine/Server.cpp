@@ -37,7 +37,7 @@ bool Server::receiveData(Client &client) {
         buffer[byteCount] = 0;
 		ws::log(ws::LOG_LVL_INFO, "[SERVER] -", ws::itos(byteCount) + " bytes were read from fd: " + ws::itos(clientFd));
 		ws::log(ws::LOG_LVL_DEBUG, "", std::string("content:\n") + buffer);
-        if (!client.getRequestParser().parseRequest(buffer)) {
+        if (!client.getRequestParser().parseRequest(buffer, byteCount)) {
 			client.setRequestFailed(true);
 			return true;
 		}

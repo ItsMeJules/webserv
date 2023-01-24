@@ -25,7 +25,8 @@ headers = {'Accept': '*/*',
             'User-Agent': 'python-requests/2.25.1'}
 r = ""
 
-files = {'jpeyron.jpg': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
+files = {'upload_file': open('srcs/main.cpp','rb')}
+filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
@@ -43,7 +44,7 @@ def gen_file():
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
 elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
-    r = requests.post(url, files=files)
+    r = requests.post(url, files=files, data=values)
 elif (len(sys.argv) > 1 and sys.argv[1] == "c_upload"):
     r = requests.post(url, data=gen_file(), headers={'Content-Type': m.content_type})
 else:

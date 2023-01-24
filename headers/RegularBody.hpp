@@ -5,7 +5,8 @@
 
 class RegularBody : public IMessageBody {
     private:
-        std::stringstream _body;
+        std::string _body;
+
 	    int _size;
         int _contentLength;
     public:
@@ -14,12 +15,13 @@ class RegularBody : public IMessageBody {
         RegularBody(RegularBody const &regularBody);
         ~RegularBody();
 
-        void append(std::string str);
         void append(std::string str, int size);
-        int parse(std::string body, std::stringstream &inReceive);
+        int parse(std::string body, std::stringstream &inReceive, int const &bodySize);
+		void truncBody(int pos, int npos);
         
-        const std::string getBody() const;
+        const std::string &getBody() const;
         const int &getSize() const;
+
         RegularBody &operator=(RegularBody const &rhs);
 };
 

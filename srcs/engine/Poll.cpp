@@ -100,7 +100,7 @@ int const Poll::polling(Server &server) {
                 HttpResponse response = client.getHttpRequest().execute(server.getServerInfo());
                 RegularBody *body = new RegularBody();
 
-				body->append("Hello World!");
+				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);

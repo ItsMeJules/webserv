@@ -11,30 +11,31 @@ RegularBody::~RegularBody() {}
 
 // ############## PUBLIC ##############
 
-void RegularBody::append(std::string str) {
-	append(str, str.size());
-}
-
 void RegularBody::append(std::string str, int size) {
-	_body << str;
-	_size += str.size();
+	_body.append(str);
+	_size += size;
 }
 
-int RegularBody::parse(std::string body, std::stringstream &inReceive) {
-    append(body);
+int RegularBody::parse(std::string body, std::stringstream &inReceive, int const &byteCount) {
+    append(body, byteCount);
 	if (_size >= _contentLength) {
 		ws::log(ws::LOG_LVL_ALL, "[REGULAR BODY] -", ws::itos(body.size()) + " chars from body was parsed");
 		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n" + body);
 		return 1;
 	} else
-		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "data stored in stringstream");
+		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "data stored in stringstream. Left to read " + ws::itos(_contentLength - _size));
 	return 0;
+}
+
+void RegularBody::truncBody(int pos, int npos) {
+	_body.erase(pos, npos);
+	_size -= npos;
 }
 
 // ############## GETTERS / SETTERS ##############
 
-const std::string RegularBody::getBody() const {
-	return _body.str();
+const std::string &RegularBody::getBody() const {
+	return _body;
 }
 
 const int &RegularBody::getSize() const {
@@ -45,7 +46,7 @@ const int &RegularBody::getSize() const {
 
 RegularBody  &RegularBody ::operator=(RegularBody  const &rhs) {
 	if (this != &rhs) {
-		_body << rhs._body.str();
+		_body = rhs._body;
 		_size = rhs._size;
 		_contentLength = rhs._contentLength;
 	}

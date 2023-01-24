@@ -8,22 +8,10 @@
 
 # include "HttpMethod.hpp"
 # include "IMessageBody.hpp"
+# include "FileBody.hpp"
 
 class HttpPost : public HttpMethod {
 	private:
-		typedef struct file_post_s {
-			std::string fileHeader;
-			std::string fileName;
-			std::string filePath;
-			std::string boundary;
-		} file_post_t;
-
-		file_post_t _fileInfo;
-
-		const bool isFile(HttpRequest const &request) const;
-		const bool fileExists() const;
-		void getFileInfo(std::string const &header, std::string const &body);
-		const bool createFile(std::string const &path, const IMessageBody *const body);
 	public:
 		HttpPost();
 		HttpPost(HttpPost const &httpPost);

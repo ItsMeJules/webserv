@@ -8,24 +8,21 @@
 
 class ChunkedBody : public IMessageBody {
     private:
-        typedef struct s_block {
-            int size;
-            std::string content;
-        } t_block;
+        std::string _body;
 
-        std::vector<t_block> _blocks;
         int _totalSize;
     public:
         ChunkedBody();
         ChunkedBody(ChunkedBody const &chunkedBody);
         ~ChunkedBody();
 
-        void append(std::string str);
         void append(std::string str, int size);
-        int parse(std::string body, std::stringstream &inReceive);
+        int parse(std::string body, std::stringstream &inReceive, int const &bodySize);
+		void truncBody(int pos, int npos);
 
-        const std::string getBody() const;
+        const std::string &getBody() const;
         const int &getSize() const;
+
         ChunkedBody &operator=(ChunkedBody const &rhs);
 };
 

@@ -28,6 +28,7 @@ bool RequestParser::parseHeaders(std::string headers) {
 		headers.erase(0, endLinePos + 2); // +2 skips CRLF
 		if (headers.rfind("\r\n", 0) != std::string::npos) { // does the string start with \r\n
 			_headersReceived = true;
+			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request metadata was parsed");
 			if (headers.size() == 2) // theres no body after the headers
 				return false;
 			_inReceive << headers.substr(2);
@@ -44,31 +45,35 @@ std::string RequestParser::emptyAndClearStream() {
 }
 
 IMessageBody *RequestParser::getAccordingBodyType() {
+	IMessageBody *body;
+
     if (_httpRequest.headersHasKey("Transfer-Encoding") && _httpRequest.getHeader("Transfer-Encoding") == "chunked")
-        return new ChunkedBody();
+			body = new ChunkedBody();
     else {
 		if (_httpRequest.headersHasKey("Content-Length"))
-			return new RegularBody(ws::stoi(_httpRequest.getHeader("Content-Length")));
+			body = new RegularBody(ws::stoi(_httpRequest.getHeader("Content-Length")));
 		else
-			return new RegularBody();
+			body = new RegularBody();
 	}
+	if (_httpRequest.headersHasKey("Content-Type") && _httpRequest.getHeader("Content-Type").rfind("multipart/form-data;", 0) != std::string::npos)
+			return new FileBody(body, _httpRequest.getHeader("Content-Type"));
+	return body;
 }
 
 // ############## PUBLIC ##############
 
-const bool RequestParser::parseRequest(std::string request) {
+const bool RequestParser::parseRequest(std::string request, int const &byteCount) {
 	if (!_headersReceived) {
-		if (request.find("\r\n\r\n") != std::string::npos) {
+		size_t endHeaders = request.find("\r\n\r\n");
+		if (endHeaders != std::string::npos) {
+			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(endHeaders + 4) + " chars from headers.");
 			std::string str = emptyAndClearStream() + request;
 			parseFirstLine(str.substr(0, str.find("\r\n")));
-			parseHeaders(str.substr(str.find("\r\n") + 2));
-			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request metadata was parsed");
-			if (_httpRequest.getMethod()->getName() == "GET") // there's no body as it's GET
+			if (!parseHeaders(str.substr(str.find("\r\n") + 2))) // there's no body
 				_requestParsed = true;
 			else {
-				request = emptyAndClearStream(); // contains the possible body following headers
-				if (!request.empty())
-					parseRequest(request);
+				ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(byteCount - endHeaders - 4) + " chars from body received with headers.");
+				parseRequest(emptyAndClearStream(), byteCount - endHeaders - 4); // removes to byteCount header size.
 			}
 		} else {
 			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "data stored in stringstream");
@@ -77,15 +82,15 @@ const bool RequestParser::parseRequest(std::string request) {
 	} else {
         if (_httpRequest.getMessageBody() == NULL)
             _httpRequest.setMessageBody(getAccordingBodyType());
-		int ret = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive);
+		int ret = _httpRequest.getMessageBody()->parse(emptyAndClearStream() + request, _inReceive, byteCount);
 		if (ret < 0)
 			return false;
         _requestParsed = ret == 1;
+		if (_requestParsed) {
+			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
+			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
+		}
     }
-	if (_requestParsed) {
-		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
-		ws::log(ws::LOG_LVL_DEBUG, "[REGULAR BODY] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
-	}
 	return true;
 }
 

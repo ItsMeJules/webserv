@@ -106,7 +106,6 @@ const int EPoll::polling(Server &server) {
                 if (!server.receiveData(client))
                     server.disconnect(client);
 				else if (client.hasRequestFailed()) {
-					ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "test");
                     modFd(events[i].data.fd, EPOLLOUT);
 				} else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
@@ -121,7 +120,7 @@ const int EPoll::polling(Server &server) {
 					response.addHeader("Connection", "close");
 				}
 
-				body->append("Hello World!");
+				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);
