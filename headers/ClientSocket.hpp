@@ -4,7 +4,6 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 
-# include "utils.hpp"
 # include "Socket.hpp"
 
 class ClientSocket : public Socket {

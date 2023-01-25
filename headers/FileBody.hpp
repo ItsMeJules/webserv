@@ -1,7 +1,8 @@
 #ifndef FILEBODY_HPP
 # define FILEBODY_HPP
 
-# include "utils.hpp"
+
+# include "IMessageBody.hpp"
 
 class FileBody : public IMessageBody {
     private:

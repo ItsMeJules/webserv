@@ -1,5 +1,6 @@
 #include "StatusCode.hpp"
 #include "assert.h"
+# include "HttpResponse.hpp"
 
 
 StatusCode::~StatusCode(){}

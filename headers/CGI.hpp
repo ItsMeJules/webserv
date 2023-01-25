@@ -6,12 +6,17 @@
 # include <cctype>
 # include <unistd.h>
 # include <stdio.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 
+#include "HttpRequest.hpp"
+#include "Server.hpp"
 #include "utils.hpp"
-# include "Server.hpp"
 
-# define BUFFER_SIZE 100000 //temporaire
+// class Server;
+
+# define BUFFER_SIZE 100000
 
 class Cgi {
 	private:

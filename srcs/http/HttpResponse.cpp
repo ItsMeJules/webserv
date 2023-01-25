@@ -1,4 +1,5 @@
 #include "HttpResponse.hpp"
+# include "CGI.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 

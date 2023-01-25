@@ -1,6 +1,5 @@
 #include "CGI.hpp"
-#include <sys/types.h>
-#include <sys/wait.h>
+
 
 
 //http://www.wijata.com/cgi/cgispec.html#4.0  GO GO GO

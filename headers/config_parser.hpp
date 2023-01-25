@@ -4,8 +4,9 @@
 # include <iostream>
 # include <vector>
 # include <fstream>
-
-# include "utils.hpp"
+# include "Server.hpp"
+# include "ServerInfo.hpp"
+# include "Constants.hpp"
 
 namespace ws {
 

@@ -2,6 +2,7 @@
 # define REGULARBODY_HPP
 
 # include "utils.hpp"
+# include "IMessageBody.hpp"
 
 class RegularBody : public IMessageBody {
     private:

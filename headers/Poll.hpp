@@ -5,7 +5,10 @@
 
 # include <poll.h>
 
-# include "utils.hpp"
+
+# include "IPoll.hpp"
+# include "Server.hpp"
+# include "Client.hpp"
 
 class Poll : public IPoll {
 	private:

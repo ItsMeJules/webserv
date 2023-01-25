@@ -4,6 +4,7 @@
 # include <iostream>
 
 # include "utils.hpp"
+# include "Constants.hpp"
 
 class IMessageBody {
 	public:

@@ -6,9 +6,13 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-# include "utils.hpp"
+
+# include "Message.hpp"
+# include "Client.hpp"
 # include "StatusCode.hpp"
-# include "Server.hpp"
+
+class Server;
+//class StatusCode;
 
 class HttpResponse : public Message {
 	private:

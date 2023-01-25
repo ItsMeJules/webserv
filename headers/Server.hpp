@@ -5,12 +5,15 @@
 
 # include <sys/types.h>
 # include <iostream>
-
-# include "utils.hpp"
 # include "ServerSocket.hpp"
-# include "ServerInfo.hpp"
+# include "IPoll.hpp"
+# include "Client.hpp"
+# include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
+# include "ServerInfo.hpp"
+# include "Constants.hpp"
 
+// class HttpResponse;
 class IPoll;
 
 class Server {
