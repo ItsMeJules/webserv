@@ -3,7 +3,7 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 ADataDecoder::ADataDecoder() {
-	_tmp = std::vector<char>(200); // arbitrary size
+	_tmp.reserve(200); // arbitrary size
 }
 
 ADataDecoder::ADataDecoder(ADataDecoder const &aDataDecoder) { *this = aDataDecoder; }
@@ -22,6 +22,8 @@ void ADataDecoder::fillTmp(char *buffer, size_t const &size) {
 }
 
 std::string ADataDecoder::bufferWithTmp(char *buffer, size_t const &size) {
+	if (_tmp.empty())
+		return std::string(buffer, size);
 	return std::string(
 				std::string(_tmp.data(), _tmp.size()) + 
 				std::string(buffer, size));

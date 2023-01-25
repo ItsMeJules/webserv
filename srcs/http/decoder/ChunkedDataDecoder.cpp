@@ -1,5 +1,5 @@
 #include "ChunkedDataDecoder.hpp"
-
+#include <iostream>
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 ChunkedDataDecoder::ChunkedDataDecoder() {
@@ -60,15 +60,16 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 		}
 
 		if (readChunkSize(wholeBuffer, endChunkSizePos) == 2) {
-			size = wholeBuffer.size() - (endChunkSizePos + 2);
-			decodeInto(ws::char_array(wholeBuffer, size, endChunkSizePos), size, vec);
+			buffer = ws::char_array(wholeBuffer, size, endChunkSizePos + 2);
+			decodeInto(buffer, size - (endChunkSizePos + 2), vec);
+			delete buffer;
 		}
 		_tmp.clear();
 	} else {
-		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", ws::itos(size) + " stored, " + ws::itos(size - _actualChunk.size) + " left to read.");
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < _actualChunk.size; i++)
 			_actualChunk.content.push_back(buffer[i]);
-		
+			
+		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", ws::itos(_actualChunk.size) + " chars stored, " + ws::itos(size - _actualChunk.size) + " left to read.");
 		if (!checkChunkSize())
 			return -2;
 		else if (_actualChunk.content.size() == _actualChunk.size) {
@@ -78,8 +79,11 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 			ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "contents:\n" + std::string(_actualChunk.content.data(), _actualChunk.content.size()));
 
 			int endChunk = _actualChunk.size + 2;
+			buffer = ws::char_array(std::string(buffer, size), size, endChunk);
+
 			clearActualChunk();
-			decodeInto(buffer + endChunk, size - endChunk, vec);
+			decodeInto(buffer, size - endChunk, vec);
+			delete buffer;
 		}
 	}
 	return _actualChunk.size == 0;
