@@ -5,11 +5,9 @@
 # include <string>
 # include <map>
 
-#include "utils.hpp"
-#include "RequestParser.hpp"
-#include "HttpResponse.hpp"
-#include "RegularBody.hpp"
+# include "utils.hpp"
 # include "FileBody.hpp"
+# include "HttpResponse.hpp"
 
 class StatusCode : public RequestParser {
 	private:

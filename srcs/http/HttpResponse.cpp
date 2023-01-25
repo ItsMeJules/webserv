@@ -73,17 +73,17 @@ void	HttpResponse::showErrorPage()
 
 // ############## GETTERS / SETTERS ##############
 
-std::string	HttpResponse::setDate(void)
-{
-	char			buffer[100];
-	struct timeval	tv;
-	struct tm		*gmt;
+// std::string	HttpResponse::setDate(void)
+// {
+// 	char			buffer[100];
+// 	struct timeval	tv;
+// 	struct tm		*gmt;
 
-	gettimeofday(&tv, NULL);
-	gmt = gmtime(&tv.tv_sec);
-	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
-	return buffer;
-}
+// 	gettimeofday(&tv, NULL);
+// 	gmt = gmtime(&tv.tv_sec);
+// 	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
+// 	return buffer;
+// }
 
 std::string	HttpResponse::getResponse() const
 {

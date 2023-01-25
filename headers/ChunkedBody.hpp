@@ -3,8 +3,7 @@
 
 # include <vector>
 
-# include "IMessageBody.hpp"
-# include "Constants.hpp"
+# include "utils.hpp"
 
 class ChunkedBody : public IMessageBody {
     private:

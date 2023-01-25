@@ -6,11 +6,9 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-# include "Message.hpp"
-# include "Client.hpp"
-# include "Server.hpp"
+# include "utils.hpp"
 # include "StatusCode.hpp"
-# include "CGI.hpp"
+# include "Server.hpp"
 
 class HttpResponse : public Message {
 	private:
@@ -36,10 +34,13 @@ class HttpResponse : public Message {
 		void	showErrorPage();
 
 		//getter setter functions
-		std::string	setDate(void){}
+		// std::string	setDate(void){}
 		std::string	getResponse() const;
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 };
 
 #endif
+
+
+// faire une fonction de la reponse avec le header et mettre la date dedans

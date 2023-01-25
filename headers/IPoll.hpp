@@ -3,16 +3,14 @@
 
 # include <vector>
 
-# include "Server.hpp"
 # include "utils.hpp"
-# include "Constants.hpp"
 
 class Server;
 
 class IPoll {
 	public:
 		virtual ~IPoll() {};
-		
+
 		virtual const bool init() = 0;
 		virtual const bool pollFd(int fd, int event) = 0;
 		virtual const bool deleteFd(int fd) = 0;

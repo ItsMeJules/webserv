@@ -6,10 +6,7 @@
 
 #  include <sys/epoll.h>
 
-#  include "IPoll.hpp"
-#  include "Server.hpp"
-#  include "Client.hpp"
-# include "StatusCode.hpp"
+# include "utils.hpp"
 
 class EPoll : public IPoll {
 	private:
@@ -26,7 +23,7 @@ class EPoll : public IPoll {
 		bool const deleteFd(int fd);
         bool const modFd(int fd, int event);
 		int const polling(Server &server);
-		
+
 		int const clientEvents() const;
         int const listenerEvents() const;
 

@@ -5,6 +5,8 @@
 # include <map>
 # include <stdint.h>
 
+# include "utils.hpp"
+
 class ServerInfo {
 	public:
 		class Location {
@@ -16,7 +18,7 @@ class ServerInfo {
 				Location();
 				Location(Location const &location);
 				~Location();
-		
+
 				Location &operator=(Location const &rhs);
 
                 const std::string &getIndexPath() const;
@@ -24,12 +26,12 @@ class ServerInfo {
         };
 	private:
 		uint32_t _maxBodySize;
-		
+
 		bool _autoindex;
 
 		std::string _serverName;
 		std::string _rootPath;
-		
+
 		std::map<std::string, std::string> _cgis;
 		std::map<std::string, ServerInfo::Location*> _locations;
 	public:

@@ -3,8 +3,8 @@
 
 # include <iostream>
 
+# include "utils.hpp"
 # include "ClientSocket.hpp"
-# include "HttpRequest.hpp"
 # include "RequestParser.hpp"
 
 class Client {

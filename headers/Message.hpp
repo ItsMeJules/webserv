@@ -4,6 +4,7 @@
 # include <map>
 # include <iostream>
 
+# include "utils.hpp"
 # include "IMessageBody.hpp"
 
 class Message {
@@ -23,10 +24,10 @@ class Message {
 		const std::string &getHeader(std::string headerTag) const;
         bool headersHasKey(std::string headerTag) const;
         bool headersContains(std::string headerTag, std::string value) const;
-		
+
 		void setMessageBody(IMessageBody *messageBody);
 		void setHttpVersion(std::string httpVersion);
-		
+
 		const std::string &getHttpVersion() const;
 		const std::map<std::string, std::string> getHeaders() const;
 		IMessageBody *getMessageBody();

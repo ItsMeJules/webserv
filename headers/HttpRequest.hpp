@@ -4,6 +4,7 @@
 # include <vector>
 # include <string>
 
+# include "utils.hpp"
 # include "Message.hpp"
 
 class HttpRequest : public Message {

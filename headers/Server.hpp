@@ -6,13 +6,10 @@
 # include <sys/types.h>
 # include <iostream>
 
+# include "utils.hpp"
 # include "ServerSocket.hpp"
-# include "IPoll.hpp"
-# include "Client.hpp"
-# include "HttpRequest.hpp"
-# include "HttpResponse.hpp"
 # include "ServerInfo.hpp"
-# include "Constants.hpp"
+# include "HttpResponse.hpp"
 
 class IPoll;
 
@@ -23,6 +20,7 @@ class Server {
 
 		std::map<int, Client> _clients;
 		std::string _name;
+		std::map<int, std::string>	_error;
 
 		bool startListening(int backlog);
     public:
@@ -41,6 +39,7 @@ class Server {
         bool connect(Client &client);
         bool disconnect(Client &client);
 		bool isConnected(int const fd);
+		void	pathErrorPages(void);
 
 		std::string	getName() const;
 		Client &getClient(int const fd);

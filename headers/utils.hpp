@@ -5,6 +5,7 @@
 # include <sstream>
 # include <iostream>
 # include <vector>
+# include <map>
 
 # include <algorithm>
 
@@ -12,6 +13,27 @@
 # include <errno.h>
 
 # include "Constants.hpp"
+# include "Client.hpp"
+# include "ClientSocket.hpp"
+# include "CGI.hpp"
+# include "ChunkedBody.hpp"
+# include "config_parser.hpp"
+# include "EPoll.hpp"
+# include "FileBody.hpp"
+# include "HttpRequest.hpp"
+# include "HttpResponse.hpp"
+# include "IMessageBody.hpp"
+# include "IPoll.hpp"
+# include "Message.hpp"
+# include "Poll.hpp"
+# include "RegularBody.hpp"
+# include "RequestParser.hpp"
+# include "Server.hpp"
+# include "Socket.hpp"
+# include "ServerInfo.hpp"
+# include "ServerSocket.hpp"
+# include "StatusCode.hpp"
+
 
 namespace ws {
 

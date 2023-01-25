@@ -70,6 +70,16 @@ Client &Server::getClient(int const fd) {
 	return _clients[fd];
 }
 
+void	Server::pathErrorPages()
+{
+	_error.insert(std::make_pair(400, "www/error_pages/400.html"));
+	_error.insert(std::make_pair(404, "www/error_pages/404.html"));
+	_error.insert(std::make_pair(405, "www/error_pages/405.html"));
+	_error.insert(std::make_pair(500, "www/error_pages/500.html"));
+	_error.insert(std::make_pair(502, "www/error_pages/502.html"));
+	_error.insert(std::make_pair(503, "www/error_pages/503.html"));
+}
+
 // ############## GETTERS / SETTERS ##############
 
 const ServerSocket &Server::getSocket() const {
