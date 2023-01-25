@@ -8,6 +8,8 @@
 class FormDataBody : public AMessageBody {
 	private:
 		class FormDataPart {
+			private:
+				int strPos(std::string str) const;
 			public:
 				FormDataPart();
 				FormDataPart(FormDataPart const &formDataPart);
@@ -22,7 +24,7 @@ class FormDataBody : public AMessageBody {
 
 				bool _parsed;
 				
-				int parse(FormDataBody const &parent);
+				int parse(FormDataBody const &parent, size_t const &partEndPos);
 
 				FormDataPart &operator=(FormDataPart const &rhs);
 		};
@@ -30,6 +32,9 @@ class FormDataBody : public AMessageBody {
 		std::vector<FormDataPart> _parts;
 		std::vector<char> _tmp;
 		std::string _boundary;
+
+		void printVector() const;
+		int nextCRLFpos(int pos = 0, int nCRLF = 1) const;
 	public:
 		FormDataBody();
 		FormDataBody(ADataDecoder *decoder, std::string boundaryHeader);
