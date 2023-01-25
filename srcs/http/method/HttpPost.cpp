@@ -12,12 +12,12 @@ HttpPost::~HttpPost() {}
 
 HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	ws::log(ws::LOG_LVL_INFO, "[HTTP POST] -", "executing post request.");
-	FileBody *fileBody = dynamic_cast<FileBody*>(request.getMessageBody());
+	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 	HttpResponse response;
 	
-	if (fileBody != NULL) {
-		fileBody->createFile(serverInfo.getRootPath() + serverInfo.getUploadPath());
-		response.setStatusCode(fileBody->fileExists() ? 201 : 500);
+	if (formBody != NULL) {
+		// fileBody->createFile(serverInfo.getRootPath() + serverInfo.getUploadPath());
+		// response.setStatusCode(fileBody->fileExists() ? 201 : 500);
 	}
 	return response;
 }

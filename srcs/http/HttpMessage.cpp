@@ -19,7 +19,7 @@ const std::string HttpMessage::build() const {
 		ss << it->first << ": " << it->second << "\r\n";
 	ss << "\r\n";
 	if (_messageBody != NULL)
-		ss << _messageBody->getBody();
+		ss << _messageBody->getBodyStr();
     return ss.str();
 }
 
@@ -41,7 +41,7 @@ bool HttpMessage::headersContains(std::string headerTag, std::string value) cons
 
 // ############## GETTERS / SETTERS ##############
 
-void HttpMessage::setMessageBody(IMessageBody *messageBody) {
+void HttpMessage::setMessageBody(AMessageBody *messageBody) {
 	_messageBody = messageBody;
 }
 
@@ -49,7 +49,7 @@ void HttpMessage::setHttpVersion(std::string httpVersion) {
 	_httpVersion = httpVersion;
 }
 
-IMessageBody *HttpMessage::getMessageBody() {
+AMessageBody *HttpMessage::getMessageBody() {
 	return _messageBody;
 }
 

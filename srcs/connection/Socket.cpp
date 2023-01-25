@@ -1,34 +1,34 @@
-# include "Socket.hpp"
+# include "ASocket.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Socket::Socket() {}
-Socket::Socket(Socket const &socket) { *this = socket; }
-Socket::~Socket() {}
+ASocket::ASocket() {}
+ASocket::ASocket(ASocket const &socket) { *this = socket; }
+ASocket::~ASocket() {}
 
 // ############## PUBLIC ##############
 
-bool Socket::close() const {
+bool ASocket::close() const {
 	bool ret = ::close(_fd) == 0;
 	if (ret)
-		ws::log(ws::LOG_LVL_SUCCESS, "[SOCKET] -", "successfully closed socket with fd: " + ws::itos(_fd));
+		ws::log(ws::LOG_LVL_SUCCESS, "[ASOCKET] -", "successfully closed socket with fd: " + ws::itos(_fd));
 	else
-		ws::log(ws::LOG_LVL_ERROR, "[SOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!", true);
+		ws::log(ws::LOG_LVL_ERROR, "[ASOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!", true);
     return ret;
 }
 
 // ############## GETTERS / SETTERS ##############
-const int &Socket::getFd() const {
+const int &ASocket::getFd() const {
 	return _fd;
 }
 
-const sockaddr_in &Socket::getAddress() const {
+const sockaddr_in &ASocket::getAddress() const {
 	return _address;
 }
 
 // ############## OPERATORS ##############
 
-Socket &Socket::operator=(Socket const &rhs) {
+ASocket &ASocket::operator=(ASocket const &rhs) {
 	if (this != &rhs) {
 		_fd = rhs._fd;
 		_address = rhs._address;

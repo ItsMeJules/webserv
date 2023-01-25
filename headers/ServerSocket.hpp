@@ -11,9 +11,9 @@
 # include <unistd.h>
 # include <arpa/inet.h>
 
-# include "Socket.hpp"
+# include "ASocket.hpp"
 
-class ServerSocket : public Socket {
+class ServerSocket : public ASocket {
 	private:
 		int _domain;
 		int _type;

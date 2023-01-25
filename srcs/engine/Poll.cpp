@@ -98,11 +98,11 @@ int const Poll::polling(Server &server) {
                     modFd(it->fd, POLLOUT);
             } else if (it->revents & POLLOUT) {
                 HttpResponse response = client.getHttpRequest().execute(server.getServerInfo());
-                RegularBody *body = new RegularBody();
+                DefaultBody *body = new DefaultBody();
 
 				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body->getSize()));
+                response.addHeader("Content-Length", ws::itos(body->getBody().size()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
                 if (client.getHttpRequest().headersContains("Connection", "close")) {

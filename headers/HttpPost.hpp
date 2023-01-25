@@ -7,8 +7,8 @@
 # include <unistd.h>
 
 # include "HttpMethod.hpp"
-# include "IMessageBody.hpp"
-# include "FileBody.hpp"
+# include "AMessageBody.hpp"
+# include "FormDataBody.hpp"
 
 class HttpPost : public HttpMethod {
 	private:

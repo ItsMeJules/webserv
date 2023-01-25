@@ -111,7 +111,7 @@ const int EPoll::polling(Server &server) {
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
                 HttpResponse response;
-                RegularBody *body = new RegularBody();
+                DefaultBody *body = new DefaultBody();
 
 				if (!client.hasRequestFailed())
 					response = client.getHttpRequest().execute(server.getServerInfo());
@@ -122,7 +122,7 @@ const int EPoll::polling(Server &server) {
 
 				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body->getSize()));
+                response.addHeader("Content-Length", ws::itos(body->getBody().size()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)

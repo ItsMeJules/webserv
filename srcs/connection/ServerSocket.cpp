@@ -95,7 +95,7 @@ ServerSocket &ServerSocket::operator=(ServerSocket const &rhs) {
 		_type = rhs._type;
 		_protocol = rhs._protocol;
 		_port = rhs._port;
-		Socket::operator=(rhs);
+		ASocket::operator=(rhs);
 	}
 	return *this;
 }

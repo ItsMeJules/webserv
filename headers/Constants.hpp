@@ -12,7 +12,7 @@ namespace ws {
 	const int LOG_LVL_ALL = 16; //		00010000
 	const int LOG_LVL_DEBUG = 32; //	00100000
 	// 00111110
-	const int LOG_LVL = LOG_LVL_INFO | LOG_LVL_SUCCESS | LOG_LVL_ERROR | LOG_LVL_ALL | LOG_LVL_DEBUG;
+	const int LOG_LVL = LOG_LVL_INFO | LOG_LVL_SUCCESS | LOG_LVL_ERROR | LOG_LVL_ALL;
 
     const std::string WHITE_SPACES = " \t\n\v\f\r";
     const std::string LOW_LETTERS = "abcdefghijklmnopqrstuvwxyz";
@@ -27,7 +27,7 @@ namespace ws {
 	const int POLL_EVENTS_SIZE = 10;
 	const int POLL_WAIT_TIMEOUT = 60 * 1000;
 
-	const int RECV_BUFFER_SIZE = 100;
+	const int RECV_BUFFER_SIZE = 1000000;
 
 	const std::string C_AQUA = "\033[38;5;14m";
 	const std::string C_YELLOW = "\033[38;5;184m";
