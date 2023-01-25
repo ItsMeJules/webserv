@@ -40,13 +40,21 @@ bool ws::string_in_range(std::string const &range, std::string const &str, size_
 
 void ws::log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno) {
 	const int lvl = ws::LOG_LVL & level;
-	if (ws::LOG_LVL & ws::LOG_LVL_NONE)
+	std::string color;
+
+	if (ws::LOG_LVL & ws::LOG_LVL_NONE || !lvl)
 		return ;
 
-	if (lvl == ws::LOG_LVL_ERROR || lvl == ws::LOG_LVL_INFO
-		|| lvl == ws::LOG_LVL_SUCCESS || lvl == ws::LOG_LVL_ALL
-		|| lvl == ws::LOG_LVL_DEBUG)
-			std::cout << "(LOGLVL: " << level << ") " << prefix << (prefix.empty() ? "" : " ") << message << std::endl;
+	if (lvl == ws::LOG_LVL_ERROR)
+		color = ws::C_RED;
+	else if (lvl == ws::LOG_LVL_INFO || lvl == ws::LOG_LVL_ALL)
+		color = ws::C_YELLOW;
+	else if (lvl == ws::LOG_LVL_SUCCESS)
+		color = ws::C_LIME;
+	else if (lvl == ws::LOG_LVL_DEBUG)
+		color = C_SILVER;
+
+	std::cout << "(LOGLVL: " << level << ") " << ws::C_AQUA << prefix << (prefix.empty() ? "" : " ") << color << message << ws::C_RESET << std::endl;
 	if (_errno)
 		std::cout << "\n error: " << strerror(errno) << std::endl;
 }

@@ -30,7 +30,7 @@ values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
 elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
-    r = requests.post(url, files=files, data=values)
+    r = requests.post(url, files=files)
 else:
     s = Session()
     req = Request('POST', url, data=pload)

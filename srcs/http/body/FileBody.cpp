@@ -19,8 +19,8 @@ void FileBody::append(std::string str, int size) {
 	_size += size;
 }
 
-int FileBody::parse(std::string body, std::stringstream &inReceive) {
-    size_t endPos = body.find(_boundary + "--");
+int FileBody::parse(std::string body, std::stringstream &inReceive) { // TODO parse data sent via http (change python script to add data)
+    size_t endPos = body.find(_boundary + "--");                        // TODO parse files incoming as chunked body too
     if (endPos == std::string::npos) {
         inReceive << body;
         ws::log(ws::LOG_LVL_DEBUG, "[FILE BODY] -", "data stored in stringstream");
@@ -31,7 +31,7 @@ int FileBody::parse(std::string body, std::stringstream &inReceive) {
     size_t fileNamePos = _fileHeader.find("filename=") + 10;
     _fileName = _fileHeader.substr(fileNamePos, _fileHeader.size() - fileNamePos - 1);
     append(body.substr(body.find("\r\n\r\n") + 4, endPos - body.find("\r\n\r\n") - 8));
-    ws::log(ws::LOG_LVL_ALL, "[FILE BODY] -", "file: " + _fileName + " was be parsed");
+    ws::log(ws::LOG_LVL_ALL, "[FILE BODY] -", "file: \"" + _fileName + "\" was parsed");
     ws::log(ws::LOG_LVL_DEBUG, "", "contents:\n" + body);
     return 1;
 }

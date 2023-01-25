@@ -1,0 +1,113 @@
+body {
+    background-color: #0e1114;
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    margin: 2%;
+	align-items: center;
+	text-align: center;
+}
+
+h1 {
+    font-size: 6vmin;
+}
+
+div.container-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 73vh;
+}
+
+div.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1rem;
+    justify-items: center;
+    justify-content: center;
+	align-items: center;
+    width: 80vw;
+}
+
+div.get {
+	width: 42.5vh;
+	height: 60vh;
+	border-color: white;
+	border: solid;
+	border-radius: 5%;
+	justify-content: center;
+	align-items: center;
+	transition: transform .2s;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+div.get:hover {
+	transform: scale(1.1);
+	background-color: rgba(255, 255, 255, 0.080);
+}
+
+
+div.post {
+	width: 42.5vh;
+	height: 60vh;
+	border-color: white;
+	border: solid;
+	border-radius: 5%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: transform .2s;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+div.post:hover {
+	transform: scale(1.1);
+	background-color: rgba(255, 255, 255, 0.080);
+}
+
+div.delete {
+	width: 42.5vh;
+	height: 60vh;
+	border-color: white;
+	border: solid;
+	border-radius: 5%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: transform .2s;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+div.delete:hover {
+	transform: scale(1.1);
+	background-color: rgba(255, 255, 255, 0.080);
+}
+
+.button{
+    background-color: #0e1114;
+	border-radius: 29px;
+	border: 1px solid white;
+	color: white;
+	font-size: 15px;
+    padding: 10px 45px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.button:hover{
+	background-color: white;
+	color: #0e1114;
+	border-color: #0e1114;
+	transition: 0.3s;
+}
+
+div.container-text {
+    padding: 1rem;
+}
+
+a {
+	text-decoration: none;
+	color: white
+}

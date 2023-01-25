@@ -33,7 +33,7 @@ bool const Poll::pollFd(int fd, int events) {
 
     _pollFd.push_back(event); // to add to the vector
 	ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "sucessfully added fd: " + ws::itos(fd) + " to polling vector");
-	ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
+	ws::log(ws::LOG_LVL_DEBUG, "[POLL] -", "with events:\n " + formatEvents(events));
 	return true;
 }
 
@@ -56,7 +56,7 @@ const bool Poll::modFd(int fd, int events) {
 		if (it->fd == fd) {
 			it->revents = events;
 			ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "successfully modified fd: " + ws::itos(fd));
-			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(events));
+			ws::log(ws::LOG_LVL_DEBUG, "[POLL] -", "with events:\n " + formatEvents(events));
 			return true;
 		}
 	}
@@ -75,8 +75,8 @@ int const Poll::polling(Server &server) {
 		if (it->revents == 0)
 			continue ;
 		if (it->revents & POLLERR) {
-			ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "error on fd: " + ws::itos(it->fd) + "!", true);
-			ws::log(ws::LOG_LVL_DEBUG, "", "with events:\n " + formatEvents(it->revents));
+			ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "error on fd: " + ws::itos(it->fd) + "!");
+			ws::log(ws::LOG_LVL_DEBUG, "[POLL] -", "with events:\n " + formatEvents(it->revents));
 			if (server.isConnected(it->fd))
 				server.disconnect(server.getClient(it->fd));
 			else
