@@ -113,7 +113,9 @@ int FormDataBody::parse(char *body, int &size) {
 	int partEndPos;
 	bool parseRet = false;
 	
-	_decoder->decodeInto(body, size, _tmp);
+	int decoded = _decoder->decodeInto(body, size, _tmp);
+	if (decoded < 1)
+		return 0;
 	do {
 		if (_tmp.size() < _boundary.size() + 4) // boundary not received
 			return 0;
@@ -143,7 +145,7 @@ int FormDataBody::parse(char *body, int &size) {
 		parseRet = part->parse(*this, partEndPos - headerStartPos);
 	} while (!parseRet);
 
-	return 1;
+	return decoded;
 }
 
 // ############## GETTERS / SETTERS ##############

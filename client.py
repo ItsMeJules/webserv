@@ -31,20 +31,20 @@ values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
   fields = {
-    "main.cpp": ("jpeyron.jpg", open("/home/jules/Pictures/Downloaded/moi/jpeyron.jpg", "rb")),
+    "main.cpp": ("mainlcpp", open("srcs/main.cpp", "rb")),
   }
 )
 
 def gen_file():
-  a = m.read(1024)
+  a = m.read(100)
   while a:
     yield a
-    a = m.read(1024)
+    a = m.read(100)
 
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
 elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
-    r = requests.post(url, files=files, data=values)
+    r = requests.post(url, files=filesPic, data=values)
 elif (len(sys.argv) > 1 and sys.argv[1] == "c_upload"):
     r = requests.post(url, data=gen_file(), headers={'Content-Type': m.content_type})
 else:
