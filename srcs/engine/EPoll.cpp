@@ -85,6 +85,7 @@ const int EPoll::polling(Server &server) {
 		if (events[i].events & EPOLLERR) {
 			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + "!");
 			ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events[i].events));
+			
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));
 			else
@@ -92,6 +93,7 @@ const int EPoll::polling(Server &server) {
 			continue ;
 		} else if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
 			ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
+
             ClientSocket socket(server.getSocket().getFd());
             if (!socket.setup())
                 return -3;
@@ -103,22 +105,33 @@ const int EPoll::polling(Server &server) {
             if (events[i].events & EPOLLIN) {
                 if (!server.receiveData(client))
                     server.disconnect(client);
-				else if (client.getRequestParser().isRequestParsed())
+				else if (client.hasRequestFailed()) {
+                    modFd(events[i].data.fd, EPOLLOUT);
+				} else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
-                HttpResponse response("HTTP/1.1", 200, "OK");
-                RegularBody *body = new RegularBody();
+                HttpResponse response;
+                DefaultBody *body = new DefaultBody();
 
-				body->append("Hello World!");
+				if (!client.hasRequestFailed())
+					response = client.getHttpRequest().execute(server.getServerInfo());
+				else {
+					response.setStatusCode(400);
+					response.addHeader("Connection", "close");
+				}
+
+				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body->getSize()));
+                response.addHeader("Content-Length", ws::itos(body->getBody().size()));
                 response.setMessageBody(body);
                 server.sendData(client, response);
-                if (client.getRequestParser().getHttpRequest().headersContains("Connection", "close")) {
+				if (response.getStatusCode() >= 400)
+					server.disconnect(client);
+                if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();
-                    modFd(events[i].data.fd, clientEvents());
+                    modFd(events[i].data.fd, EPOLLIN);
                 }
             } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);
@@ -128,11 +141,11 @@ const int EPoll::polling(Server &server) {
 }
 
 
-const int EPoll::clientEvents() const {
-	return EPOLLIN;
+const int EPoll::pollOutEvent() const {
+	return EPOLLOUT;
 }
 
-const int EPoll::listenerEvents() const {
+const int EPoll::pollInEvent() const {
     return EPOLLIN;
 }
 

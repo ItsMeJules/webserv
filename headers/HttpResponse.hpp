@@ -5,23 +5,33 @@
 
 # include <unistd.h>
 
-# include "Message.hpp"
-# include "Client.hpp"
+# include "HttpMessage.hpp"
+# include "utils.hpp"
 
-class HttpResponse : public Message {
+class HttpResponse : public HttpMessage {
 	private:
 		int _statusCode;
-		std::string _reasonPhrase;
+		ws::http_status_t _statusPhrase;
+
+		static ws::http_status_t createStatus(std::string reason, std::string explanation);
+	public:
+        static std::map<int, ws::http_status_t> codes;
+
 	public:
 		HttpResponse();
-		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);
+		HttpResponse(int statusCode);
 		HttpResponse(HttpResponse const &htttpResponse);
 		~HttpResponse();
 
-		std::string build();
-		void send(Client &client);
+		const std::string build() const;
+
+		void setStatusCode(int statusCode);
+
+		const int getStatusCode() const;
 
 		HttpResponse &operator=(HttpResponse const &rhs);
+
+        static std::map<int, ws::http_status_t> createCodes();
 };
 
 #endif

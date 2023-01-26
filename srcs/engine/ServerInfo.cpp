@@ -3,7 +3,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerInfo::ServerInfo() {}
+ServerInfo::ServerInfo() : _rootPath("/"), _uploadPath("tmp/") {}
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
 ServerInfo::~ServerInfo() {
     for (std::map<std::string, ServerInfo::Location*>::iterator it = _locations.begin(); it != _locations.end(); it++)
@@ -38,6 +38,10 @@ const std::string &ServerInfo::getServerName() const {
 
 const std::string &ServerInfo::getRootPath() const {
     return _rootPath;
+}
+
+const std::string &ServerInfo::getUploadPath() const {
+    return _uploadPath;
 }
 
 const std::map<std::string, std::string> &ServerInfo::getCgis() const {

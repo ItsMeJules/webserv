@@ -1,12 +1,14 @@
 #include "HttpRequest.hpp"
 
-#include <iostream>
+std::map<std::string, HttpMethod*> HttpRequest::methods = HttpRequest::initMethods();
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-HttpRequest::HttpRequest() {}
+HttpRequest::HttpRequest() : _method(NULL) {}
 HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
-HttpRequest::~HttpRequest() {}
+HttpRequest::~HttpRequest() {
+	delete _method;
+}
 
 // ############## PRIVATE ##############
 
@@ -14,26 +16,32 @@ HttpRequest::~HttpRequest() {}
 
 // ############## PUBLIC ##############
 
-std::string HttpRequest::build() {
+const std::string HttpRequest::build() const {
 	std::stringstream ss;
-	ss << _method << " ";
+	ss << _method->getName() << " ";
 	ss << _path << " ";
 	ss << _httpVersion << "\r\n";
-	ss << Message::build();
+	ss << HttpMessage::build();
 	return ss.str();
+}
+
+HttpResponse HttpRequest::execute(ServerInfo const &serverInfo) {
+	return _method->execute(serverInfo, *this);
 }
 
 // ############## GETTERS / SETTERS ##############
 
 void HttpRequest::setMethod(std::string method) {
-	_method = method;
+	if (HttpRequest::methods.count(method) == 0)
+		return ;
+	_method = HttpRequest::methods.at(method)->clone();
 }
 
 void HttpRequest::setPath(std::string path) {
 	_path = path;
 }
 
-std::string HttpRequest::getMethod() const {
+HttpMethod *HttpRequest::getMethod() const {
 	return _method;
 }
 
@@ -47,7 +55,21 @@ HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 	if (this != &rhs) {
 		_method = rhs._method;
 		_path = rhs._path;
-		Message::operator=(rhs);
+		HttpMessage::operator=(rhs);
 	}
 	return *this;
+}
+
+std::map<std::string, HttpMethod*> HttpRequest::initMethods() {
+	std::map<std::string, HttpMethod*> map;
+	
+	map.insert(std::make_pair("GET", new HttpGet()));
+	map.insert(std::make_pair("POST", new HttpPost()));
+	map.insert(std::make_pair("DELETE", new HttpDelete()));
+	return map;
+}
+
+void HttpRequest::clearMethods() {
+    for (std::map<std::string, HttpMethod*>::const_iterator it = HttpRequest::methods.begin(); it != HttpRequest::methods.end(); it++)
+		delete it->second;
 }

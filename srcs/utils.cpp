@@ -38,6 +38,10 @@ bool ws::string_in_range(std::string const &range, std::string const &str, size_
 	return true;
 }
 
+char *ws::char_array(std::string const &str, int end, int begin) {
+	return (new std::vector<char>(str.data() + begin, str.data() + end))->data();
+}
+
 void ws::log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno) {
 	const int lvl = ws::LOG_LVL & level;
 	std::string color;

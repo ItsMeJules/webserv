@@ -4,26 +4,38 @@
 # include <vector>
 # include <string>
 
-# include "Message.hpp"
+# include "HttpMessage.hpp"
+# include "HttpMethod.hpp"
+# include "HttpGet.hpp"
+# include "HttpPost.hpp"
+# include "HttpDelete.hpp"
+# include "HttpResponse.hpp"
+# include "ServerInfo.hpp"
 
-class HttpRequest : public Message {
+class HttpRequest : public HttpMessage {
 	private:
-		std::string _method;
+		HttpMethod *_method;
 		std::string _path;
+
+		static std::map<std::string, HttpMethod*> methods;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
 		~HttpRequest();
 
-		std::string build();
+		const std::string build() const;
+		HttpResponse execute(ServerInfo const &serverInfo);
 
 		void setMethod(std::string method);
 		void setPath(std::string path);
 
-		std::string getMethod() const;
+		HttpMethod *getMethod() const;
 		std::string getPath() const;
 
 		HttpRequest &operator=(HttpRequest const &rhs);
+
+		static std::map<std::string, HttpMethod*> initMethods();
+		static void clearMethods();
 };
 
 #endif

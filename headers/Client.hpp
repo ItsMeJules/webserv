@@ -11,6 +11,7 @@ class Client {
 	private:
 		ClientSocket _socket;
 		RequestParser _parser;
+		bool _requestFailed;
 	public:
 		Client();
 		Client(ClientSocket socket);
@@ -20,12 +21,14 @@ class Client {
 		bool init();
 
 		void setSocket(ClientSocket socket);
+		void setRequestFailed(bool requestFailed);
 
 		ClientSocket &getSocket();
 		RequestParser &getRequestParser();
+		HttpRequest &getHttpRequest();
+		const bool &hasRequestFailed() const;
 
 		Client &operator=(Client const &rhs);
-		friend std::ostream &operator<<(std::ostream &os, const Client &client);
 };
 
 #endif

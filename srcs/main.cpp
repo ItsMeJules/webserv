@@ -33,4 +33,5 @@ int main(int ac, char **av) {
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++)
             delete *it;
     }
+    HttpRequest::clearMethods();
 }

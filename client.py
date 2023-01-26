@@ -2,6 +2,7 @@ import socket
 import requests
 from requests import Session, Request
 import sys
+from requests_toolbelt import MultipartEncoder
 
 # ip = input("Entrez une adresse: ").split(':')
 host = "127.0.0.1"
@@ -25,16 +26,31 @@ headers = {'Accept': '*/*',
 r = ""
 
 files = {'upload_file': open('srcs/main.cpp','rb')}
+filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
+
+m = MultipartEncoder(
+  fields = {
+    "main.cpp": ("mainlcpp", open("srcs/main.cpp", "rb")),
+  }
+)
+
+def gen_file():
+  a = m.read(100)
+  while a:
+    yield a
+    a = m.read(100)
 
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())
 elif (len(sys.argv) > 1 and sys.argv[1] == "upload"):
-    r = requests.post(url, files=files)
+    r = requests.post(url, files=filesPic, data=values)
+elif (len(sys.argv) > 1 and sys.argv[1] == "c_upload"):
+    r = requests.post(url, data=gen_file(), headers={'Content-Type': m.content_type})
 else:
     s = Session()
     req = Request('POST', url, data=pload)
     prepped = req.prepare()
+    # prepped.headers['Content-Length'] = 30
     r = s.send(prepped)
-    prepped.headers['Content-Length'] = 30
 print(r.text)
