@@ -24,12 +24,12 @@ class FormDataBody : public AMessageBody {
 
 				bool _parsed;
 				
-				int parse(FormDataBody const &parent, size_t const &partEndPos);
+				bool parse(FormDataBody const &parent, size_t const &partEndPos);
 
 				FormDataPart &operator=(FormDataPart const &rhs);
 		};
 
-		std::vector<FormDataPart> _parts;
+		std::vector<FormDataPart*> _parts;
 		std::vector<char> _tmp;
 		std::string _boundary;
 
