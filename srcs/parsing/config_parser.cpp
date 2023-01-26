@@ -131,14 +131,7 @@ int ws::check_error_page_key(std::string key) {
 		return 0;
 }
 
-int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
-    std::cout << "\tserver line: " << cpt.line << std::endl;
-    char *cstr = new char [cpt.line.length()+1];
-    strcpy (cstr, cpt.line.c_str());
-    char *p = ::strtok (cstr, " ");
-	std::string str = std::string(p);
-
-	std::map<std::string, confValues> matchValues;
+void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 	matchValues["name"] = NAME;
 	matchValues["listen"] = LISTEN;
 	matchValues["client_max_body_size"] = CLIENT_MAX_BODY;
@@ -149,6 +142,17 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	matchValues["error_page"] = ERROR_PAGE;
 	matchValues["upload"] = UPLOAD;
 	matchValues["root"] = ROOT;
+}
+
+int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
+    std::cout << "\tserver line: " << cpt.line << std::endl;
+    char *cstr = new char [cpt.line.length()+1];
+    strcpy (cstr, cpt.line.c_str());
+    char *p = ::strtok (cstr, " ");
+	std::string str = std::string(p);
+
+	std::map<std::string, confValues> matchValues;
+	parserInit(matchValues);
 
 	int val;
 	std::string key = "NULL";

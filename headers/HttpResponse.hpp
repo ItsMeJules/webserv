@@ -24,4 +24,4 @@ class HttpResponse : public Message {
 		HttpResponse &operator=(HttpResponse const &rhs);
 };
 
-#endif
+#endif	
