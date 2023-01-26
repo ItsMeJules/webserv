@@ -442,5 +442,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
     if (cpt.blockLevel != 0)
         throw std::invalid_argument("Missing closing bracket!");
     std::cout << "whole file is parsed" << std::endl;
-    return 0;
+	ServerInfo test1 = server->getServerInfo();
+	std::string test = test1.getServerName();
+   return 0;
 }

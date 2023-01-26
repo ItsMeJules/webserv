@@ -80,6 +80,11 @@ ServerInfo &Server::getServerInfo() {
     return _serverInfo;
 }
 
+std::string Server::getServerName() const
+{
+	return _name;
+}
+
 // ############## OPERATORS ##############
 
 Server &Server::operator=(Server const &rhs) {
