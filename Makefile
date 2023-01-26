@@ -2,7 +2,7 @@
 NAME		=	webserv
 
 #	Compilation
-CC			=	c++
+CC			=	g++
 CFLAGS		=	-fsanitize=address -g -std=c++98
 RM			=	rm -rf
 SRC_DIR 	= 	srcs/

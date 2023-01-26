@@ -6,7 +6,7 @@ Message::Message() : _messageBody(NULL) {}
 Message::Message(std::string httpVersion) : _httpVersion(httpVersion), _messageBody(NULL) {}
 Message::Message(Message const &message) { *this = message; }
 Message::~Message() {
-    delete _messageBody;
+    // delete _messageBody;
 }
 
 // ############## PRIVATE ##############

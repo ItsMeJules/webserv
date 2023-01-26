@@ -35,10 +35,11 @@ class HttpResponse : public Message {
 		void send(Client &client);
 		void	get_response(HttpRequest &request, Server &server);
 		void	post_response(HttpRequest &request, Server &server);
+		void	delete_response(HttpRequest &request, Server &server);
 		void	showErrorPage();
 
 		//getter setter functions
-		// std::string	setDate(void){}
+		std::string	setDate(void);
 		std::string	getResponse() const;
 
 		HttpResponse &operator=(HttpResponse const &rhs);

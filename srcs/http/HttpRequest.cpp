@@ -63,6 +63,7 @@ HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 		_method = rhs._method;
 		_path = rhs._path;
 		Message::operator=(rhs);
+		_isCgi = rhs._isCgi;
 	}
 	return *this;
 }

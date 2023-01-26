@@ -47,16 +47,6 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 
 Cgi::~Cgi() {}
 
-std::map<std::string, std::string> createCGIMap(HttpRequest &request, Server const &server)
-{
-	std::string content_type = "text/html";
-	std::map<std::string, std::string> env;
-	std::string _binary;
-	//Pour GET, la seule variable est QUERY STRING
-
-	return env;
-}
-
 void	Cgi::setInputBody(std::string inputBody)
 {
 	_inputBody = inputBody;
@@ -118,9 +108,10 @@ std::string	Cgi::execute(const std::string	&_binary)
 	}
 	else if (!pid)
 	{
+		char * const * nll = NULL;
 		dup2(input_fd, STDIN_FILENO);
 		dup2(output_fd, STDOUT_FILENO);
-		// execve(_binary.c_str(), NULL, env);//il faut crer une fonction qui retourne un tab
+		execve(_binary.c_str(), nll, env);//il faut crer une fonction qui retourne un tab
 		std::cerr << "crash de execve" << std::endl;
 		return "500";
 	}

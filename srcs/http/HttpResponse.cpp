@@ -21,6 +21,7 @@ std::string HttpResponse::build() {
 	ss << _httpVersion << " ";
 	ss << _statusCode << " ";
 	ss << _reasonPhrase << "\r\n";
+	ss << _date << "\r\n";
 	ss << Message::build();
 	return ss.str();
 }
@@ -39,7 +40,7 @@ void HttpResponse::get_response(HttpRequest &request, Server &server)
 		Cgi cgi(request, server);
 		int i = 0;
 		int j = _response.size() - 2;
-
+		_date = setDate();
 		_response = cgi.execute(request.getIsCgi());
 	}
 	else
@@ -55,6 +56,7 @@ void	HttpResponse::post_response(HttpRequest &request, Server &server)
 		Cgi cgi(request, server);
 		int i = 0;
 		int j = _response.size() - 2;
+		_date = setDate();
 		_response = cgi.execute(request.getIsCgi());
 	}
 	else
@@ -65,6 +67,11 @@ void	HttpResponse::post_response(HttpRequest &request, Server &server)
 
 //cgi ne concerne pas delete method
 
+void	HttpResponse::delete_response(HttpRequest &request, Server &server)
+{
+	
+}
+
 void	HttpResponse::showErrorPage()
 {
 	std::string page;
@@ -74,17 +81,17 @@ void	HttpResponse::showErrorPage()
 
 // ############## GETTERS / SETTERS ##############
 
-// std::string	HttpResponse::setDate(void)
-// {
-// 	char			buffer[100];
-// 	struct timeval	tv;
-// 	struct tm		*gmt;
+std::string	HttpResponse::setDate(void)
+{
+	char			buffer[100];
+	struct timeval	tv;
+	struct tm		*gmt;
 
-// 	gettimeofday(&tv, NULL);
-// 	gmt = gmtime(&tv.tv_sec);
-// 	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
-// 	return buffer;
-// }
+	gettimeofday(&tv, NULL);
+	gmt = gmtime(&tv.tv_sec);
+	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
+	return buffer;
+}
 
 std::string	HttpResponse::getResponse() const
 {

@@ -100,6 +100,7 @@ void	Server::setName(std::string name)
 	_name = name;
 }
 
+
 // ############## OPERATORS ##############
 
 Server &Server::operator=(Server const &rhs) {
