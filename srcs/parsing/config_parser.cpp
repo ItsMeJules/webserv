@@ -142,6 +142,7 @@ void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 	matchValues["error_page"] = ERROR_PAGE;
 	matchValues["upload"] = UPLOAD;
 	matchValues["root"] = ROOT;
+	matchValues["rewrite"] = REWRITE;
 }
 
 int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
@@ -157,7 +158,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	int val;
 	std::string key = "NULL";
 	std::string path = "NULL";
-	ServerInfo serverInfo = server.getServerInfo();
+	ServerInfo &serverInfo = server.getServerInfo();
 	ServerSocket socketInfo = server.getSocket();
 	switch (matchValues[str])
 	{
@@ -230,7 +231,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			}
 			break;
 		
-		case ERROR_PAGE:
+		case ERROR_PAGE: // OK
 			p = strtok(NULL, " ,|;");
 			while (p!=0) {
 				std::string value = std::string(p);
@@ -239,6 +240,8 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					val = atoi(p);
 				if (val <= 600 && val >= 100)
 					path = std::string(p);
+				if (path != "NULL" && val != 0)
+					serverInfo.addErrorPage(val, path);
 				else {
 					std::cerr << "Problem Configuration Files - ERROR_PAGE" << std::endl;
 					return 1;
@@ -267,25 +270,69 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cerr << "Problem Configuration Files - DEFAULT_ERROR" << std::endl;
 			break;
 	}
+	std::cout << "\t\tName: " << serverInfo.getServerName() << std::endl;
+	std::cout << "\t\tListen: " << socketInfo.getPort() << std::endl;
+	std::cout << "\t\tClient_Size_Body_: " << serverInfo.getMaxBodySize() << std::endl;
+	std::cout << "\t\tAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
+	std::vector<std::string> test1 = serverInfo.getMethod();
+	std::cout << "\t\tMethod: " << " \t";
+	for (std::vector<std::string>::const_iterator i = test1.begin(); i != test1.end(); ++i)
+    	std::cout << *i << ' ';
+	std::cout << std::endl;
+	std::map<std::string, std::string> test2 = serverInfo.getCgis();
+	std::cout << "\t\tCGIS: " << " \t";
+    for (std::map<std::string, std::string>::const_iterator it = test2.begin(); it != test2.end(); ++it) {
+        std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
+    }
+	std::cout << std::endl;
+	std::map<int, std::string> test3 = serverInfo.getError();
+	std::cout << "\t\tIndex: " << serverInfo.getIndexPath() << std::endl;
+		std::cout << "\t\tError_Page: " << " \t";
+    for (std::map<int, std::string>::const_iterator it = test3.begin(); it != test3.end(); ++it) {
+        std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
+    }
+	std::cout << std::endl;
+	std::cout << "\t\tUpload: " << serverInfo.getUploadPath() << std::endl;
+	std::cout << "\t\tRoot: " << serverInfo.getRootPath() << std::endl;
 	delete[] cstr;
 	return 0;
 }
 
-void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
-    std::cout << "\t\tlocation line: " << cpt.line << std::endl;
-	std::cout << "\tserver line: " << cpt.line << std::endl;
+int ws::checkAutoIndex(std::string index, Location &locationInfo) {
+	if (index.compare("on") == 0) {
+		locationInfo.setAutoIndex(true);
+		return (0);
+	}
+	else if (index.compare("off") == 0) {
+		locationInfo.setAutoIndex(false);
+		return (0);
+	}
+	else {
+		std::cerr << "Problem Configuration Files - AUTOINDEX" << std::endl;
+		return (1);
+	}
+}
+
+int ws::checkMethod(std::string method, Location &locationInfo) {
+	if ((method.compare("GET") == 0) || (method.compare("POST") == 0) || (method.compare("DELETE") == 0)) {
+		locationInfo.addtoMethod(method);
+		return (0);
+	}
+	else {
+		std::cerr << "Problem Configuration Files - METHOD" << std::endl;
+		return (1);
+	}
+}
+
+int ws::parse_location_line(config_parsing_t &cpt, Location &location) {
+    std::cout << "\t\t\tlocation line: " << cpt.line << std::endl;
     char *cstr = new char [cpt.line.length()+1];
     strcpy (cstr, cpt.line.c_str());
     char *p = ::strtok (cstr, " ");
 	std::string str = std::string(p);
-	// A mettre dans une autre fonction qui fera également les checks avant parsing
+
 	std::map<std::string, confValues> matchValues;
-	matchValues["autoindex"] = AUTOINDEX;
-	matchValues["method"] = METHOD;
-	matchValues["index"] = INDEX;
-	matchValues["upload"] = UPLOAD;
-	matchValues["root"] = ROOT;
-	matchValues["rewrite"] = REWRITE;
+	parserInit(matchValues);
 
 	Location loc = location;
 	switch (matchValues[str])
@@ -294,28 +341,27 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 			p = strtok(NULL, " ,|;");
 			while (p!=0)
 			{
-				loc.setIndexPath(p);
+				location.setIndexPath(p);
 				p = strtok(NULL," ,|;");
 			}
 			break;
 
 		case AUTOINDEX:
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
-				if (strcmp(p, "on") == 0)
-					loc.setAutoIndex(true);
-				else
-					loc.setAutoIndex(false);
+			while (p!=0) {
+				std::string index = std::string(p);
+				if (checkAutoIndex(index, location))
+					return (1);
 				p = strtok(NULL," ,|;");
 			}
 			break;
 
 		case METHOD:
 			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
-				loc.addtoMethod(p);
+			while (p!=0) {
+				std::string method = std::string(p);
+				if (checkMethod(method, location))
+					return (1);
 				p = strtok(NULL," ,|;");
 			}
 			break;
@@ -324,7 +370,7 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				loc.setUploadPath(p);
+				location.setUploadPath(p);
 				p = strtok(NULL," ,|;");
 			}
 			break;
@@ -333,7 +379,7 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				loc.setRewritePath(p);
+				location.setRewritePath(p);
 				p = strtok(NULL," ,|;");
 			}
 			break;
@@ -342,19 +388,28 @@ void ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 			p = strtok(NULL," ,|;");
 			while (p!=0)
 			{
-				loc.setRootPath(p);
+				location.setRootPath(p);
 				p = strtok(NULL," ,|;");
 			}
 			break;
 
 		default:
 			std::cout << "0 - Error Value" << std::endl;
+			return (1);
 			break;
 	}
+	std::cout << "\tIndex: " << location.getIndexPath() << std::endl;
+	std::cout << "\tAutoIndex: " << location.hasAutoindex() << std::endl;
+	std::cout << "\tRewrite: " << location.getRewritePath() << std::endl;
+	std::cout << "\tRoot: " << location.getRootPath() << std::endl;
+	std::cout << "\tUpload: " << location.getUploadPath() << std::endl;
+	std::vector<std::string> test = location.getMethod();
+	std::cout << "\tMethod: " << " \t";
+	for (std::vector<std::string>::const_iterator i = test.begin(); i != test.end(); ++i)
+    	std::cout << *i << ' ';
+	std::cout << std::endl;
 	delete[] cstr;
-
-
-
+	return 0;
 }
 
 void ws::check_location_path(std::string const &path) {
@@ -401,6 +456,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 				std::cout << "html line: " << cpt.line <<std::endl;
 				cpt.blockLevel++;
 				break;
+
             case 1: //we are inside the html block
                 if (lineType != SERVER)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only server blocks can be found at this level.");
@@ -409,6 +465,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                 servers.push_back(server);
                 cpt.blockLevel++;
                 break ;
+
             case 2: //we are inside server block
                 if (lineType == LOCATION && location == NULL) {
                     std::cout << "\t\tnew location line: " << cpt.line << std::endl;
@@ -424,25 +481,27 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                     server->getServerInfo().addLocation(cpt.line, location);
                     cpt.blockLevel++;
                 } else if (lineType == INFO) {
-					int i = parse_server_line(cpt, *server);
-					if (i == 1)
+					if (parse_server_line(cpt, *server) == 1)
 						return 1;
 				}     
                 break ;
+
             case 3: //we are inside location block
                 if (lineType != INFO)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ": \"" + cpt.line +
                                                 "\" is invalid. There can't be a location block inside another location block.");
-                    parse_location_line(cpt, *location);
+                    if(parse_location_line(cpt, *location) == 1);
+						return 1;
                 break ;
+
             default:
-                break ;
+				std::cout << "0 - Error Value" << std::endl;
+				return 1;
+				break;
         }
     }
     if (cpt.blockLevel != 0)
         throw std::invalid_argument("Missing closing bracket!");
     std::cout << "whole file is parsed" << std::endl;
-	ServerInfo test1 = server->getServerInfo();
-	std::string test = test1.getServerName();
    return 0;
 }

@@ -11,7 +11,7 @@ class Location {
 		std::string _uploadPath;
 		std::string _rewritePath;
 
-		bool _autoindex;
+		bool _autoIndex;
 
 		std::vector<std::string> _method;
 	public:

@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Location::Location() {}
+Location::Location() : _autoIndex(false) {}
 Location::Location(Location const &location) { *this = location; }
 Location::~Location() {}
 
@@ -25,7 +25,7 @@ const std::string &Location::getRewritePath() const {
 }
 
 bool Location::hasAutoindex() const {
-	return _autoindex;
+	return _autoIndex;
 }
 
 const std::vector<std::string> &Location::getMethod() const {
@@ -49,7 +49,7 @@ void  Location::setRewritePath(std::string Path) {
 }
 
 void  Location::setAutoIndex(bool AutoIndex) {
-	this->_autoindex = AutoIndex;
+	this->_autoIndex = AutoIndex;
 }
 
 void  Location::addtoMethod(std::string Method) {
@@ -61,7 +61,7 @@ void  Location::addtoMethod(std::string Method) {
 Location &Location::operator=(Location const &rhs) {
 	if (this != &rhs) {
 		_indexPath = rhs._indexPath;
-		_autoindex = rhs._autoindex;
+		_autoIndex = rhs._autoIndex;
 	}
 	return *this;
 }

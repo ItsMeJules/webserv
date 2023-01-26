@@ -49,12 +49,14 @@ namespace ws {
     int		parse_config(std::string const &name, std::vector<Server*> &servers);
     int		check_error_page_key(std::string key);
     int		parse_server_line(config_parsing_t &cpt, Server &server);
-    void	parse_location_line(config_parsing_t &cpt, Location &location);
+    int		parse_location_line(config_parsing_t &cpt, Location &location);
     int		checkFileExtension(std::string file);
     int		checkPort(int port, ServerSocket &socketInfo);
     int		checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
     int		checkAutoIndex(std::string index, ServerInfo &serverInfo);
+	int 	checkAutoIndex(std::string index, Location &locationInfo);
     int		checkMethod(std::string method, ServerInfo &serverInfo);
+	int		checkMethod(std::string method, Location &locationInfo);
     void	parserInit(std::map<std::string, confValues> &Values);
 
 	void	check_location_path(std::string const &path);

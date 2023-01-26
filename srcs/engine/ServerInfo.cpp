@@ -3,18 +3,21 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerInfo::ServerInfo() {}
-ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
+ServerInfo::ServerInfo() {
+	_autoindex = false;
+	_maxBodySize = 1000000;
+	_serverName = "localhost";
+	std::cout<< "wet" << std::endl;	
+}
+ServerInfo::ServerInfo(ServerInfo const &serverInfo) {
+	*this = serverInfo;
+}
 ServerInfo::~ServerInfo() {
     for (std::map<std::string, Location *>::iterator it = _locations.begin(); it != _locations.end(); it++) {
 		if (it->second)
 			delete it->second;
 	}
 }
-
-// Location::Location() {}
-// Location::Location(Location const &location) { *this = location; }
-// Location::~Location() {}
 
 // ############## PRIVATE ##############
 
@@ -66,15 +69,6 @@ const std::map<int, std::string> &ServerInfo::getError() const {
 	return _errorPage;
 }
 
-
-// const std::string &Location::getIndexPath() const {
-//     return _indexPath;
-// }
-
-// bool Location::hasAutoindex() const {
-//     return _autoindex;
-// }
-
 void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
 	this->_maxBodySize = MaxBodySize;
 }
@@ -99,8 +93,8 @@ void  ServerInfo::setUploadPath(std::string Path) {
 	this->_uploadPath = Path;
 }
 
-void  ServerInfo::addtoMethod(std::string Method) {
-	this->_method.push_back(Method);
+void  ServerInfo::addtoMethod(std::string method) {
+	this->_method.push_back(method);
 }
 
 void  ServerInfo::addToCGIS(std::string Extension, std::string Path) {
@@ -120,6 +114,12 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_serverName = rhs._serverName;
 		_rootPath = rhs._rootPath;
 		_cgis = rhs._cgis;
+		_uploadPath = rhs._uploadPath;
+		_method = rhs._method;
+		_cgis = rhs._cgis;
+		_locations = rhs._locations;
+		_errorPage = rhs._errorPage;
+
 		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
 			
 		}
@@ -128,11 +128,3 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 
 	return *this;
 }
-
-// ServerInfo::Location &ServerInfo::Location::operator=(ServerInfo::Location const &rhs) {
-// 	if (this != &rhs) {
-// 		_indexPath = rhs._indexPath;
-// 		_autoindex = rhs._autoindex;
-// 	}
-// 	return *this;
-// }
