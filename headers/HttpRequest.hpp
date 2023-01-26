@@ -15,13 +15,13 @@
 class HttpRequest : public HttpMessage {
 	private:
 		static std::map<std::string, HttpMethod*> methods;
-		
+
 		HttpMethod *_method;
 		std::string _path;
 
 		std::vector<std::string> _data;
 		std::string	_query;
-		std::string	_isCgi;
+		bool	_isCgi;
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);
@@ -37,7 +37,7 @@ class HttpRequest : public HttpMessage {
 		std::string getPath() const;
 		std::vector<std::string>	getData() const;
 		std::string getQuery() const;
-		std::string getIsCgi() const;
+		bool IsCgi();
 
 		HttpRequest &operator=(HttpRequest const &rhs);
 

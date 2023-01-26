@@ -57,8 +57,9 @@ std::string	HttpRequest::getQuery() const {
 	return _query;
 }
 
-std::string HttpRequest::getIsCgi() const {
-	return _isCgi;
+bool	HttpRequest::IsCgi()
+{
+	return (_isCgi);
 }
 
 // ############## OPERATORS ##############
@@ -74,7 +75,7 @@ HttpRequest &HttpRequest::operator=(HttpRequest const &rhs) {
 
 std::map<std::string, HttpMethod*> HttpRequest::initMethods() {
 	std::map<std::string, HttpMethod*> map;
-	
+
 	map.insert(std::make_pair("GET", new HttpGet()));
 	map.insert(std::make_pair("POST", new HttpPost()));
 	map.insert(std::make_pair("DELETE", new HttpDelete()));

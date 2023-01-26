@@ -23,6 +23,7 @@ class Cgi {
 		std::string	_inputBody;
 		std::map<std::string, std::string> _env;
 		HttpRequest	_httpRequest;
+		std::string	_response;
 
 	public:
 		Cgi();
@@ -31,6 +32,11 @@ class Cgi {
 		~Cgi();
 
 		std::string	execute(const std::string &_binary);
+
+
+		void	get_response(HttpRequest &request, Server &server);
+		void	post_response(HttpRequest &request, Server &server);
+		// void	delete_response(HttpRequest &request, Server &server);
 
 		void	setInputBody(std::string inputBody);
 		char **envToTab(void);

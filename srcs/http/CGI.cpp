@@ -144,3 +144,27 @@ std::string	Cgi::execute(const std::string	&_binary)
 
 	return _body;
 }
+
+
+
+void Cgi::get_response(HttpRequest &request, Server &server)
+{
+	if (HttpRequest::IsCgi)
+	{
+		Cgi cgi(request, server);
+		int i = 0;
+		int j = _response.size() - 2;
+		_response = cgi.execute(request.);
+	}
+}
+
+void	Cgi::post_response(HttpRequest &request, Server &server)
+{
+	if (HttpRequest::IsCgi)
+	{
+		Cgi cgi(request, server);
+		int i = 0;
+		int j = _response.size() - 2;
+		_response = cgi.execute(request.getIsCgi());
+	}
+}

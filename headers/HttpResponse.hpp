@@ -14,6 +14,7 @@ class HttpResponse : public HttpMessage {
 		ws::http_status_t _statusPhrase;
 
 		static ws::http_status_t createStatus(std::string reason, std::string explanation);
+
 	public:
         static std::map<int, ws::http_status_t> codes;
 
@@ -28,6 +29,7 @@ class HttpResponse : public HttpMessage {
 		void setStatusCode(int statusCode);
 
 		const int getStatusCode() const;
+
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 
