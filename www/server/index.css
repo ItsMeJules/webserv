@@ -66,6 +66,40 @@ div.post:hover {
 	background-color: rgba(255, 255, 255, 0.080);
 }
 
+div.name {
+	margin-bottom: 1vh;
+	margin-top: 3vh;
+}
+
+div.mail {
+	margin-bottom: 1vh;
+	margin-top: 3vh;
+}
+
+div.phone {
+	margin-bottom: 1vh;
+	margin-top: 3vh;
+}
+
+div.btn {
+	margin-bottom: 7vh;
+	margin-top: 8vh;
+}
+
+label {
+	width: 15%;
+	display: inline-block;
+}
+
+input {
+	display: inline-block;
+	background-color: white;
+	border-radius: 29px;
+	font-size: 15px;
+	border: 1px solid white;
+	padding: 10px 45px;
+}
+
 div.delete {
 	width: 42.5vh;
 	height: 60vh;

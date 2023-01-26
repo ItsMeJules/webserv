@@ -32,11 +32,24 @@
 					<div class="title">
 						<h2>TRY POST METHOD</h2>
 					</div>
-					<div class="txt">
-						Click here to try Post
-					</div>
-					<div class="btn">
-						<button class="button" type="button" role="button" onclick="">POST</button>
+					<div class="form">
+						<form action="/test-post" method="post">
+							<div class="name">
+								<label for="name">Nom</label>
+								<input type="text" name="name" id="name" placeholder="Peyron"required>
+							</div>
+							<div class="mail">
+								<label for="name">Mail</label>
+								<input type="email" name="email" id="email" placeholder="jpeyron@gmail.com"required>
+							</div>
+							<div class="phone">
+								<label for="name">Phone</label>
+								<input type="number" name="phone" id="phone" placeholder="0123456789" required>
+							</div>
+							<div class="btn">
+								<button class="button" type="button" role="button" onclick="">POST</button>
+							</div>
+						</form>
 					</div>
 				</div>
 				<div class="delete">
