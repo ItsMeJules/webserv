@@ -7,7 +7,6 @@ ServerInfo::ServerInfo() {
 	_autoindex = false;
 	_maxBodySize = 1000000;
 	_serverName = "localhost";
-	std::cout<< "wet" << std::endl;	
 }
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) {
 	*this = serverInfo;

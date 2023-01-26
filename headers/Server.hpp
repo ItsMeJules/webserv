@@ -47,6 +47,8 @@ class Server {
         ServerInfo &getServerInfo();
 		std::string getServerName() const;
 
+		void setServerSocket(ServerSocket serverSocket);
+
 		Server &operator=(Server const &rhs);
 };
 

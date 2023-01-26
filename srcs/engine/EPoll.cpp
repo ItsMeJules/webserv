@@ -112,21 +112,21 @@ const int EPoll::polling(Server &server) {
                 HttpResponse response("HTTP/1.1", 200, "OK");
                 RegularBody *body = new RegularBody();
 				
-				char *line = NULL;
-				std::string htmlBody, tmp;
-				FILE* fd = fopen("./www/server/index.html", "r");
-				if (fd == NULL)
-					std::cerr << "FAILLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL" << std::endl;
-				while (getline(&line, NULL, fd) != -1)
-				{
-					std::cout << "Line: " << line << std::endl; 
-					htmlBody.append(line);
-					free(line);
-					line = NULL;
-				}
-				std::cout << htmlBody << std::endl;
+				// char *line = NULL;
+				// std::string htmlBody, tmp;
+				// FILE* fd = fopen("./www/server/index.html", "r");
+				// if (fd == NULL)
+				// 	std::cerr << "FAILLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL" << std::endl;
+				// while (getline(&line, NULL, fd) != -1)
+				// {
+				// 	std::cout << "Line: " << line << std::endl; 
+				// 	htmlBody.append(line);
+				// 	free(line);
+				// 	line = NULL;
+				// }
+				// std::cout << htmlBody << std::endl;
 
-				body->append(htmlBody);
+				body->append("Htllo World!", 13);
                 response.addHeader("Content-Type", "text/plain");
                 response.addHeader("Content-Length", ws::itos(body->getSize()));
                 response.setMessageBody(body);

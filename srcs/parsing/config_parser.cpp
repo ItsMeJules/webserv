@@ -270,30 +270,31 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cerr << "Problem Configuration Files - DEFAULT_ERROR" << std::endl;
 			break;
 	}
-	std::cout << "\t\tName: " << serverInfo.getServerName() << std::endl;
-	std::cout << "\t\tListen: " << socketInfo.getPort() << std::endl;
-	std::cout << "\t\tClient_Size_Body_: " << serverInfo.getMaxBodySize() << std::endl;
-	std::cout << "\t\tAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
-	std::vector<std::string> test1 = serverInfo.getMethod();
-	std::cout << "\t\tMethod: " << " \t";
-	for (std::vector<std::string>::const_iterator i = test1.begin(); i != test1.end(); ++i)
-    	std::cout << *i << ' ';
-	std::cout << std::endl;
-	std::map<std::string, std::string> test2 = serverInfo.getCgis();
-	std::cout << "\t\tCGIS: " << " \t";
-    for (std::map<std::string, std::string>::const_iterator it = test2.begin(); it != test2.end(); ++it) {
-        std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
-    }
-	std::cout << std::endl;
-	std::map<int, std::string> test3 = serverInfo.getError();
-	std::cout << "\t\tIndex: " << serverInfo.getIndexPath() << std::endl;
-		std::cout << "\t\tError_Page: " << " \t";
-    for (std::map<int, std::string>::const_iterator it = test3.begin(); it != test3.end(); ++it) {
-        std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
-    }
-	std::cout << std::endl;
-	std::cout << "\t\tUpload: " << serverInfo.getUploadPath() << std::endl;
-	std::cout << "\t\tRoot: " << serverInfo.getRootPath() << std::endl;
+	
+	// std::cout << "\t\tName: " << serverInfo.getServerName() << std::endl;
+	// std::cout << "\t\tListen: " << socketInfo.getPort() << std::endl;
+	// std::cout << "\t\tClient_Size_Body_: " << serverInfo.getMaxBodySize() << std::endl;
+	// std::cout << "\t\tAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
+	// std::vector<std::string> test1 = serverInfo.getMethod();
+	// std::cout << "\t\tMethod: " << " \t";
+	// for (std::vector<std::string>::const_iterator i = test1.begin(); i != test1.end(); ++i)
+    // 	std::cout << *i << ' ';
+	// std::cout << std::endl;
+	// std::map<std::string, std::string> test2 = serverInfo.getCgis();
+	// std::cout << "\t\tCGIS: " << " \t";
+    // for (std::map<std::string, std::string>::const_iterator it = test2.begin(); it != test2.end(); ++it) {
+    //     std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
+    // }
+	// std::cout << std::endl;
+	// std::map<int, std::string> test3 = serverInfo.getError();
+	// std::cout << "\t\tIndex: " << serverInfo.getIndexPath() << std::endl;
+	// 	std::cout << "\t\tError_Page: " << " \t";
+    // for (std::map<int, std::string>::const_iterator it = test3.begin(); it != test3.end(); ++it) {
+    //     std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
+    // }
+	// std::cout << std::endl;
+	// std::cout << "\t\tUpload: " << serverInfo.getUploadPath() << std::endl;
+	// std::cout << "\t\tRoot: " << serverInfo.getRootPath() << std::endl;
 	delete[] cstr;
 	return 0;
 }
@@ -398,16 +399,16 @@ int ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 			return (1);
 			break;
 	}
-	std::cout << "\tIndex: " << location.getIndexPath() << std::endl;
-	std::cout << "\tAutoIndex: " << location.hasAutoindex() << std::endl;
-	std::cout << "\tRewrite: " << location.getRewritePath() << std::endl;
-	std::cout << "\tRoot: " << location.getRootPath() << std::endl;
-	std::cout << "\tUpload: " << location.getUploadPath() << std::endl;
-	std::vector<std::string> test = location.getMethod();
-	std::cout << "\tMethod: " << " \t";
-	for (std::vector<std::string>::const_iterator i = test.begin(); i != test.end(); ++i)
-    	std::cout << *i << ' ';
-	std::cout << std::endl;
+	// std::cout << "\tIndex: " << location.getIndexPath() << std::endl;
+	// std::cout << "\tAutoIndex: " << location.hasAutoindex() << std::endl;
+	// std::cout << "\tRewrite: " << location.getRewritePath() << std::endl;
+	// std::cout << "\tRoot: " << location.getRootPath() << std::endl;
+	// std::cout << "\tUpload: " << location.getUploadPath() << std::endl;
+	// std::vector<std::string> test = location.getMethod();
+	// std::cout << "\tMethod: " << " \t";
+	// for (std::vector<std::string>::const_iterator i = test.begin(); i != test.end(); ++i)
+    // 	std::cout << *i << ' ';
+	// std::cout << std::endl;
 	delete[] cstr;
 	return 0;
 }
@@ -490,7 +491,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                 if (lineType != INFO)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ": \"" + cpt.line +
                                                 "\" is invalid. There can't be a location block inside another location block.");
-                    if(parse_location_line(cpt, *location) == 1);
+                    if(parse_location_line(cpt, *location) == 1)
 						return 1;
                 break ;
 
