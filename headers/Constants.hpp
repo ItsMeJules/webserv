@@ -27,7 +27,7 @@ namespace ws {
 	const int POLL_EVENTS_SIZE = 10;
 	const int POLL_WAIT_TIMEOUT = 60 * 1000;
 
-	const int RECV_BUFFER_SIZE = 100;
+	const int RECV_BUFFER_SIZE = 1000;
 
 	const std::string C_AQUA = "\033[38;5;14m";
 	const std::string C_YELLOW = "\033[38;5;184m";

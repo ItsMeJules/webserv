@@ -73,7 +73,7 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 			_actualChunk.content.push_back(buffer[i]);
 		
 		_sizeRead += i;
-		ws::log(ws::LOG_LVL_INFO, "[ChunkedDataDecoder] -", ws::itos(i) + " chars stored, " + ws::itos(_actualChunk.size - _sizeRead) + " left to read.");
+		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", ws::itos(i) + " chars stored, " + ws::itos(_actualChunk.size - _sizeRead) + " left to read.");
 
 		if (!checkChunkSize(buffer, size, i))
 			return -2;
