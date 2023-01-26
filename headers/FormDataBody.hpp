@@ -33,7 +33,6 @@ class FormDataBody : public AMessageBody {
 		std::vector<char> _tmp;
 		std::string _boundary;
 
-		void printVector() const;
 		int nextCRLFpos(int pos = 0, int nCRLF = 1) const;
 	public:
 		FormDataBody();

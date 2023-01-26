@@ -6,6 +6,7 @@
 class DefaultDataDecoder : public ADataDecoder {
 	private:
 		int _contentLength;
+		int _sizeRead;
 	public:
 		DefaultDataDecoder();
 		DefaultDataDecoder(int contentLength);

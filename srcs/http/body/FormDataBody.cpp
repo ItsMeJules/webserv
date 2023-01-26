@@ -17,12 +17,6 @@ FormDataBody::~FormDataBody() {
 
 // ############## PRIVATE ##############
 
-void FormDataBody::printVector() const {
-	for (std::vector<char>::const_iterator it = _tmp.begin(); it != _tmp.end(); it++)
-		std::cout << *it;
-	std::cout << std::endl;
-}
-
 int FormDataBody::nextCRLFpos(int pos, int nCRLF) const {
 	while (nCRLF--) {
 		while (pos + 1 < _tmp.size()) { // +1 to check for \r\n 
@@ -31,7 +25,7 @@ int FormDataBody::nextCRLFpos(int pos, int nCRLF) const {
 				break ;
 		}
 	}
-	if (pos == _tmp.size()) // not found
+	if (pos + 1 == _tmp.size()) // not found
 		return -1;
 	return pos - 1;
 }
@@ -116,7 +110,7 @@ FormDataBody::FormDataPart &FormDataBody::FormDataPart::operator=(FormDataPart c
 int FormDataBody::parse(char *body, int &size) {
 	FormDataPart *part;
 	size_t headerStartPos;
-	size_t partEndPos;
+	int partEndPos;
 	bool parseRet = false;
 	
 	_decoder->decodeInto(body, size, _tmp);
@@ -125,6 +119,9 @@ int FormDataBody::parse(char *body, int &size) {
 			return 0;
 		headerStartPos = _boundary.size() + 4;
 		partEndPos = nextCRLFpos(headerStartPos, 3);
+
+		if (partEndPos == -1)
+			return 0;
 
 		if (!_parts.empty()) {
 			FormDataPart *lastPart = *(_parts.end() - 1);
@@ -183,7 +180,6 @@ std::string FormDataBody::getBodyStr() {
 
 FormDataBody &FormDataBody::operator=(FormDataBody const &rhs) {
 	if (this != &rhs) {
-		std::cout << "part: " << _parts.size() << " rhs._parts: " << rhs._parts.size() << std::endl;
 		_parts = rhs._parts;
 		_tmp = rhs._tmp;
 		_boundary = rhs._boundary;
