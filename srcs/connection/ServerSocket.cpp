@@ -83,6 +83,10 @@ std::string const &ServerSocket::getIp() const {
     return _ip;
 }
 
+const int &ServerSocket::getPort() const {
+	return _port;
+}
+
 void ServerSocket::setIp(std::string ip) {
     _ip = ip;
 }
