@@ -19,6 +19,7 @@ class Server {
 	private:
 		ServerSocket _socket;
         ServerInfo _serverInfo;
+		std::string _name;
 
 		std::map<int, Client> _clients;
 
@@ -44,6 +45,9 @@ class Server {
 
 		const ServerSocket &getSocket() const;
         ServerInfo &getServerInfo();
+		std::string getServerName() const;
+
+		void setServerSocket(ServerSocket serverSocket);
 
 		Server &operator=(Server const &rhs);
 };

@@ -36,8 +36,10 @@ class ServerSocket : public Socket {
 
 		bool setup();
 
+		int	const &getPort() const;
         std::string const &getIp() const;
 
+		void setPort(int port);
         void setIp(std::string ip);
 
 		ServerSocket &operator=(ServerSocket const &rhs);

@@ -79,8 +79,16 @@ bool ServerSocket::bindTo() {
 
 // ############## GETTERS / SETTERS ##############
 
+int const &ServerSocket::getPort() const {
+	return _port;
+}
+
 std::string const &ServerSocket::getIp() const {
     return _ip;
+}
+
+void ServerSocket::setPort(int port) {
+	_port = port;
 }
 
 void ServerSocket::setIp(std::string ip) {

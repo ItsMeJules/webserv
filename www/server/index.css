@@ -11,6 +11,10 @@ h1 {
     font-size: 6vmin;
 }
 
+span {
+	color: #01e6cd;
+}
+
 div.container-button {
 	display: flex;
 	justify-content: center;
@@ -143,5 +147,5 @@ div.container-text {
 
 a {
 	text-decoration: none;
-	color: white
+	color: #01e6cd;
 }
