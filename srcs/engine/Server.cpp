@@ -47,6 +47,7 @@ bool Server::receiveData(Client &client) {
 }
 
 void Server::sendData(Client &client, HttpResponse &response) {
+	std::cout << "IN SEND DATA FUNCTION" << std::endl;
     response.send(client);
 }
 

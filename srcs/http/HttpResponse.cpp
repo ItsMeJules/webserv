@@ -17,11 +17,12 @@ HttpResponse::~HttpResponse() {
 // ############## PUBLIC ##############
 
 std::string HttpResponse::build() {
+	std::cout << "HERE IN BUILD" << std::endl;
 	std::stringstream ss;
 	ss << _httpVersion << " ";
 	ss << _statusCode << " ";
 	ss << _reasonPhrase << "\r\n";
-	ss << _date << "\r\n";
+	// ss << _date << "";
 	ss << Message::build();
 	return ss.str();
 }
@@ -67,10 +68,10 @@ void	HttpResponse::post_response(HttpRequest &request, Server &server)
 
 //cgi ne concerne pas delete method
 
-void	HttpResponse::delete_response(HttpRequest &request, Server &server)
-{
-	
-}
+// void	HttpResponse::delete_response(HttpRequest &request, Server &server)
+// {
+
+// }
 
 void	HttpResponse::showErrorPage()
 {
@@ -83,6 +84,7 @@ void	HttpResponse::showErrorPage()
 
 std::string	HttpResponse::setDate(void)
 {
+	std::cout << "THIS IS THE HOUR" << std::endl;
 	char			buffer[100];
 	struct timeval	tv;
 	struct tm		*gmt;
