@@ -125,7 +125,7 @@ const int EPoll::polling(Server &server) {
 
 				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body->getBody().size()));
+                response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
                 response.setMessageBody(body);
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)

@@ -30,14 +30,14 @@ std::vector<char> &DefaultBody::getBody() {
 }
 
 std::string DefaultBody::getBodyStr() {
-	return std::string(_body.data(), _body.size());
+	return std::string(_body.data(), _body.size() - 1);
 }
 
 // ############## OPERATORS ##############
 
 DefaultBody &DefaultBody::operator=(DefaultBody const &rhs) {
 	if (this != &rhs) {
-		
+		_body = rhs._body;
 	}
 	return *this;
 }
