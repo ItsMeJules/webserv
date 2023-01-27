@@ -72,7 +72,7 @@ div.post:hover {
 
 div.name {
 	margin-bottom: 1vh;
-	margin-top: 3vh;
+	/* margin-top: 3vh; */
 }
 
 div.mail {
