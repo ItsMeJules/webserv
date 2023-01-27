@@ -1,7 +1,10 @@
 #ifndef HTTPGET_HPP
 # define HTTPGET_HPP
 
+# include <fstream>
+
 # include "HttpMethod.hpp"
+# include "DefaultBody.hpp"
 
 class HttpGet : public HttpMethod {
 	private:

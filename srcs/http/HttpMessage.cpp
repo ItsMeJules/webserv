@@ -6,7 +6,7 @@ HttpMessage::HttpMessage() : _messageBody(NULL) {}
 HttpMessage::HttpMessage(std::string httpVersion) : _httpVersion(httpVersion), _messageBody(NULL) {}
 HttpMessage::HttpMessage(HttpMessage const &message) { *this = message; }
 HttpMessage::~HttpMessage() {
-    delete _messageBody;
+    // delete _messageBody;
 }
 
 // ############## PRIVATE ##############
@@ -18,8 +18,10 @@ const std::string HttpMessage::build() const {
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)
 		ss << it->first << ": " << it->second << "\r\n";
 	ss << "\r\n";
+	std::cout << " maybe herer " << std::endl;
 	if (_messageBody != NULL)
 		ss << _messageBody->getBodyStr();
+	std::cout << " east herer " << std::endl;
     return ss.str();
 }
 

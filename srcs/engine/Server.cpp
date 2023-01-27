@@ -80,7 +80,7 @@ Client &Server::getClient(int const fd) {
 
 // ############## GETTERS / SETTERS ##############
 
-const ServerSocket &Server::getSocket() const {
+ServerSocket &Server::getSocket() {
 	return _socket;
 }
 

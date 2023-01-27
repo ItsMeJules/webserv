@@ -122,11 +122,12 @@ const int EPoll::polling(Server &server) {
 					response.setStatusCode(400);
 					response.addHeader("Connection", "close");
 				}
+				std::cout << " fjeifnfsa" << std::endl;
 
-				body->append("Hello World!", 13);
-                response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
-                response.setMessageBody(body);
+				// body->append("Hello World!", 13);
+                // response.addHeader("Content-Type", "text/plain");
+                // response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
+                // response.setMessageBody(body);
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)
 					server.disconnect(client);

@@ -35,18 +35,21 @@ int main(int ac, char **av) {
         ws::parse_config(std::string(av[1]), Server::servers);
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
-            ServerSocket serverSocket;
-            serverSocket.setup();
-           
-            server->setServerSocket(serverSocket);
+
+            server->getSocket().setup();
+            server->getSocket().setIp("127.0.0.1");
             server->setup();
         }
-        for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
-            Server *server = *it;
+        while (1) {
+            for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
+                Server *server = *it;
 
-            if (Server::poller->polling(*server) < 0)
-                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
-            delete *it;
+                if (Server::poller->polling(*server) < 0) {
+                    ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
+                    delete server;
+                    return 1;
+                }
+            }
         }
     }
     HttpRequest::clearMethods();

@@ -159,7 +159,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	std::string key = "NULL";
 	std::string path = "NULL";
 	ServerInfo &serverInfo = server.getServerInfo();
-	ServerSocket socketInfo = server.getSocket();
+	ServerSocket &socketInfo = server.getSocket();
 	switch (matchValues[str])
 	{
 		case NAME:

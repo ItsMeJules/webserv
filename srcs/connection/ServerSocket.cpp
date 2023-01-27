@@ -2,12 +2,10 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerSocket::ServerSocket() : _domain(-1), _port(-1) {}
+ServerSocket::ServerSocket() : _domain(-1), _port(-1), _type(SOCK_STREAM), _protocol(0) {}
 ServerSocket::ServerSocket(int domain, int type, int protocol, int port)
 	: _domain(domain), _type(type), _protocol(protocol), _port(port) {}
-ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port) {
-
-}
+ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port), _type(SOCK_STREAM), _protocol(0) {}
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
 ServerSocket::~ServerSocket() {}
@@ -17,11 +15,11 @@ ServerSocket::~ServerSocket() {}
 // ############## PRIVATE ##############
 
 bool ServerSocket::setup() {
-    if (_domain == -1) {
+	_domain = AF_INET;
+	_type = SOCK_STREAM;
+	_protocol = 0;
+    if (_port == -1) {
 		ws::log(ws::LOG_LVL_INFO, "[SERVER SOCKET] -", "setting up server socket with default values...");
-        _domain = AF_INET;
-        _type = SOCK_STREAM;
-        _protocol = 0;
         if (_port == -1)
             _port = 9999;
     } else
@@ -31,6 +29,7 @@ bool ServerSocket::setup() {
 }
 
 bool ServerSocket::generateFd() {
+	std::cout << _domain << " " << _type<< " " <<  _protocol<< " " << std::endl; 
 	_fd = socket(_domain, _type, _protocol);
 	if (_fd == -1)
 		ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while creating a socket!", true);
@@ -69,6 +68,7 @@ bool ServerSocket::bindTo() {
 	_address.sin_addr.s_addr = _ip.empty() ? INADDR_ANY : inet_addr(_ip.c_str());
 	_address.sin_port = htons(_port);
 
+	std::cout << _ip << std::endl;
 	bool bound = bind(_fd, (struct sockaddr *)&_address, sizeof(_address)) == 0;
 	if (bound)
 		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully bound fd: " + ws::itos(_fd));
@@ -92,6 +92,7 @@ void ServerSocket::setPort(int port) {
 }
 
 void ServerSocket::setIp(std::string ip) {
+	std::cout << ip << "<- ip" << std::endl;
     _ip = ip;
 }
 
