@@ -50,6 +50,8 @@ bool ChunkedDataDecoder::checkChunkSize(const char *buffer, int const &bufSize, 
 
 // ############## PUBLIC ##############
 
+# include <iostream>
+
 int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &vec) {
 	if (_actualChunk.size == -1) {
 		std::string wholeBuffer = ADataDecoder::bufferWithTmp(buffer, size);
@@ -90,18 +92,24 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 				i += 2;
 
 			buffer = ws::char_array(std::string(buffer, size), size, i);
+			_previousChunk = _actualChunk;
 
 			clearActualChunk();
 			decodeInto(buffer, size - i, vec);
 			delete buffer;
-			if (_actualChunk.size == 0)
-				ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
-			return _actualChunk.size == 0 ? 1 : 2;
 		}
 	}
-	if (_actualChunk.size == 0)
+	if (_actualChunk.size == 0) {
+		if (_previousChunk.size != 0) {
+			_previousChunk.size = 0;
+			std::cout << "lol" << std::endl;
+			return 2;
+		}
+		std::cout << "mdr: " << _actualChunk.size << std::endl;
 		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
-	return true;
+		return 1;
+	} else
+		return 2;
 }
 
 // ############## GETTERS / SETTERS ##############

@@ -10,6 +10,7 @@ class ChunkedDataDecoder : public ADataDecoder {
 			std::vector<char> content;
 		} t_chunk;
 
+		t_chunk _previousChunk;
 		t_chunk _actualChunk;
 		int _sizeRead;
 
