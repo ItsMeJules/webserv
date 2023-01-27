@@ -3,22 +3,26 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerInfo::ServerInfo() {}
-ServerInfo::ServerInfo(ServerInfo const &serverInfo) { *this = serverInfo; }
-ServerInfo::~ServerInfo() {
-    for (std::map<std::string, ServerInfo::Location*>::iterator it = _locations.begin(); it != _locations.end(); it++)
-        delete it->second;
+ServerInfo::ServerInfo() {
+	_autoindex = false;
+	_maxBodySize = 1000000;
+	_serverName = "localhost";
 }
-
-ServerInfo::Location::Location() {}
-ServerInfo::Location::Location(Location const &location) { *this = location; }
-ServerInfo::Location::~Location() {}
+ServerInfo::ServerInfo(ServerInfo const &serverInfo) {
+	*this = serverInfo;
+}
+ServerInfo::~ServerInfo() {
+    for (std::map<std::string, Location *>::iterator it = _locations.begin(); it != _locations.end(); it++) {
+		if (it->second)
+			delete it->second;
+	}
+}
 
 // ############## PRIVATE ##############
 
 // ############## PUBLIC ##############
 
-void ServerInfo::addLocation(std::string path, ServerInfo::Location *location) {
+void ServerInfo::addLocation(std::string path, Location *location) {
     _locations.insert(std::make_pair(path, location));
 }
 
@@ -40,20 +44,64 @@ const std::string &ServerInfo::getRootPath() const {
     return _rootPath;
 }
 
+const std::string &ServerInfo::getIndexPath() const {
+	return _indexPath;
+}
+
+const std::string &ServerInfo::getUploadPath() const {
+	return _uploadPath;
+}
+
+const std::vector<std::string> &ServerInfo::getMethod() const {
+	return _method;
+}
+
 const std::map<std::string, std::string> &ServerInfo::getCgis() const {
     return _cgis;
 }
 
-const std::map<std::string, ServerInfo::Location*> &ServerInfo::getLocations() const {
+const std::map<std::string, Location *> &ServerInfo::getLocations() const {
     return _locations;
 }
 
-const std::string &ServerInfo::Location::getIndexPath() const {
-    return _indexPath;
+const std::map<int, std::string> &ServerInfo::getError() const {
+	return _errorPage;
 }
 
-bool ServerInfo::Location::hasAutoindex() const {
-    return _autoindex;
+void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
+	this->_maxBodySize = MaxBodySize;
+}
+
+void  ServerInfo::setAutoIndex(bool AutoIndex) {
+	this->_autoindex = AutoIndex;
+}
+
+void  ServerInfo::setServerName(std::string ServerName) {
+	this->_serverName = ServerName;
+}
+
+void  ServerInfo::setRootPath(std::string Path) {
+	this->_rootPath = Path;
+}
+
+void  ServerInfo::setIndexPath(std::string Path) {
+	this->_indexPath = Path;
+}
+
+void  ServerInfo::setUploadPath(std::string Path) {
+	this->_uploadPath = Path;
+}
+
+void  ServerInfo::addtoMethod(std::string method) {
+	this->_method.push_back(method);
+}
+
+void  ServerInfo::addToCGIS(std::string Extension, std::string Path) {
+	this->_cgis[Extension] = Path;
+}
+
+void  ServerInfo::addErrorPage(int Key, std::string Value) {
+	this->_errorPage[Key] = Value;
 }
 
 // ############## OPERATORS ##############
@@ -65,15 +113,17 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_serverName = rhs._serverName;
 		_rootPath = rhs._rootPath;
 		_cgis = rhs._cgis;
+		_uploadPath = rhs._uploadPath;
+		_method = rhs._method;
+		_cgis = rhs._cgis;
 		_locations = rhs._locations;
-	}
-	return *this;
-}
+		_errorPage = rhs._errorPage;
 
-ServerInfo::Location &ServerInfo::Location::operator=(ServerInfo::Location const &rhs) {
-	if (this != &rhs) {
-		_indexPath = rhs._indexPath;
-		_autoindex = rhs._autoindex;
+		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
+			
+		}
+		
 	}
+
 	return *this;
 }

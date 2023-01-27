@@ -26,7 +26,7 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 	_env["STATUS_CODE"] = "200"; // can't be another one
 	_env["CGI"] = "CGI/1.1";
 	_env["SCRIPT_NAME"] = request.getPath();
-	_env["REQUEST_METHOD"] = request.getMethod();
+	_env["REQUEST_METHOD"] = request.getMethod()->getName();
 	_env["CONTENT_LENGTH"] = ws::itos(_inputBody.length());
 	_env["CONTENT_TYPE"] = content_type;
 	_env["PATH_INFO"] = request.getPath();
@@ -147,3 +147,24 @@ std::string	Cgi::execute(const std::string	&_binary)
 
 
 
+void Cgi::get_response(HttpRequest &request, Server &server)
+{
+// 	if (request.IsCgi())
+// 	{
+// 		Cgi cgi(request, server);
+// 		int i = 0;
+// 		int j = _response.size() - 2;
+// 		_response = cgi.execute(request.);
+// 	}
+}
+
+void	Cgi::post_response(HttpRequest &request, Server &server)
+{
+	// if (request.IsCgi())
+	// {
+	// 	Cgi cgi(request, server);
+	// 	int i = 0;
+	// 	int j = _response.size() - 2;
+	// 	_response = cgi.execute(request.IsCgi());
+	// }
+}

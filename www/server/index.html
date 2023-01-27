@@ -13,25 +13,61 @@
     </head>
     <body>
 		<header>
-			<h1>WEBSERV</h1>
+			<h1>WEB<span>SERV</span></h1>
 		</header>
 		<div class="container-button">
 			<div class="grid">
 				<div class="get">
-					<button class="button" role="button">GET</button>
+					<div class="title">
+						<h2>TRY <span>GET</span> METHOD</h2>
+					</div>
+					<div class="txt">
+						Click here to download<br>the Webserv subject.
+					</div>
+					<div class="btn">
+						<button class="button" type="button" role="button" onclick="">GET</button>
+					</div>
 				</div>
 				<div class="post">
-					<button class="button" role="button">POST</button>
+					<div class="title">
+						<h2>TRY POST METHOD</h2>
+					</div>
+					<div class="form">
+						<form action="/test-post" method="post">
+							<div class="name">
+								<label for="name">Nom</label>
+								<input type="text" name="name" id="name" placeholder="Peyron"required>
+							</div>
+							<div class="mail">
+								<label for="name">Mail</label>
+								<input type="email" name="email" id="email" placeholder="jpeyron@gmail.com"required>
+							</div>
+							<div class="phone">
+								<label for="name">Phone</label>
+								<input type="number" name="phone" id="phone" placeholder="0123456789" required>
+							</div>
+							<div class="btn">
+								<button class="button" type="button" role="button" onclick="">POST</button>
+							</div>
+						</form>
+					</div>
 				</div>
 				<div class="delete">
-					<button class="button" role="button">DELETE</button>
+					<div class="title">
+						<h2>TRY DELETE METHOD</h2>
+					</div>
+					<div class="txt">
+						Click here to try Delete
+					</div>
+					<div class="btn">
+						<button class="button" type="button" role="button" onclick="">DELETE</button>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="container-text">
 			Realized by:
-			<a href="https://profile.intra.42.fr/users/emcariot">Emma Cariot</a>
-			,
+			<a href="https://profile.intra.42.fr/users/emcariot">Emma Cariot,</a>
 			<a href="https://profile.intra.42.fr/users/jpeyron">Jules Peyron</a>
 			et
 			<a href="https://profile.intra.42.fr/users/piboidin">Pierre-Louis Boidin</a>

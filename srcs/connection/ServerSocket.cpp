@@ -79,18 +79,22 @@ bool ServerSocket::bindTo() {
 
 // ############## GETTERS / SETTERS ##############
 
+int const &ServerSocket::getPort() const {
+	return _port;
+}
+
 std::string const &ServerSocket::getIp() const {
     return _ip;
+}
+
+void ServerSocket::setPort(int port) {
+	_port = port;
 }
 
 void ServerSocket::setIp(std::string ip) {
     _ip = ip;
 }
 
-int	ServerSocket::getPort() const
-{
-	return _port;
-}
 
 // ############## OPERATORS ##############
 
@@ -100,7 +104,7 @@ ServerSocket &ServerSocket::operator=(ServerSocket const &rhs) {
 		_type = rhs._type;
 		_protocol = rhs._protocol;
 		_port = rhs._port;
-		Socket::operator=(rhs);
+		ASocket::operator=(rhs);
 	}
 	return *this;
 }

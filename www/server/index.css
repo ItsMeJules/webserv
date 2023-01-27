@@ -11,6 +11,10 @@ h1 {
     font-size: 6vmin;
 }
 
+span {
+	color: #01e6cd;
+}
+
 div.container-button {
 	display: flex;
 	justify-content: center;
@@ -24,7 +28,99 @@ div.grid {
     grid-gap: 1rem;
     justify-items: center;
     justify-content: center;
-    width: 70vw;
+	align-items: center;
+    width: 80vw;
+}
+
+div.get {
+	width: 42.5vh;
+	height: 60vh;
+	border-color: white;
+	border: solid;
+	border-radius: 5%;
+	justify-content: center;
+	align-items: center;
+	transition: transform .2s;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+div.get:hover {
+	transform: scale(1.1);
+	background-color: rgba(255, 255, 255, 0.080);
+}
+
+
+div.post {
+	width: 42.5vh;
+	height: 60vh;
+	border-color: white;
+	border: solid;
+	border-radius: 5%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: transform .2s;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+div.post:hover {
+	transform: scale(1.1);
+	background-color: rgba(255, 255, 255, 0.080);
+}
+
+div.name {
+	margin-bottom: 1vh;
+	margin-top: 3vh;
+}
+
+div.mail {
+	margin-bottom: 1vh;
+	margin-top: 3vh;
+}
+
+div.phone {
+	margin-bottom: 1vh;
+	margin-top: 3vh;
+}
+
+div.btn {
+	margin-bottom: 7vh;
+	margin-top: 8vh;
+}
+
+label {
+	width: 15%;
+	display: inline-block;
+}
+
+input {
+	display: inline-block;
+	background-color: white;
+	border-radius: 29px;
+	font-size: 15px;
+	border: 1px solid white;
+	padding: 10px 45px;
+}
+
+div.delete {
+	width: 42.5vh;
+	height: 60vh;
+	border-color: white;
+	border: solid;
+	border-radius: 5%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: transform .2s;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+div.delete:hover {
+	transform: scale(1.1);
+	background-color: rgba(255, 255, 255, 0.080);
 }
 
 .button{
@@ -51,5 +147,5 @@ div.container-text {
 
 a {
 	text-decoration: none;
-	color: white
+	color: #01e6cd;
 }

@@ -11,9 +11,9 @@
 # include <unistd.h>
 # include <arpa/inet.h>
 
+# include "ASocket.hpp"
 
-# include "Socket.hpp"
-class ServerSocket : public Socket {
+class ServerSocket : public ASocket {
 	private:
 		int _domain;
 		int _type;
@@ -36,10 +36,11 @@ class ServerSocket : public Socket {
 
 		bool setup();
 
-		int	getPort() const;
+		const int &getPort() const;
 
         std::string const &getIp() const;
 
+		void setPort(int port);
         void setIp(std::string ip);
 
 		ServerSocket &operator=(ServerSocket const &rhs);

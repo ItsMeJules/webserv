@@ -28,8 +28,8 @@ class Poll : public IPoll {
         bool const modFd(int fd, int event);
 		int const polling(Server &server);
 
-		int const clientEvents() const;
-        int const listenerEvents() const;
+		int const pollOutEvent() const;
+        int const pollInEvent() const;
 
 		Poll &operator=(Poll const &rhs);
 };

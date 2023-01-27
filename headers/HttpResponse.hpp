@@ -7,45 +7,35 @@
 # include <sys/time.h>
 
 
-# include "Message.hpp"
-# include "Client.hpp"
-# include "StatusCode.hpp"
+# include "HttpMessage.hpp"
+# include "utils.hpp"
 
-class Server;
-//class StatusCode;
-
-class HttpResponse : public Message {
+class HttpResponse : public HttpMessage {
 	private:
 		int _statusCode;
-		std::string _reasonPhrase;
-		StatusCode	_status_code;
+		ws::http_status_t _statusPhrase;
 
-		std::string	_response;
-		std::string	_date;
-		std::string	_header;
-		std::string _type;
+		static ws::http_status_t createStatus(std::string reason, std::string explanation);
+
+	public:
+        static std::map<int, ws::http_status_t> codes;
 
 	public:
 		HttpResponse();
-		HttpResponse(std::string httpVersion, int statusCode, std::string reasonPhrase);
+		HttpResponse(int statusCode);
 		HttpResponse(HttpResponse const &htttpResponse);
 		~HttpResponse();
 
-		std::string build();
-		void send(Client &client);
-		void	get_response(HttpRequest &request, Server &server);
-		void	post_response(HttpRequest &request, Server &server);
-		// void	delete_response(HttpRequest &request, Server &server);
-		void	showErrorPage();
+		const std::string build() const;
 
-		//getter setter functions
-		std::string	setDate(void);
-		std::string	getResponse() const;
+		void setStatusCode(int statusCode);
+
+		const int getStatusCode() const;
+
 
 		HttpResponse &operator=(HttpResponse const &rhs);
+
+        static std::map<int, ws::http_status_t> createCodes();
 };
 
 #endif
-
-
-// faire une fonction de la reponse avec le header et mettre la date dedans

@@ -6,9 +6,14 @@
 
 # include "utils.hpp"
 # include "HttpRequest.hpp"
-# include "ChunkedBody.hpp"
-# include "FileBody.hpp"
-# include "RegularBody.hpp"
+
+# include "AMessageBody.hpp"
+# include "FormDataBody.hpp"
+# include "DefaultBody.hpp"
+
+# include "ADataDecoder.hpp"
+# include "ChunkedDataDecoder.hpp"
+# include "DefaultDataDecoder.hpp"
 
 
 class RequestParser {
@@ -22,15 +27,14 @@ class RequestParser {
 		void parseFirstLine(std::string firstLine);
 
 		std::string emptyAndClearStream();
-        IMessageBody *getAccordingBodyType();
-
+        AMessageBody *getAccordingBodyType();
 	public:
 		bool parseHeaders(std::string headers);
 		RequestParser();
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
-		void parseRequest(std::string request);
+		const bool parseRequest(char *request, int &byteCount);
         void clear();
 
 		HttpRequest &getHttpRequest();

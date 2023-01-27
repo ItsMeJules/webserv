@@ -4,18 +4,18 @@
 # include <map>
 # include <iostream>
 
-# include "IMessageBody.hpp"
+# include "AMessageBody.hpp"
 
-class Message {
+class HttpMessage {
 	protected:
 		std::string _httpVersion;
 		std::map<std::string, std::string> _headers;
-		IMessageBody *_messageBody;
+		AMessageBody *_messageBody;
 	public:
-		Message();
-		Message(std::string httpVersion);
-		Message(Message const &message);
-		virtual ~Message();
+		HttpMessage();
+		HttpMessage(std::string httpVersion);
+		HttpMessage(HttpMessage const &message);
+		virtual ~HttpMessage();
 
 		virtual const std::string build() const;
 
@@ -24,14 +24,14 @@ class Message {
         bool headersHasKey(std::string headerTag) const;
         bool headersContains(std::string headerTag, std::string value) const;
 
-		void setMessageBody(IMessageBody *messageBody);
+		void setMessageBody(AMessageBody *messageBody);
 		void setHttpVersion(std::string httpVersion);
 
 		const std::string &getHttpVersion() const;
 		const std::map<std::string, std::string> getHeaders() const;
-		IMessageBody *getMessageBody();
+		AMessageBody *getMessageBody();
 
-		Message &operator=(Message const &rhs);
+		HttpMessage &operator=(HttpMessage const &rhs);
 };
 
 #endif

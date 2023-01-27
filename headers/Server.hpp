@@ -49,6 +49,9 @@ class Server {
 
 		const ServerSocket &getSocket() const;
         ServerInfo &getServerInfo();
+		std::string getServerName() const;
+
+		void setServerSocket(ServerSocket serverSocket);
 
 		void	setName(std::string name);
 

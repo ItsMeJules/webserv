@@ -1,6 +1,8 @@
 webserv
 .vscode/*
 .subject/
-.obj/
+obj/
 .obj/*
 subject/en.subject.pdf
+.editorconfig
+.idea/
