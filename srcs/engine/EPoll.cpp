@@ -125,9 +125,9 @@ const int EPoll::polling(Server &server) {
 					response.addHeader("Connection", "close");
 				}
 
+				response.addHeader("Date: ", response.generateDate());
 				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
-				response.addHeader("Date: ", response.generateDate());
                 response.addHeader("Content-Length", ws::itos(body->getBody().size()));
                 response.setMessageBody(body);
 

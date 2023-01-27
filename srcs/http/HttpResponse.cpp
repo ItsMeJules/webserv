@@ -38,7 +38,6 @@ const int HttpResponse::getStatusCode() const {
 
 std::string	HttpResponse::generateDate(void)
 {
-	std::cout << "THIS IS THE HOUR" << std::endl;
 	char			buffer[100];
 	struct timeval	tv;
 	struct tm		*gmt;

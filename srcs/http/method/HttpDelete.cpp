@@ -22,13 +22,18 @@ std::string HttpDelete::getName() {
 	return "DELETE";
 }
 
+std::string HttpDelete::getPath() const
+{
+	return _path;
+}
+
 // ############## GETTERS / SETTERS ##############
 
 // ############## OPERATORS ##############
 
 HttpDelete &HttpDelete::operator=(HttpDelete const &rhs) {
 	if (this != &rhs) {
-		
+
 	}
 	return *this;
 }

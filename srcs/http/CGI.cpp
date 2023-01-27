@@ -1,7 +1,4 @@
 #include "CGI.hpp"
-
-
-
 //http://www.wijata.com/cgi/cgispec.html#4.0  GO GO GO
 
 Cgi::Cgi(){}
@@ -16,7 +13,13 @@ Cgi	&Cgi::operator=(Cgi const &src)
 	return *this;
 }
 
-Cgi::Cgi(HttpRequest &request, Server &server)
+Cgi::Cgi(HttpRequest &request, Server &server, ServerInfo &serverInfo) : _inputBody(request.getMessageBody()->getBodyStr())
+{
+	std::cout << "hello" << std::endl;
+	initEnv(request, server, serverInfo);
+}
+
+void	Cgi::initEnv(HttpRequest &request, Server &server, ServerInfo &serverInfo)
 {
 	std::map<std::string, std::string> headers = request.getHeaders();
 	std::string content_type = "text/html";
@@ -26,6 +29,7 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 	_env["STATUS_CODE"] = "200"; // can't be another one
 	_env["CGI"] = "CGI/1.1";
 	_env["SCRIPT_NAME"] = request.getPath();
+	std::cout << _env["SCRIPT_NAME"] << std::endl;
 	_env["REQUEST_METHOD"] = request.getMethod()->getName();
 	_env["CONTENT_LENGTH"] = ws::itos(_inputBody.length());
 	_env["CONTENT_TYPE"] = content_type;
@@ -43,6 +47,9 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 	_env["SERVER_PORT"] = ws::itos(server.getSocket().getPort());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_SOFTWARE"] = "Webservgang";
+
+	_env.insert(serverInfo.getCgis().begin(), serverInfo.getCgis().end());
+
 }
 
 Cgi::~Cgi() {}
@@ -59,7 +66,9 @@ void	Cgi::setEnv(std::map<std::string, std::string> env)
 
 char **Cgi::envToTab(void)
 {
+	std::cout << "DEBUG : EST DANS ENVTOTAB" << std::endl;
 	char **env = new char *[_env.size() + 1];
+	std::cout << "SIZE = " << _env.size() << std::endl;
 	int i;
 	i = 0;
 
@@ -83,6 +92,7 @@ std::string	Cgi::execute(const std::string	&_binary)
 
 	try
 	{
+		std::cout << "EST DANS EXCEPTION" << std::endl;
 		env = envToTab();
 	}
 	catch(const std::exception& e)
@@ -145,26 +155,25 @@ std::string	Cgi::execute(const std::string	&_binary)
 	return _body;
 }
 
-
-
-void Cgi::get_response(HttpRequest &request, Server &server)
+void Cgi::writeGetResponse(HttpRequest &request, Server &server, ServerInfo &serverInfo)
 {
+	if (request.IsCgi())
+	{
+		Cgi cgi(request, server, serverInfo);
+		int i = 0;
+		int j = _response.size() - 2;
+		std::cout << "RESPONSE = " << _response << std::endl;
+	}
+}
+
+// void	Cgi::writePostResponse(HttpRequest &request, Server &server)
+// {
 // 	if (request.IsCgi())
 // 	{
 // 		Cgi cgi(request, server);
 // 		int i = 0;
 // 		int j = _response.size() - 2;
-// 		_response = cgi.execute(request.);
+// 		std::cout << "RESPONSE DANS POST" << _response << std::endl;
+// 		// _response = cgi.execute(request.IsCgi());
 // 	}
-}
-
-void	Cgi::post_response(HttpRequest &request, Server &server)
-{
-	// if (request.IsCgi())
-	// {
-	// 	Cgi cgi(request, server);
-	// 	int i = 0;
-	// 	int j = _response.size() - 2;
-	// 	_response = cgi.execute(request.IsCgi());
-	// }
-}
+// }

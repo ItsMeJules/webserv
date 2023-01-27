@@ -2,6 +2,7 @@
 #include "Server.hpp"
 #include "config_parser.hpp"
 #include "utils.hpp"
+# include "CGI.hpp"
 
 #ifdef __linux__
 # include "EPoll.hpp"
@@ -21,6 +22,7 @@ std::vector<Server *> vecserv;
 
 int main(int ac, char **av) {
     if (ac < 2) {
+
         ServerSocket serverSocket;
         serverSocket.setup();
 
@@ -48,7 +50,7 @@ int main(int ac, char **av) {
                 ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
             delete *it;
         }
-        
+
     }
     HttpRequest::clearMethods();
 }
