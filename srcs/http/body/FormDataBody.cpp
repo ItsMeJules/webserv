@@ -128,7 +128,6 @@ int FormDataBody::parse(char *body, int &size) {
 		if (partEndPos == -1)
 			return 0;
 
-
 		if (!_parts.empty()) {
 			FormDataPart *lastPart = *(_parts.end() - 1);
 			if (!lastPart->_parsed) {
