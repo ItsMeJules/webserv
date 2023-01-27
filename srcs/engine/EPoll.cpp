@@ -127,6 +127,8 @@ const int EPoll::polling(Server &server) {
 
 				body->append("Hello World!", 13);
                 response.addHeader("Content-Type", "text/plain");
+				std::string	_date = HttpResponse::setDate();
+				response.addHeader("Date: ", _date);
                 response.addHeader("Content-Length", ws::itos(body->getBody().size()));
                 response.setMessageBody(body);
 

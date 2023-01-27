@@ -36,18 +36,18 @@ const int HttpResponse::getStatusCode() const {
     return _statusCode;
 }
 
-// std::string	HttpResponse::setDate(void)
-// {
-// 	std::cout << "THIS IS THE HOUR" << std::endl;
-// 	char			buffer[100];
-// 	struct timeval	tv;
-// 	struct tm		*gmt;
+std::string	HttpResponse::setDate(void)
+{
+	std::cout << "THIS IS THE HOUR" << std::endl;
+	char			buffer[100];
+	struct timeval	tv;
+	struct tm		*gmt;
 
-// 	gettimeofday(&tv, NULL);
-// 	gmt = gmtime(&tv.tv_sec);
-// 	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
-// 	return buffer;
-// }
+	gettimeofday(&tv, NULL);
+	gmt = gmtime(&tv.tv_sec);
+	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
+	return buffer;
+}
 
 
 // ############## OPERATORS ##############
