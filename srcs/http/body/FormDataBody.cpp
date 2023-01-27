@@ -65,28 +65,31 @@ bool FormDataBody::FormDataPart::parse(FormDataBody const &parent, size_t const 
 
 	if (headerKey == "Content-Disposition") {
 		size_t namePos = headerValue.find("name=") + 6; // skips name="
-		std::string nameValue = headerValue.substr(namePos, headerValue.size() - (namePos + 1));
+		std::string nameValue = headerValue.substr(namePos,  headerValue.find("\"", namePos) - namePos);
 		size_t fileNamePos = headerValue.find("filename=");
+		std::vector<char> &directiveContent = _directives[nameValue];
 
 		headerEndPos += 4;
 		if (fileNamePos != std::string::npos) {
 			fileNamePos += 10; // skips filename="
 			_fileKey = nameValue.substr(0, nameValue.find("\""));
 			_fileName = headerValue.substr(fileNamePos, headerValue.size() - (fileNamePos + 1));
-			std::vector<char> &directiveContent = _directives[_fileKey];
 
 			for (int i = headerEndPos; i < partEndPos; i++)
 				directiveContent.push_back(_contents[i]);
+			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "file " + _fileName + " with directive " + _fileKey + " was parsed with value:\n" + std::string(directiveContent.data(), directiveContent.size()));
 			_parsed = true;
 			return true;
 		} else {
-			std::vector<char> &directiveContent = _directives[nameValue];
-
 			for (int i = headerEndPos; i < partEndPos; i++)
 				directiveContent.push_back(_contents[i]);
+			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "directive " + nameValue + " was parsed with value:\n" + std::string(directiveContent.data(), directiveContent.size()));
 		}
-	} else
+	} else {
 		_headers.insert(std::make_pair(headerKey, headerValue));
+		ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "header " + headerKey + " was parsed with value: " + headerValue);
+	}
+	ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "data part was fully parsed.");
 	_parsed = true;
 	return false;
 }
@@ -125,25 +128,31 @@ int FormDataBody::parse(char *body, int &size) {
 		if (partEndPos == -1)
 			return 0;
 
+
 		if (!_parts.empty()) {
 			FormDataPart *lastPart = *(_parts.end() - 1);
-			if (!lastPart->_parsed)
+			if (!lastPart->_parsed) {
 				part = lastPart;
-			else {
+			} else {
+				ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new FormDataPart is about to be parsed.");
 				part = new FormDataPart();
 				_parts.push_back(part);
 			}
 		} else {
+			ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new FormDataPart is about to be parsed.");
 			part = new FormDataPart();			
 			_parts.push_back(part);
 		}
 
 		for (int i = headerStartPos; i < partEndPos; i++)
 			part->_contents.push_back(_tmp[i]);
-		// not efficient operation, i could use an offset and just skip the first values
+		// not efficient operation, i could maybe use an offset and just skip the first values
 		_tmp.erase(_tmp.begin(), _tmp.begin() + partEndPos + 2);
 		parseRet = part->parse(*this, partEndPos - headerStartPos);
 	} while (!parseRet);
+
+	if (decoded == 1)
+		ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new FormDataPart is about to be parsed.");
 	
 	return decoded;
 }

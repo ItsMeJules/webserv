@@ -90,10 +90,14 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 			clearActualChunk();
 			decodeInto(buffer, size - i, vec);
 			delete buffer;
+			if (_actualChunk.size == 0)
+				ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
 			return _actualChunk.size == 0 ? 1 : 2;
 		}
 	}
-	return _actualChunk.size == 0;
+	if (_actualChunk.size == 0)
+		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
+	return true;
 }
 
 // ############## GETTERS / SETTERS ##############

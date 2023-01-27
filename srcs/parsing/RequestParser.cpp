@@ -76,7 +76,6 @@ const bool RequestParser::parseRequest(char *request, int &byteCount) {
 				ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(bodySize) + " chars from body received with headers.");
 
 				std::vector<char> vector(request + (byteCount - bodySize), request + byteCount + 1);
-
 				parseRequest(vector.data(), bodySize); // removes to byteCount header size.
 			}
 		} else {
