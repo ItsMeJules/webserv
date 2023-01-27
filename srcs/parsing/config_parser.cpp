@@ -121,14 +121,65 @@ int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
 	}
 }
 
-int ws::check_error_page_key(std::string key) {
-	int	check;
-	int key_err = 0;
-	const char* tmp_c = key.data();
-	if (isdigit(tmp_c[0]))
-		return (1);
-	else
-		return 0;
+
+std::vector<std::string> ws::cppSplitStr(const std::string &str, const std::string &charset)
+{
+    std::vector<std::string> res;
+    if (str.find(charset) != std::string::npos)
+    {
+        res.push_back(str.substr(0, str.find(charset)));
+        res.push_back(str.substr(str.find(charset) + charset.length(), str.length() - str.find(charset) - charset.length()));
+    }
+    else
+        res.push_back(str);
+    return res;
+}
+
+int ws::checkIpKey(std::string key) {
+	const char *tmp_c = key.data();
+	int i = 0;
+	while (tmp_c[i]) {
+		if ((tmp_c[i] >= '0' && tmp_c[i] <= '9' ) || tmp_c[i] == '.')
+			i++;
+		else
+			throw std::invalid_argument("Error, Invalid Listen : Can have only an IP & Port.");
+	}
+	return 0;
+}
+
+int ws::checkPortKey(std::string key) {
+	const char *tmp = key.c_str();
+	int p_tmp = atoi(tmp);
+	int i = 0;
+
+	std::cout << "key: " << key << std::endl;
+	while (tmp[i])
+	{
+		if (tmp[i] >= 0 && tmp[i] <= 9) {
+			std::cout << tmp[i] << std::endl;
+			i++;
+		}
+		else
+			throw std::invalid_argument("Error, Invalid Listen : Port can only contain number.");
+	}
+	if (p_tmp < 0 && p_tmp > 65535)
+		throw std::invalid_argument("Error, Invalid Listen : Port can only be between 0 and 65535.");
+	return 0;
+}
+
+int ws::checkErrorKey(std::string key) {
+	const char *tmp = key.c_str();
+	int p_tmp = atoi(tmp);
+	int i = 0;
+
+	while (tmp[i])
+	{
+		if (isdigit(tmp[i]))
+			i++;
+		else
+			throw std::invalid_argument("Error, Page_Error : Can only be Number.");
+	}
+	return 0;
 }
 
 void ws::parserInit(std::map<std::string, confValues> &matchValues) {
@@ -158,8 +209,14 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	int val;
 	std::string key = "NULL";
 	std::string path = "NULL";
+	std::vector<std::string> listen;
+	std::string str2;
+	std::string ip;
+	std::string port;
+
 	ServerInfo &serverInfo = server.getServerInfo();
 	ServerSocket socketInfo = server.getSocket();
+	
 	switch (matchValues[str])
 	{
 		case NAME:
@@ -172,11 +229,34 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 		case LISTEN: // Checker --> OK
 			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				int p_tmp = atoi(p);
-				if (checkPort(p_tmp, socketInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
+			str2 = p;
+			if (str2.find(":") != std::string::npos) {
+				listen = cppSplitStr(str2, ":");
+				if (listen.size() > 2)
+					throw std::invalid_argument("Error, Invalid Listen : Can have only an IP & Port.");
+				ip = listen[0];
+				port = listen[1];
+				if (checkIpKey(ip))
+					socketInfo.setIp(ip);
+				if (checkPortKey(port) == 0) {
+					std::cout << "ICI" << std::endl;
+					const char *tmp = port.c_str();
+					int p_tmp = atoi(tmp);
+					socketInfo.setPort(p_tmp);
+				}
+			}
+			else {
+				std::cout << "\t\tSocketInfo -> _port: " << p << std::endl;
+				str2 = p;
+				int test = checkPortKey(str2);
+				std::cout << "test renvoi : " << test << "et port " << p << std::endl;
+				if (checkPortKey(port) == 0) {
+					std::cout << "ICI PORT" << std::endl;
+					int p_tmp = atoi(p);
+					socketInfo.setPort(p_tmp);
+				}
+				else
+					throw std::invalid_argument("Error, Port : There is a problem with your listen config.");
 			}
 			break;
 		
@@ -236,7 +316,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			while (p!=0) {
 				std::string value = std::string(p);
 				int size = value.size();
-				if ((size == 3) && (check_error_page_key(value) == 1))
+				if ((size == 3) && (checkErrorKey(value) == 1))
 					val = atoi(p);
 				if (val <= 600 && val >= 100)
 					path = std::string(p);
