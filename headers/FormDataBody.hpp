@@ -8,8 +8,6 @@
 class FormDataBody : public AMessageBody {
 	private:
 		class FormDataPart {
-			private:
-				int strPos(std::string str) const;
 			public:
 				FormDataPart();
 				FormDataPart(FormDataPart const &formDataPart);
@@ -36,6 +34,7 @@ class FormDataBody : public AMessageBody {
 		std::vector<char> _tmp;
 		std::string _boundary;
 
+		int strPos(std::string str, std::vector<char> const &vec) const;
 		int nextCRLFpos(int pos = 0, int nCRLF = 1) const;
 		FormDataPart &getNextNeedParsing();
 	public:

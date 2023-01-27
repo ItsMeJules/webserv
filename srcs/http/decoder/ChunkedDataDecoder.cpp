@@ -97,15 +97,11 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 			clearActualChunk();
 			decodeInto(buffer, size - i, vec);
 			delete buffer;
+			if (_actualChunk.size == 0 && _previousChunk.size != 0)
+				return 3;
 		}
 	}
 	if (_actualChunk.size == 0) {
-		if (_previousChunk.size != 0) {
-			_previousChunk.size = 0;
-			std::cout << "lol" << std::endl;
-			return 2;
-		}
-		std::cout << "mdr: " << _actualChunk.size << std::endl;
 		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
 		return 1;
 	} else
