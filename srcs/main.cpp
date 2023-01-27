@@ -48,6 +48,7 @@ int main(int ac, char **av) {
                 ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
             delete *it;
         }
+        
     }
     HttpRequest::clearMethods();
 }

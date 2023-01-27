@@ -36,7 +36,7 @@ const int HttpResponse::getStatusCode() const {
     return _statusCode;
 }
 
-std::string	HttpResponse::setDate(void)
+std::string	HttpResponse::generateDate(void)
 {
 	std::cout << "THIS IS THE HOUR" << std::endl;
 	char			buffer[100];

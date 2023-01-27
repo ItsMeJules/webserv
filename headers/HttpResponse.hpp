@@ -32,7 +32,7 @@ class HttpResponse : public HttpMessage {
 
 		const int getStatusCode() const;
 
-		std::string setDate();
+		std::string generateDate();
 
 
 		HttpResponse &operator=(HttpResponse const &rhs);
