@@ -24,7 +24,7 @@ bool Server::startListening(int backlog) {
 
 bool Server::setup() {
 	ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "setting up the server...");
-    return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->listenerEvents());
+    return startListening(10) && poller->init() && poller->pollFd(_socket.getFd(), poller->pollInEvent());
 }
 
 bool Server::receiveData(Client &client) {
@@ -37,7 +37,10 @@ bool Server::receiveData(Client &client) {
         buffer[byteCount] = 0;
 		ws::log(ws::LOG_LVL_INFO, "[SERVER] -", ws::itos(byteCount) + " bytes were read from fd: " + ws::itos(clientFd));
 		ws::log(ws::LOG_LVL_DEBUG, "", std::string("content:\n") + buffer);
-        client.getRequestParser().parseRequest(buffer);
+        if (!client.getRequestParser().parseRequest(buffer, byteCount)) {
+			client.setRequestFailed(true);
+			return true;
+		}
     } else if (byteCount == 0) {
 		ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "0 byte was read from fd: " + ws::itos(clientFd));
         return false;
@@ -47,12 +50,17 @@ bool Server::receiveData(Client &client) {
 }
 
 void Server::sendData(Client &client, HttpResponse &response) {
-    response.send(client);
+	std::string responseStr = response.build();
+
+	ws::log(ws::LOG_LVL_ALL, "[HTTP RESPONSE] -", ws::itos(responseStr.length()) + " chars were sent to fd: " + ws::itos(client.getSocket().getFd()));
+	ws::log(ws::LOG_LVL_DEBUG, "[HTTP RESPONSE] -", "contents:\n----------\n" + responseStr + "\n----------");
+
+	write(client.getSocket().getFd(), responseStr.c_str(), responseStr.length());
 }
 
 bool Server::connect(Client &client) {
     _clients.insert(std::make_pair(client.getSocket().getFd(), client));
-    return poller->pollFd(client.getSocket().getFd(), poller->clientEvents());
+    return poller->pollFd(client.getSocket().getFd(), poller->pollInEvent());
 }
 
 bool Server::disconnect(Client &client) {

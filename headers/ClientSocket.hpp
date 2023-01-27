@@ -4,9 +4,9 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 
-# include "Socket.hpp"
+# include "ASocket.hpp"
 
-class ClientSocket : public Socket {
+class ClientSocket : public ASocket {
 	private:
 		int _serverListeningFd;
 	public:

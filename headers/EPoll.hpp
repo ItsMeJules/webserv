@@ -26,8 +26,8 @@ class EPoll : public IPoll {
         bool const modFd(int fd, int event);
 		int const polling(Server &server);
 		
-		int const clientEvents() const;
-        int const listenerEvents() const;
+		int const pollOutEvent() const;
+        int const pollInEvent() const;
 
 		EPoll &operator=(EPoll const &rhs);
 };

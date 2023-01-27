@@ -49,4 +49,5 @@ int main(int ac, char **av) {
             delete *it;
         }
     }
+    HttpRequest::clearMethods();
 }

@@ -32,7 +32,7 @@ const int &ClientSocket::getServerListeningFd() const {
 ClientSocket &ClientSocket::operator=(ClientSocket const &rhs) { 
 	if (this != &rhs) {
 		_serverListeningFd = rhs._serverListeningFd;
-		Socket::operator=(rhs);
+		ASocket::operator=(rhs);
 	}
 	return *this;
 }

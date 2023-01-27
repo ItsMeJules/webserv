@@ -1,5 +1,5 @@
-#ifndef SOCKET_HPP
-# define SOCKET_HPP
+#ifndef ASOCKET_HPP
+# define ASOCKET_HPP
 
 # include <iostream>
 
@@ -12,16 +12,16 @@
 
 # include "utils.hpp"
 
-class Socket {
+class ASocket {
 	private:
 	protected:
 		int _fd;
 
 		sockaddr_in _address;
 	public:
-		Socket();
-		Socket(Socket const &socket);
-		virtual ~Socket();
+		ASocket();
+		ASocket(ASocket const &socket);
+		virtual ~ASocket();
 
 		virtual bool setup() = 0;
         virtual bool close() const;
@@ -29,7 +29,7 @@ class Socket {
 		const int &getFd() const;
 		const sockaddr_in &getAddress() const;
 
-		Socket &operator=(Socket const &rhs);
+		ASocket &operator=(ASocket const &rhs);
 };
 
 #endif
