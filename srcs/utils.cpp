@@ -9,7 +9,7 @@ int ws::stoi(std::string const &str) {
 }
 
 unsigned int ws::hextoi(std::string const &str) {
-	unsigned int x;
+	unsigned int x = 0;
 	std::stringstream ss;
 	ss << std::hex << str;
 	ss >> x;

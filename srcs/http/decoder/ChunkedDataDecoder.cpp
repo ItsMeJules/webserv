@@ -55,9 +55,12 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 		std::string wholeBuffer = ADataDecoder::bufferWithTmp(buffer, size);
 		size_t endChunkSizePos = wholeBuffer.find("\r\n");
 
-		if (endChunkSizePos == std::string::npos) {
+		if (endChunkSizePos == std::string::npos || endChunkSizePos == 0) {
             ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "chunk size not complete. stored in string.");
-			ADataDecoder::fillTmp(buffer, size);
+			if (endChunkSizePos == 0) // if the found pos is 0, it means there are no number so we skip the position.
+				ADataDecoder::fillTmp(buffer + 1, size - 1);
+			else
+				ADataDecoder::fillTmp(buffer, size);
 			return 0;
 		}
 
