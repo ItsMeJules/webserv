@@ -122,7 +122,7 @@ int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
 }
 
 
-std::vector<std::string> ws::cppSplitStr(const std::string &str, const std::string &charset)
+std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
 {
     std::vector<std::string> res;
     if (str.find(charset) != std::string::npos)
@@ -152,13 +152,10 @@ int ws::checkPortKey(std::string key) {
 	int p_tmp = atoi(tmp);
 	int i = 0;
 
-	std::cout << "key: " << key << std::endl;
 	while (tmp[i])
 	{
-		if (tmp[i] >= 0 && tmp[i] <= 9) {
-			std::cout << tmp[i] << std::endl;
+		if (tmp[i] >= '0' && tmp[i] <= '9')
 			i++;
-		}
 		else
 			throw std::invalid_argument("Error, Invalid Listen : Port can only contain number.");
 	}
@@ -174,7 +171,7 @@ int ws::checkErrorKey(std::string key) {
 
 	while (tmp[i])
 	{
-		if (isdigit(tmp[i]))
+		if (tmp[i] >= '0' && tmp[i] <= '9')
 			i++;
 		else
 			throw std::invalid_argument("Error, Page_Error : Can only be Number.");
@@ -197,187 +194,186 @@ void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 }
 
 int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
-    std::cout << "\tserver line: " << cpt.line << std::endl;
-    char *cstr = new char [cpt.line.length()+1];
-    strcpy (cstr, cpt.line.c_str());
-    char *p = ::strtok (cstr, " ");
-	std::string str = std::string(p);
-
-	std::map<std::string, confValues> matchValues;
-	parserInit(matchValues);
-
-	int val;
-	std::string key = "NULL";
-	std::string path = "NULL";
-	std::vector<std::string> listen;
-	std::string str2;
-	std::string ip;
-	std::string port;
-
+	std::vector<std::string> lineArguments = splitStr(cpt.line, ws::WHITE_SPACES);
 	ServerInfo &serverInfo = server.getServerInfo();
-	ServerSocket socketInfo = server.getSocket();
 	
-	switch (matchValues[str])
-	{
-		case NAME:
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				serverInfo.setServerName(p);
-				p = strtok(NULL," ,|;");
-			}
-			break;
+	std::cout << lineArguments[0] << " ;" << lineArguments[1] << std::endl;
+	if (cpt.configKeys.count(lineArguments[0]) == 0)
+		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
+	
+	switch (cpt.configKeys[lineArguments[0]]) {
+	case NAME:
+		if (lineArguments.size() != 2)
+			throw std::length_error("Wrong number of arguments, 2 expected.");
 
-		case LISTEN: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			str2 = p;
-			if (str2.find(":") != std::string::npos) {
-				listen = cppSplitStr(str2, ":");
-				if (listen.size() > 2)
-					throw std::invalid_argument("Error, Invalid Listen : Can have only an IP & Port.");
-				ip = listen[0];
-				port = listen[1];
-				if (checkIpKey(ip))
-					socketInfo.setIp(ip);
-				if (checkPortKey(port) == 0) {
-					std::cout << "ICI" << std::endl;
-					const char *tmp = port.c_str();
-					int p_tmp = atoi(tmp);
-					socketInfo.setPort(p_tmp);
-				}
-			}
-			else {
-				std::cout << "\t\tSocketInfo -> _port: " << p << std::endl;
-				str2 = p;
-				int test = checkPortKey(str2);
-				std::cout << "test renvoi : " << test << "et port " << p << std::endl;
-				if (checkPortKey(port) == 0) {
-					std::cout << "ICI PORT" << std::endl;
-					int p_tmp = atoi(p);
-					socketInfo.setPort(p_tmp);
-				}
-				else
-					throw std::invalid_argument("Error, Port : There is a problem with your listen config.");
-			}
-			break;
-		
-		case CLIENT_MAX_BODY: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string size = std::string(p);
-				if (checkClientMaxBodySize(size, serverInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
-			break;
+		if (!ws::string_in_range(lineArguments[1], ws::AL_NUM, lineArguments[1].size() - 1))
+			throw std::invalid_argument(lineArguments[1] + " is not a valid name for a server. Only alnum chars are accepted!");
 
-		case AUTOINDEX: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string index = std::string(p);
-				if (checkAutoIndex(index, serverInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
-			break;
+		if (lineArguments[1][lineArguments[1].size() - 1] != ';')
+			throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 
-		case METHOD: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string method = std::string(p);
-				if (checkMethod(method, serverInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-		
-		case CGI: // OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				if (p[0] == '.')
-					key = std::string(p);
-				else
-					path = std::string(p);
-				if (key != "NULL" && path != "NULL")
-					serverInfo.addToCGIS(key, path);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-
-		case INDEX: // OK
-			p = strtok(NULL, " ,|;");
-			while (p!=0) {
-				serverInfo.setIndexPath(p);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-		
-		case ERROR_PAGE: // OK
-			p = strtok(NULL, " ,|;");
-			while (p!=0) {
-				std::string value = std::string(p);
-				int size = value.size();
-				if ((size == 3) && (checkErrorKey(value) == 1))
-					val = atoi(p);
-				if (val <= 600 && val >= 100)
-					path = std::string(p);
-				if (path != "NULL" && val != 0)
-					serverInfo.addErrorPage(val, path);
-				else {
-					std::cerr << "Problem Configuration Files - ERROR_PAGE" << std::endl;
-					return 1;
-				}
-				p = strtok(NULL, " ,|;");
-			}
-			break;
-
-		case UPLOAD: // OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				serverInfo.setUploadPath(p);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-
-		case ROOT: // OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				serverInfo.setRootPath(p);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-
-		default:
-			std::cerr << "Problem Configuration Files - DEFAULT_ERROR" << std::endl;
-			break;
+		serverInfo.setServerName(lineArguments[1].substr(0, lineArguments[1].size() - 1));
+		std::cout << serverInfo.getServerName() << std::endl;
+		break;
+	
+	default:
+		break;
 	}
-	
-	// std::cout << "\t\tName: " << serverInfo.getServerName() << std::endl;
-	// std::cout << "\t\tListen: " << socketInfo.getPort() << std::endl;
-	// std::cout << "\t\tClient_Size_Body_: " << serverInfo.getMaxBodySize() << std::endl;
-	// std::cout << "\t\tAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
-	// std::vector<std::string> test1 = serverInfo.getMethod();
-	// std::cout << "\t\tMethod: " << " \t";
-	// for (std::vector<std::string>::const_iterator i = test1.begin(); i != test1.end(); ++i)
-    // 	std::cout << *i << ' ';
-	// std::cout << std::endl;
-	// std::map<std::string, std::string> test2 = serverInfo.getCgis();
-	// std::cout << "\t\tCGIS: " << " \t";
-    // for (std::map<std::string, std::string>::const_iterator it = test2.begin(); it != test2.end(); ++it) {
-    //     std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
-    // }
-	// std::cout << std::endl;
-	// std::map<int, std::string> test3 = serverInfo.getError();
-	// std::cout << "\t\tIndex: " << serverInfo.getIndexPath() << std::endl;
-	// 	std::cout << "\t\tError_Page: " << " \t";
-    // for (std::map<int, std::string>::const_iterator it = test3.begin(); it != test3.end(); ++it) {
-    //     std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
-    // }
-	// std::cout << std::endl;
-	// std::cout << "\t\tUpload: " << serverInfo.getUploadPath() << std::endl;
-	// std::cout << "\t\tRoot: " << serverInfo.getRootPath() << std::endl;
-	delete[] cstr;
 	return 0;
 }
+
+// int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
+//     std::cout << "\tserver line: " << cpt.line << std::endl;
+//     char *cstr = new char [cpt.line.length()+1];
+//     strcpy (cstr, cpt.line.c_str());
+//     char *p = ::strtok (cstr, " ");
+// 	std::string str = std::string(p);
+
+// 	std::map<std::string, confValues> matchValues;
+// 	parserInit(matchValues);
+
+// 	int val = 0;
+// 	std::string key = "NULL";
+// 	std::string path = "NULL";
+// 	std::vector<std::string> listen;
+// 	std::string str2;
+// 	std::string ip;
+// 	std::string port;
+
+// 	ServerInfo &serverInfo = server.getServerInfo();
+// 	ServerSocket socketInfo = server.getSocket();
+	
+// 	switch (matchValues[str])
+// 	{
+// 		case NAME:
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				serverInfo.setServerName(p);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+
+// 		case LISTEN: // Checker --> OK
+// 			p = strtok(NULL," ,|;");
+// 			str2 = p;
+// 			if (str2.find(":") != std::string::npos) {
+// 				listen = splitStr(str2, ":");
+// 				if (listen.size() > 2)
+// 					throw std::invalid_argument("Error, Invalid Listen : Can have only an IP & Port.");
+// 				ip = listen[0];
+// 				port = listen[1];
+// 				if (checkIpKey(ip) == 0)
+// 					socketInfo.setIp(ip);
+// 				if (checkPortKey(port) == 0) {
+// 					const char *tmp = port.c_str();
+// 					int p_tmp = atoi(tmp);
+// 					socketInfo.setPort(p_tmp);
+// 				}
+// 			}
+// 			else {
+// 				if (checkPortKey(str2) == 0) {
+// 					const char *tmp = str2.c_str();
+// 					int p_tmp = atoi(tmp);
+// 					socketInfo.setPort(p_tmp);
+// 				}
+// 				else
+// 					throw std::invalid_argument("Error, Port : There is a problem with your listen config.");
+// 			}
+// 			break;
+		
+// 		case CLIENT_MAX_BODY: // Checker --> OK
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				std::string size = std::string(p);
+// 				if (checkClientMaxBodySize(size, serverInfo))
+// 					return (1);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+
+// 		case AUTOINDEX: // Checker --> OK
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				std::string index = std::string(p);
+// 				if (checkAutoIndex(index, serverInfo))
+// 					return (1);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+
+// 		case METHOD: // Checker --> OK
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				std::string method = std::string(p);
+// 				if (checkMethod(method, serverInfo))
+// 					return (1);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+		
+// 		case CGI: // OK
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				if (p[0] == '.')
+// 					key = std::string(p);
+// 				else
+// 					path = std::string(p);
+// 				if (key != "NULL" && path != "NULL")
+// 					serverInfo.addToCGIS(key, path);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+
+// 		case INDEX: // OK
+// 			p = strtok(NULL, " ,|;");
+// 			while (p!=0) {
+// 				serverInfo.setIndexPath(p);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+		
+// 		case ERROR_PAGE: // OK
+// 			p = strtok(NULL, " ,|;"); // removes space , | ;
+// 			while (p != 0) {
+// 				std::string value = std::string(p);
+// 				int p_tmp = atoi(p);
+// 				bool found = false;
+
+// 				if (HttpResponse::codes.count(p_tmp) == 0)
+// 					throw std::invalid_argument("Error, Page_Error : The Error Key can be only numbers.");
+// 				if (checkErrorKey(value) != 0)
+// 					val = p_tmp;
+// 				else if (val != 0)
+// 					path = value;
+// 				else 
+// 					throw std::invalid_argument("Error, Page_Error : Invalid Argument.");
+// 				p = strtok(NULL, " ,|;");
+// 			}
+// 			break;
+
+// 		case UPLOAD: // OK
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				serverInfo.setUploadPath(p);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+
+// 		case ROOT: // OK
+// 			p = strtok(NULL," ,|;");
+// 			while (p!=0) {
+// 				serverInfo.setRootPath(p);
+// 				p = strtok(NULL," ,|;");
+// 			}
+// 			break;
+
+// 		default:
+// 			std::cerr << "Problem Configuration Files - DEFAULT_ERROR" << std::endl;
+// 			break;
+// 	}
+// 	delete[] cstr;
+// 	return 0;
+// }
 
 int ws::checkAutoIndex(std::string index, Location &locationInfo) {
 	if (index.compare("on") == 0) {
@@ -509,6 +505,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 
 	if (ws::checkFileExtension(name))
 		return 1;
+	parserInit(cpt.configKeys);
 	cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
     cpt.blockLevel = 0;

@@ -19,6 +19,7 @@ namespace ws {
     const std::string UP_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const std::string LETTERS = LOW_LETTERS + UP_LETTERS;
 	const std::string HEX_VALUES = "0123456789abcdef";
+	const std::string AL_NUM = LETTERS + "0123456789";
 
     const std::string CONFIG_INFO_LETTERS = LETTERS + '_';
     const std::string CONFIG_PATH_LETTERS = LETTERS + "/_0123456789";

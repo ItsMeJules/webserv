@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include <vector>
+# include <map>
 # include <fstream>
 # include <locale>
 # include <string>
@@ -14,20 +15,6 @@
 # include "Constants.hpp"
 
 namespace ws {
-
-    typedef struct config_parsing_s {
-        std::ifstream file;
-        std::string line;
-        int lineNumber;
-        int blockLevel;
-    } config_parsing_t;
-
-    enum ConfigLineType {
-        HTML,
-        SERVER,
-        LOCATION,
-        INFO,
-    };
 
     enum confValues {
         ERROR,
@@ -42,7 +29,22 @@ namespace ws {
         UPLOAD,
         ROOT,
         REWRITE
-};
+    };
+
+    typedef struct config_parsing_s {
+        std::ifstream file;
+        std::string line;
+        int lineNumber;
+        int blockLevel;
+        std::map<std::string, confValues> configKeys;
+    } config_parsing_t;
+
+    enum ConfigLineType {
+        HTML,
+        SERVER,
+        LOCATION,
+        INFO,
+    };
 
     ConfigLineType              get_block_type(config_parsing_t &cpt, std::string line);
 
@@ -60,7 +62,7 @@ namespace ws {
     int		                    checkMethod(std::string method, ServerInfo &serverInfo);
 	int		                    checkMethod(std::string method, Location &locationInfo);
     void	                    parserInit(std::map<std::string, confValues> &Values);
-    std::vector<std::string>    cppSplitStr(const std::string &str, const std::string &charset);
+    std::vector<std::string>    splitStr(const std::string &str, const std::string &charset);
 
 	void	                    check_location_path(std::string const &path);
     void	                    check_opening_bracket(config_parsing_t const &cpt, std::string const &line);
