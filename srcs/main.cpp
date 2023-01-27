@@ -41,12 +41,15 @@ int main(int ac, char **av) {
             server->setServerSocket(serverSocket);
             server->setup();
         }
-        for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
-            Server *server = *it;
+        while (1)
+        {
+            for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
+                Server *server = *it;
 
-            if (Server::poller->polling(*server) < 0)
-                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
-            delete *it;
+                if (Server::poller->polling(*server) < 0)
+                    ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
+                // delete *it;
+            }
         }
     }
     HttpRequest::clearMethods();
