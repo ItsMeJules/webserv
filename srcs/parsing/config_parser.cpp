@@ -70,13 +70,13 @@ int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	if (i != len)
 	{
 		if (size[i] == 'G' && i == len - 1)
-			sizeBody *= 1000000000;
+			sizeBody *= GIGA;
 		else if (size[i] == 'M' && i == len - 1)
-			sizeBody *= 1000000;
+			sizeBody *= MEGA;
 		else if (size[i] == 'K' && i == len - 1)
-			sizeBody *= 1000;
+			sizeBody *= KILO;
 		else {
-			std::cerr << "Problem Configuration Files - CLIENTMAXBODYSIZE" << std::endl;
+			throw std::invalid_argument(size + " must finish with a 'G', 'M' or a 'K' !");
 			return (1);
 		}
 	}
@@ -265,6 +265,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 					serverInfo.setPort(stoi(lineArguments[1].substr(0, sizeArgumentOne)));
 				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
 			}
+			break;
 
 		case CLIENT_MAX_BODY:
 			if (lineArguments.size() != 2)
@@ -273,9 +274,15 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 			
-			
+			if (checkClientMaxBodySize(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
+				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "must finish with a 'G', 'M' or a 'K' !");
+
+			std::cout << "\tSet in ServerClientBodySizeMax: " << serverInfo.getMaxBodySize() << std::endl;
+
+		
 	
 	default:
+		throw std::invalid_argument("Problem Configuration Files - DEFAULT_ERROR");
 		break;
 	}
 	return 0;

@@ -29,6 +29,10 @@ namespace ws {
 	const int POLL_EVENTS_SIZE = 10;
 	const int POLL_WAIT_TIMEOUT = 60 * 1000;
 
+	const int GIGA = 1000000000;
+	const int MEGA = 1000000;
+	const int KILO = 1000;
+
 	const int RECV_BUFFER_SIZE = 20;
 
 	const std::string C_AQUA = "\033[38;5;14m";
