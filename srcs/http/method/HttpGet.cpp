@@ -15,9 +15,13 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	DefaultBody *body = new DefaultBody();
 	std::ifstream file;
 	struct stat fileInfo;
+	std::string requestedPath = request.getPath();
 
 	if (request.getPath()[0] == '/')
-		request.setPath("/home/jules/Dev/42/C++/webserv/www/server" + request.getPath());
+		request.setPath(info.getRootPath() + request.getPath());
+	
+	if (request.getPath() == info.getRootPath() + "/")
+		request.setPath(request.getPath() + "/index.html");
 
 	stat(request.getPath().c_str(), &fileInfo);
 	file.open(request.getPath().c_str(), std::fstream::ate);
