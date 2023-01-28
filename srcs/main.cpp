@@ -22,6 +22,8 @@ std::vector<Server *> vecserv;
 
 int main(int ac, char **av) {
     if (ac < 2) {
+        // Cgi cgi;
+        // cgi.execute();
 
         ServerSocket serverSocket;
         serverSocket.setup();

@@ -106,6 +106,7 @@ std::string	Cgi::execute(const std::string	&_binary)
 	int	input_fd = fileno(input_file);
 	int	output_fd = fileno(output_file);
 
+	fprintf(stderr, "SALUT = %s\n", _inputBody.c_str());
 	write(input_fd, _inputBody.c_str(), _inputBody.length());
 	lseek(input_fd, 0, SEEK_SET);
 
@@ -155,16 +156,16 @@ std::string	Cgi::execute(const std::string	&_binary)
 	return _body;
 }
 
-void Cgi::writeGetResponse(HttpRequest &request, Server &server, ServerInfo &serverInfo)
-{
-	if (request.IsCgi())
-	{
-		Cgi cgi(request, server, serverInfo);
-		int i = 0;
-		int j = _response.size() - 2;
-		std::cout << "RESPONSE = " << _response << std::endl;
-	}
-}
+// void Cgi::writeGetResponse(HttpRequest &request, Server &server, ServerInfo &serverInfo)
+// {
+// 	if (request.IsCgi())
+// 	{
+// 		Cgi cgi(request, server, serverInfo);
+// 		int i = 0;
+// 		int j = _response.size() - 2;
+// 		std::cout << "RESPONSE = " << _response << std::endl;
+// 	}
+// }
 
 // void	Cgi::writePostResponse(HttpRequest &request, Server &server)
 // {

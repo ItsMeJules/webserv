@@ -94,3 +94,15 @@ std::map<int, ws::http_status_t> HttpResponse::createCodes() {
     codes[505] = createStatus("HTTP Version Non supported", "The HTTP version is not yet supported.");
     return codes;
 }
+
+bool    HttpResponse::isCgi()
+{
+    return (_isCgi);
+}
+
+void    HttpResponse::cgiMethod(void)
+{
+    std::cout << "is in cgi method" <<  std::endl;
+    std::string result;
+
+}

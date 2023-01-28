@@ -15,7 +15,9 @@ class HttpResponse : public HttpMessage {
 		int _statusCode;
 		ws::http_status_t _statusPhrase;
 
+
 		static ws::http_status_t createStatus(std::string reason, std::string explanation);
+		bool	_isCgi;
 
 	public:
         static std::map<int, ws::http_status_t> codes;
@@ -34,7 +36,8 @@ class HttpResponse : public HttpMessage {
 
 		std::string generateDate();
 
-
+		bool	isCgi();
+		void	cgiMethod();
 		HttpResponse &operator=(HttpResponse const &rhs);
 
         static std::map<int, ws::http_status_t> createCodes();

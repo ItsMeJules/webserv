@@ -1,16 +1,17 @@
 <html>
-<!-- <head>><meta charset="utf-8"/></head> -->
+<head><?php header("test: abcdef"); ?><meta charset="utf-8"/></head>
 <body>
 
 
 
     <?php
 
+    print_r($_SERVER);
 
     echo '<br/>';
     echo '<br/>';
 
-    print 'hello' . env[0];
+    echo "POST : ";
     print_r($_POST);
     echo '<br/>';
     echo '<br/>';
