@@ -2,7 +2,7 @@
 NAME		=	webserv
 
 #	Compilation
-CC			=	g++
+CC			=	c++
 CFLAGS		=	-fsanitize=address -g -std=c++98
 RM			=	rm -rf
 SRC_DIR 	= 	srcs/
@@ -33,10 +33,10 @@ all				:	init $(NAME)
 bonus			:	all
 
 #		Init:
-init			:	
+init			:
 					@ $(shell mkdir -p $(OBJ_DIR))
 
-#		Compile:		
+#		Compile:
 $(NAME)			:	$(OBJ) $(INC)
 					@ echo "$(_INFO) Initialize $(NAME)"
 				 	@ $(CC) $(CFLAGS) $(IFLAGS) -o $(NAME) $(OBJ)
