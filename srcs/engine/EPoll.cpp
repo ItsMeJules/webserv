@@ -3,6 +3,8 @@
 # include <stdio.h>
 #include <iostream>
 #include <string>
+# include <iostream>
+# include <ostream>
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -33,7 +35,7 @@ const bool EPoll::init() {
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
 		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to create instance!", true);
-	else                                                                                                                                                                
+	else
 		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "instance created with fd: " + ws::itos(_epollFd));
 	return _epollFd != -1;
 }
@@ -88,7 +90,7 @@ const int EPoll::polling(Server &server) {
 		if (events[i].events & EPOLLERR) {
 			ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "error on fd: " + ws::itos(events[i].data.fd) + "!");
 			ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events[i].events));
-			
+
 			if (server.isConnected(events[i].data.fd))
 				server.disconnect(server.getClient(events[i].data.fd));
 			else
@@ -107,17 +109,21 @@ const int EPoll::polling(Server &server) {
             Client &client = server.getClient(events[i].data.fd);
             if (events[i].events & EPOLLIN) {
                 if (!server.receiveData(client))
-                    server.disconnect(client);
+				    server.disconnect(client);
 				else if (client.hasRequestFailed()) {
                     modFd(events[i].data.fd, EPOLLOUT);
 				} else if (client.getRequestParser().isRequestParsed())
+				{
                     modFd(events[i].data.fd, EPOLLOUT);
+				}
             } else if (events[i].events & EPOLLOUT) {
                 HttpResponse response;
                 DefaultBody *body = new DefaultBody();
 
 				if (!client.hasRequestFailed())
+				{
 					response = client.getHttpRequest().execute(server.getServerInfo());
+				}
 				else {
 					response.setStatusCode(400);
 					response.addHeader("Connection", "close");
@@ -128,7 +134,9 @@ const int EPoll::polling(Server &server) {
                 // response.setMessageBody(body);
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)
+				{
 					server.disconnect(client);
+				}
                 else if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
