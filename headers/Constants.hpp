@@ -14,7 +14,8 @@ namespace ws {
 	// 00111110
 	const int LOG_LVL = LOG_LVL_INFO | LOG_LVL_SUCCESS | LOG_LVL_ERROR | LOG_LVL_ALL | LOG_LVL_DEBUG;
 
-    const std::string WHITE_SPACES = " \t\n\v\f\r";
+	const std::string SPACE = " ";    
+	const std::string WHITE_SPACES = " \t\n\v\f\r";
     const std::string LOW_LETTERS = "abcdefghijklmnopqrstuvwxyz";
     const std::string UP_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const std::string LETTERS = LOW_LETTERS + UP_LETTERS;

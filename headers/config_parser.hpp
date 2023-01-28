@@ -55,7 +55,6 @@ namespace ws {
     int		                    parse_server_line(config_parsing_t &cpt, Server &server);
     int		                    parse_location_line(config_parsing_t &cpt, Location &location);
     int		                    checkFileExtension(std::string file);
-    int		                    checkPort(int port, ServerSocket &socketInfo);
     int		                    checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
     int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);
 	int 	                    checkAutoIndex(std::string index, Location &locationInfo);
@@ -63,6 +62,7 @@ namespace ws {
 	int		                    checkMethod(std::string method, Location &locationInfo);
     void	                    parserInit(std::map<std::string, confValues> &Values);
     std::vector<std::string>    splitStr(const std::string &str, const std::string &charset);
+    bool	                    ft_in_charset(char const c, const std::string &charset);
 
 	void	                    check_location_path(std::string const &path);
     void	                    check_opening_bracket(config_parsing_t const &cpt, std::string const &line);

@@ -57,17 +57,6 @@ int ws::checkFileExtension(std::string file) {
 	return (0);
 }
 
-int ws::checkPort(int port, ServerSocket &socketInfo) {
-	if (port > 0 && port < 65535) {
-		socketInfo.setPort(port);
-		return (0);
-	}
-	else {
-		std::cerr << "Problem Configuration Files - LISTEN" << std::endl;
-		return (1);
-	}
-}
-
 int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	int len = size.size();
 	int i = 0;
@@ -122,18 +111,19 @@ int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
 }
 
 
-std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
-{
-    std::vector<std::string> res;
-    if (str.find(charset) != std::string::npos)
-    {
-        res.push_back(str.substr(0, str.find(charset)));
-        res.push_back(str.substr(str.find(charset) + charset.length(), str.length() - str.find(charset) - charset.length()));
-    }
-    else
-        res.push_back(str);
-    return res;
-}
+// std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
+// {
+//     std::vector<std::string> res;
+
+//     if (str.find(charset) != std::string::npos)
+//     {
+//         res.push_back(str.substr(0, str.find(charset)));
+//         res.push_back(str.substr(str.find(charset) + charset.length(), str.length() - str.find(charset) - charset.length()));
+//     }
+//     else
+//         res.push_back(str);
+//     return res;
+// }
 
 int ws::checkIpKey(std::string key) {
 	const char *tmp_c = key.data();
@@ -193,28 +183,97 @@ void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 	matchValues["rewrite"] = REWRITE;
 }
 
+bool	ws::ft_in_charset(char const c, const std::string &charset)
+{
+	int	i_charset;
+
+	i_charset = 0;
+	while (charset[i_charset])
+	{
+		if (c == charset[i_charset++])
+			return true;
+	}
+	return false;
+}
+
+std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
+{
+	std::vector<std::string> res;
+	std::string			tmp;
+	size_t			i;
+
+	i = 0;
+	while (i < str.length())
+	{
+		while (i < str.length() && ft_in_charset(str[i], charset))
+			i++;
+		if (i < str.length())
+		{
+			tmp = "";
+			while (i < str.length() && !ft_in_charset(str[i], charset))
+				tmp += str[i++];
+			res.push_back(tmp);
+		}
+	}
+	return res;
+}
+
 int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	std::vector<std::string> lineArguments = splitStr(cpt.line, ws::WHITE_SPACES);
+	std::vector<std::string> values;
 	ServerInfo &serverInfo = server.getServerInfo();
-	
-	std::cout << lineArguments[0] << " ;" << lineArguments[1] << std::endl;
+	size_t sizeArgumentOne = lineArguments[1].size() - 1;
+
+	for (std::vector<std::string>::iterator it = lineArguments.begin(); it != lineArguments.end(); it++) {
+		std::cout << "Argument: " << *it << std::endl;
+	}
 	if (cpt.configKeys.count(lineArguments[0]) == 0)
 		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
 	
 	switch (cpt.configKeys[lineArguments[0]]) {
-	case NAME:
-		if (lineArguments.size() != 2)
-			throw std::length_error("Wrong number of arguments, 2 expected.");
+		case NAME:
+			if (lineArguments.size() != 2)
+				throw std::length_error("Wrong number of arguments, 2 expected.");
 
-		if (!ws::string_in_range(lineArguments[1], ws::AL_NUM, lineArguments[1].size() - 1))
-			throw std::invalid_argument(lineArguments[1] + " is not a valid name for a server. Only alnum chars are accepted!");
+			if (lineArguments[1][sizeArgumentOne] != ';')
+				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 
-		if (lineArguments[1][lineArguments[1].size() - 1] != ';')
-			throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
+			if (ws::string_in_range(lineArguments[1], ws::AL_NUM, sizeArgumentOne))
+				throw std::invalid_argument(lineArguments[1] + " is not a valid name for a server. Only alnum chars are accepted!");
 
-		serverInfo.setServerName(lineArguments[1].substr(0, lineArguments[1].size() - 1));
-		std::cout << serverInfo.getServerName() << std::endl;
-		break;
+			serverInfo.setServerName(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in ServerName: " << serverInfo.getServerName() << std::endl;
+			break;
+
+		case LISTEN:
+			if (lineArguments.size() != 2)
+				throw std::length_error("Wrong number of arguments, 2 expected.");
+
+			if (lineArguments[1][sizeArgumentOne] != ';')
+				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
+
+			if (lineArguments[1].find(":") != std::string::npos) {
+				values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), ":");
+				if (checkIpKey(values[0]) == 0)
+					serverInfo.setIp(values[0]);
+				if (checkPortKey(values[1]) == 0)
+					serverInfo.setPort(stoi(values[1]));
+				std::cout << "\tSet in ServerIp: " << serverInfo.getIp() << std::endl;
+				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
+			} else {
+				if (checkPortKey(lineArguments[1].substr(0, sizeArgumentOne)) == 0)
+					serverInfo.setPort(stoi(lineArguments[1].substr(0, sizeArgumentOne)));
+				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
+			}
+
+		case CLIENT_MAX_BODY:
+			if (lineArguments.size() != 2)
+				throw std::length_error("Wrong number of arguments, 2 expected.");
+
+			if (lineArguments[1][sizeArgumentOne] != ';')
+				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
+			
+			
 	
 	default:
 		break;

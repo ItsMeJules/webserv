@@ -52,6 +52,14 @@ const std::string &ServerInfo::getUploadPath() const {
 	return _uploadPath;
 }
 
+const std::string &ServerInfo::getIp() const {
+	return _ip;
+}
+
+const int &ServerInfo::getPort() const {
+	return _port;
+}
+
 const std::vector<std::string> &ServerInfo::getMethod() const {
 	return _method;
 }
@@ -70,6 +78,14 @@ const std::map<int, std::string> &ServerInfo::getError() const {
 
 void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
 	this->_maxBodySize = MaxBodySize;
+}
+
+void  ServerInfo::setIp(std::string ip) {
+	this->_ip = ip;
+}
+
+void  ServerInfo::setPort(int port) {
+	this->_port = port;
 }
 
 void  ServerInfo::setAutoIndex(bool AutoIndex) {

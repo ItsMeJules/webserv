@@ -62,3 +62,4 @@ void ws::log(int const &level, std::string const &prefix, std::string const &mes
 	if (_errno)
 		std::cout << "\n error: " << strerror(errno) << std::endl;
 }
+

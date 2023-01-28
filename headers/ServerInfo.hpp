@@ -18,6 +18,9 @@ class ServerInfo {
 		std::string _rootPath;
 		std::string _indexPath;
 		std::string _uploadPath;
+		std::string _ip;
+		int			_port;
+
 		
 		std::vector<std::string> _method;
 		std::map<std::string, std::string> _cgis;
@@ -37,12 +40,16 @@ class ServerInfo {
 		const std::string &getRootPath() const;
 		const std::string &getIndexPath() const;
 		const std::string &getUploadPath() const;
+		const std::string &getIp() const;
+		const int &getPort() const;
 		const std::vector<std::string> &getMethod() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, Location*> &getLocations() const;
 		const std::map<int, std::string> &getError() const;
 
 		void  setMaxBodySize(uint32_t MaxBodySize);
+		void  setIp(std::string ip);
+		void  setPort(int port);
 		void  setAutoIndex(bool AutoIndex);
 		void  setServerName(std::string ServerName);
 		void  setRootPath(std::string Path);
