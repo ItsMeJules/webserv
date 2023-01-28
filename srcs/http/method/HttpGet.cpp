@@ -19,9 +19,9 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 
 	if (request.getPath()[0] == '/')
 		request.setPath(info.getRootPath() + request.getPath());
-	
+
 	if (request.getPath() == info.getRootPath() + "/")
-		request.setPath(request.getPath() + "/index.html");
+		request.setPath(info.getIndexPath());
 
 	stat(request.getPath().c_str(), &fileInfo);
 	file.open(request.getPath().c_str(), std::fstream::ate);
@@ -70,7 +70,7 @@ std::string HttpGet::getName() {
 
 HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 	if (this != &rhs) {
-		
+
 	}
 	return *this;
 }
