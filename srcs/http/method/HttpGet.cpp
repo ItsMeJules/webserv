@@ -15,14 +15,25 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	DefaultBody *body = new DefaultBody();
 	std::ifstream file;
 	struct stat fileInfo;
+	std::string requestedPath = request.getPath();
+
+	if (response.getStatusCode() == 200)
+	{
+		std::cout << "CEST OK" << std::endl;
+	}
 
 	if (request.getPath()[0] == '/')
-		request.setPath("/home/jules/Dev/42/C++/webserv/www/server" + request.getPath());
+		request.setPath(info.getRootPath() + request.getPath());
+
+	if (request.getPath() == info.getRootPath() + "/")
+		request.setPath(info.getIndexPath());
 
 	stat(request.getPath().c_str(), &fileInfo);
 	file.open(request.getPath().c_str(), std::fstream::ate);
+
 	if (!file.is_open() || !S_ISREG(fileInfo.st_mode)) { // https://stackoverflow.com/a/40163393/10885193
 		response.setStatusCode(404);
+		std::cout << "REQUEST HAS FAILED" << std::endl;
 		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
@@ -37,6 +48,8 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 		response.addHeader("Content-Type", "text/html");
 	else if (request.getPath() == "index.css")
 		response.addHeader("Content-Type", "text/css");
+	if (request.getPath() == "favicon.ico")
+		response.addHeader("Content-Type", "text/favicon");
 
 	size_t fileSize = file.tellg();
 	std::string fileContent = std::string(fileSize, ' ');
@@ -60,13 +73,22 @@ std::string HttpGet::getName() {
 	return "GET";
 }
 
+bool	HttpGet::isCgi()
+{
+	return (_isCgi);
+}
+
+
+
+
+
 // ############## GETTERS / SETTERS ##############
 
 // ############## OPERATORS ##############
 
 HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 	if (this != &rhs) {
-		
+
 	}
 	return *this;
 }

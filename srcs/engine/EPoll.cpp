@@ -144,7 +144,10 @@ const int EPoll::polling(Server &server) {
                     modFd(events[i].data.fd, EPOLLIN);
                 }
             } else if (events[i].events & EPOLLRDHUP)
+			{
+				std::cout << "ERREUR ICI ???" << std::endl;
                 server.disconnect(client);
+			}
         }
  	}
 	return 1;

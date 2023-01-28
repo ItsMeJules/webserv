@@ -106,15 +106,15 @@ std::string	Cgi::execute(const std::string	&_binary)
 		std::cerr << "CRASH" << std::endl;
 		return "500";
 	}
-	else if (!pid)
-	{
-		char * const * nll = NULL;
-		dup2(input_fd, STDIN_FILENO);
-		dup2(output_fd, STDOUT_FILENO);
-		execve(_binary.c_str(), nll, env);//il faut crer une fonction qui retourne un tab
-		std::cerr << "crash de execve" << std::endl;
-		return "500";
-	}
+	// else if (!pid)
+	// {
+	// 	char * const * nll = NULL;
+	// 	dup2(input_fd, STDIN_FILENO);
+	// 	dup2(output_fd, STDOUT_FILENO);
+	// 	execve(_binary.c_str(), nll, env);//il faut crer une fonction qui retourne un tab
+	// 	std::cerr << "crash de execve" << std::endl;
+	// 	return "500";
+	// }
 	else
 	{
 		char	tmp[BUFFER_SIZE] = {0};
