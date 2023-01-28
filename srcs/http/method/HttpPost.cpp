@@ -6,7 +6,7 @@ HttpPost::HttpPost() {}
 HttpPost::HttpPost(HttpPost const &httpPost) { *this = httpPost; }
 HttpPost::~HttpPost() {}
 
-// ############## PRIVATE ##############
+// ############## PRIVATE ############## 
 
 // ############## PUBLIC ##############
 

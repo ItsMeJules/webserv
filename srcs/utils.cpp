@@ -62,3 +62,14 @@ void ws::log(int const &level, std::string const &prefix, std::string const &mes
 	if (_errno)
 		std::cout << "\n error: " << strerror(errno) << std::endl;
 }
+
+bool ws::file_exists(std::string const &path) {
+	struct stat fileInfo;
+	return stat(path.c_str(), &fileInfo) == 0;
+}
+
+bool ws::file_is_reg(std::string const &path) {
+	struct stat fileInfo;
+	stat(path.c_str(), &fileInfo);
+	return !S_ISREG(fileInfo.st_mode);
+}

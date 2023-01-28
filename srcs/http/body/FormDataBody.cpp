@@ -186,7 +186,6 @@ std::string FormDataBody::getBodyStr() {
 	return body;
 }
 
-
 // ############## OPERATORS ##############
 
 FormDataBody &FormDataBody::operator=(FormDataBody const &rhs) {

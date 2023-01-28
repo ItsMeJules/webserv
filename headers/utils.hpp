@@ -8,6 +8,7 @@
 
 # include <string.h>
 # include <errno.h>
+# include <sys/stat.h>
 
 # include "Constants.hpp"
 
@@ -31,6 +32,10 @@ namespace ws {
 
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
+
+	// FILES
+	bool file_exists(std::string const &path);
+	bool file_is_dir(std::string const &path);
 }
 
 #endif
