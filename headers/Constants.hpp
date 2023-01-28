@@ -11,6 +11,7 @@ namespace ws {
 	const int LOG_LVL_ERROR = 8; //		00001000
 	const int LOG_LVL_ALL = 16; //		00010000
 	const int LOG_LVL_DEBUG = 32; //	00100000
+	const int LOL_LVL_PARSING = 64; //  01000000
 	// 00111110
 	const int LOG_LVL = LOG_LVL_INFO | LOG_LVL_SUCCESS | LOG_LVL_ERROR | LOG_LVL_ALL | LOG_LVL_DEBUG;
 
