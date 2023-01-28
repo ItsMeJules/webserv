@@ -18,10 +18,8 @@ const std::string HttpMessage::build() const {
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)
 		ss << it->first << ": " << it->second << "\r\n";
 	ss << "\r\n";
-	std::cout << " maybe herer " << std::endl;
 	if (_messageBody != NULL)
 		ss << _messageBody->getBodyStr();
-	std::cout << " east herer " << std::endl;
     return ss.str();
 }
 
@@ -38,7 +36,9 @@ bool HttpMessage::headersHasKey(std::string headerTag) const {
 }
 
 bool HttpMessage::headersContains(std::string headerTag, std::string value) const {
-	return _headers.count(headerTag) && _headers.at(headerTag) == value;
+	if (_headers.count(headerTag) == 0)
+		return false;
+	return _headers.at(headerTag) == value;
 }
 
 // ############## GETTERS / SETTERS ##############

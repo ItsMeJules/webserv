@@ -94,10 +94,10 @@ const int EPoll::polling(Server &server) {
 			else
 				deleteFd(events[i].data.fd);
 			continue ;
-		} else if (server.getSocket().getFd() == events[i].data.fd) { // Essai de connexion
+		} else if (server.getServerSocket().getFd() == events[i].data.fd) { // Essai de connexion
 			ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
 
-            ClientSocket socket(server.getSocket().getFd());
+            ClientSocket socket(server.getServerSocket().getFd());
             if (!socket.setup())
                 return -3;
 
@@ -122,8 +122,6 @@ const int EPoll::polling(Server &server) {
 					response.setStatusCode(400);
 					response.addHeader("Connection", "close");
 				}
-				std::cout << " fjeifnfsa" << std::endl;
-
 				// body->append("Hello World!", 13);
                 // response.addHeader("Content-Type", "text/plain");
                 // response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
@@ -131,7 +129,7 @@ const int EPoll::polling(Server &server) {
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)
 					server.disconnect(client);
-                if (client.getHttpRequest().headersContains("Connection", "close")) {
+                else if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();

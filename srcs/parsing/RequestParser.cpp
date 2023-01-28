@@ -64,10 +64,12 @@ AMessageBody *RequestParser::getAccordingBodyType() {
 const bool RequestParser::parseRequest(char *request, int &byteCount) {
 	if (!_headersReceived) {
 		std::string requestStr = request;
-		size_t endHeaders = requestStr.find("\r\n\r\n");
+		size_t endHeaders = std::string(_inReceive.str() + requestStr).find("\r\n\r\n");
+		
 		if (endHeaders != std::string::npos) {
-			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(endHeaders + 4) + " chars from headers.");
 			std::string str = emptyAndClearStream() + requestStr;
+			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(str.size()) + " chars from headers.");
+
 			parseFirstLine(str.substr(0, str.find("\r\n")));
 			if (!parseHeaders(str.substr(str.find("\r\n") + 2))) // there's no body
 				_requestParsed = true;
@@ -89,11 +91,11 @@ const bool RequestParser::parseRequest(char *request, int &byteCount) {
 		if (ret < 0)
 			return false;
         _requestParsed = ret == 1;
-		if (_requestParsed) {
-			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
-			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
-		}
     }
+	if (_requestParsed) {
+		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
+		ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
+	}
 	return true;
 }
 

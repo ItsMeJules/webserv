@@ -30,7 +30,6 @@ std::vector<char> &DefaultBody::getBody() {
 }
 
 std::string DefaultBody::getBodyStr() {
-	std::cout << "size:" << _body.size() << std::endl;
 	return std::string(_body.data(), _body.size() - 1);
 }
 

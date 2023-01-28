@@ -18,6 +18,8 @@ int DefaultDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 		vec.push_back(buffer[i]);
 	_sizeRead += size;
 
+	
+
 	if (vec.size() >= _contentLength) {
 		ws::log(ws::LOG_LVL_ALL, "[DefaultDataDecoder] -", "the whole request was read, " + ws::itos(_sizeRead) + " chars were parsed!");
 		return 1;

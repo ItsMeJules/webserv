@@ -31,7 +31,7 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 	_env["CONTENT_TYPE"] = content_type;
 	_env["PATH_INFO"] = request.getPath();
 	_env["QUERY_STRING"] = request.getQuery();
-	_env["REMOTE_ADDR"] = ws::itos(server.getSocket().getPort());
+	_env["REMOTE_ADDR"] = ws::itos(server.getServerSocket().getPort());
 	_env["REMOTE_IDENT"] = headers["Authorization"];
 	_env["REMOTE_USER"] = headers["Authorization"];
 	_env["REQUEST_URI"] = request.getPath() + request.getQuery();
@@ -40,7 +40,7 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 		_env["SERVER_NAME"] = headers["Hostname"];
 	else
 		_env["SERVER_NAME"] = _env["REMOTE_ADDR"];
-	_env["SERVER_PORT"] = ws::itos(server.getSocket().getPort());
+	_env["SERVER_PORT"] = ws::itos(server.getServerSocket().getPort());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_SOFTWARE"] = "Webservgang";
 }

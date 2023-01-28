@@ -43,7 +43,7 @@ class Server {
 
 		Client &getClient(int const fd);
 
-		ServerSocket &getSocket();
+		ServerSocket &getServerSocket();
         ServerInfo &getServerInfo();
 		std::string getServerName() const;
 

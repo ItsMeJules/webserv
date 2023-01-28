@@ -82,8 +82,8 @@ int const Poll::polling(Server &server) {
 			else
 				deleteFd(it->fd);
 			continue ;
-		} else if (server.getSocket().getFd() == it->fd) { // Dans le cas du Serveur
-			ClientSocket socket(server.getSocket().getFd());
+		} else if (server.getServerSocket().getFd() == it->fd) { // Dans le cas du Serveur
+			ClientSocket socket(server.getServerSocket().getFd());
 			if (!socket.setup())
 				return -3;
 

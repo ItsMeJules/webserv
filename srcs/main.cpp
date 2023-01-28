@@ -36,8 +36,8 @@ int main(int ac, char **av) {
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
 
-            server->getSocket().setup();
-            server->getSocket().setIp("127.0.0.1");
+            server->getServerSocket().setIp("127.0.0.1");
+            server->getServerSocket().setup();
             server->setup();
         }
         while (1) {
