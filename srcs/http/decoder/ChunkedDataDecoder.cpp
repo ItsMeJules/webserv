@@ -50,17 +50,20 @@ bool ChunkedDataDecoder::checkChunkSize(const char *buffer, int const &bufSize, 
 
 // ############## PUBLIC ##############
 
+# include <iostream>
+
 int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &vec) {
 	if (_actualChunk.size == -1) {
 		std::string wholeBuffer = ADataDecoder::bufferWithTmp(buffer, size);
 		size_t endChunkSizePos = wholeBuffer.find("\r\n");
 
-		if (endChunkSizePos == std::string::npos || endChunkSizePos == 0) {
+		if (endChunkSizePos == 0) { // if the found pos is 0, it means there are no number so we skip the position.
+			ADataDecoder::fillTmp(buffer + 2, size - 2);
             ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "chunk size not complete. stored in string.");
-			if (endChunkSizePos == 0) // if the found pos is 0, it means there are no number so we skip the position.
-				ADataDecoder::fillTmp(buffer + 1, size - 1);
-			else
-				ADataDecoder::fillTmp(buffer, size);
+			return 0;
+		} else if (endChunkSizePos == std::string::npos) {
+            ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "chunk size not complete. stored in string.");
+			ADataDecoder::fillTmp(buffer, size);
 			return 0;
 		}
 
@@ -89,18 +92,20 @@ int ChunkedDataDecoder::decodeInto(char *buffer, int size, std::vector<char> &ve
 				i += 2;
 
 			buffer = ws::char_array(std::string(buffer, size), size, i);
+			_previousChunk = _actualChunk;
 
 			clearActualChunk();
 			decodeInto(buffer, size - i, vec);
 			delete buffer;
-			if (_actualChunk.size == 0)
-				ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
-			return _actualChunk.size == 0 ? 1 : 2;
+			if (_actualChunk.size == 0 && _previousChunk.size != 0)
+				return 3;
 		}
 	}
-	if (_actualChunk.size == 0)
+	if (_actualChunk.size == 0) {
 		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "all chunks were received & parsed!");
-	return true;
+		return 1;
+	} else
+		return 2;
 }
 
 // ############## GETTERS / SETTERS ##############

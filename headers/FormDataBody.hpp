@@ -8,8 +8,6 @@
 class FormDataBody : public AMessageBody {
 	private:
 		class FormDataPart {
-			private:
-				int strPos(std::string str) const;
 			public:
 				FormDataPart();
 				FormDataPart(FormDataPart const &formDataPart);
@@ -18,13 +16,16 @@ class FormDataBody : public AMessageBody {
 				std::map<std::string, std::string> _headers;
 				std::map<std::string, std::vector<char> > _directives;
 				
+				std::string _directiveName;
 				std::string _fileKey;
 				std::string _fileName;
 				std::vector<char> _contents;
 
-				bool _parsed;
+				bool _headersParsed;
+				bool _bodyParsed;
 				
-				bool parse(FormDataBody const &parent, size_t const &partEndPos);
+				void fillContents(int const &begin, int const &end, std::vector<char> &from);
+				bool parseHeaders(FormDataBody const &parent, size_t const &headerEndPos);
 
 				FormDataPart &operator=(FormDataPart const &rhs);
 		};
@@ -33,7 +34,9 @@ class FormDataBody : public AMessageBody {
 		std::vector<char> _tmp;
 		std::string _boundary;
 
+		int strPos(std::string str, std::vector<char> const &vec) const;
 		int nextCRLFpos(int pos = 0, int nCRLF = 1) const;
+		FormDataPart &getNextNeedParsing();
 	public:
 		FormDataBody();
 		FormDataBody(ADataDecoder *decoder, std::string boundaryHeader);
