@@ -94,7 +94,7 @@ int ws::checkAutoIndex(std::string index, ServerInfo &serverInfo) {
 		return (0);
 	}
 	else {
-		std::cerr << "Problem Configuration Files - AUTOINDEX" << std::endl;
+		throw std::invalid_argument(index + "need to be params by 'on' or 'off' !");
 		return (1);
 	}
 }
@@ -245,7 +245,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			std::cout << "\tSet in ServerName: " << serverInfo.getServerName() << std::endl;
 			break;
 
-		case LISTEN:
+		case LISTEN: 
 			if (lineArguments.size() != 2)
 				throw std::length_error("Wrong number of arguments, 2 expected.");
 
@@ -253,7 +253,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 
 			if (lineArguments[1].find(":") != std::string::npos) {
-				values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), ":");
+				values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), ":"); 
 				if (checkIpKey(values[0]) == 0)
 					serverInfo.setIp(values[0]);
 				if (checkPortKey(values[1]) == 0)
@@ -278,8 +278,29 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "must finish with a 'G', 'M' or a 'K' !");
 
 			std::cout << "\tSet in ServerClientBodySizeMax: " << serverInfo.getMaxBodySize() << std::endl;
+			break;
 
-		
+		case AUTOINDEX:
+			if (lineArguments.size() != 2)
+				throw std::length_error("Wrong number of arguments, 2 expected.");
+
+			if (lineArguments[1][sizeArgumentOne] != ';')
+				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
+
+			if (checkAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
+				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
+
+			std::cout << "\tSet in AutoIndex: " << serverInfo.hasAutoindex() << std::endl;
+			break;
+
+		case INDEX:
+			if (lineArguments.size() != 2)
+				throw std::length_error("Wrong number of arguments, 2 expected.");
+
+			if (lineArguments[1][sizeArgumentOne] != ';')
+				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
+
+			
 	
 	default:
 		throw std::invalid_argument("Problem Configuration Files - DEFAULT_ERROR");
