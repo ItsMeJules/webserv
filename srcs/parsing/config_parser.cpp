@@ -225,6 +225,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	std::vector<std::string> method;
 	std::map<int, std::string> errorPage;
 	std::map<std::string, Location*> locations;
+	int	tmp = 0;
 
 	ServerInfo &serverInfo = server.getServerInfo();
 	size_t sizeArgumentOne = lineArguments[1].size() - 1;
@@ -365,6 +366,12 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			{
 				std::cout << "\tSet in ServerMethod: " << *it << "\n";
 			}
+			break;
+
+		case ERROR_PAGE:
+			tmp = stoi(lineArguments[1]);
+			if (HttpResponse::codes.count(tmp) == 0)
+				throw std::invalid_argument("Error, Page_Error : The Error Key doen't exist.");
 			break;
 
 
