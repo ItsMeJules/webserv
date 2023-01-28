@@ -2,12 +2,10 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerSocket::ServerSocket() : _domain(-1), _port(-1) {}
-ServerSocket::ServerSocket(int domain, int type, int protocol, int port)
-	: _domain(domain), _type(type), _protocol(protocol), _port(port) {}
-ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port) {
+ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port), _type(SOCK_STREAM), _protocol(0) {}
+ServerSocket::ServerSocket(int port) : _domain(AF_INET), _port(port), _type(SOCK_STREAM) {}
 
-}
+ServerSocket::ServerSocket() : _domain(AF_INET), _port(-1), _type(SOCK_STREAM), _protocol(0) {}
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
 ServerSocket::~ServerSocket() {}
@@ -17,13 +15,9 @@ ServerSocket::~ServerSocket() {}
 // ############## PRIVATE ##############
 
 bool ServerSocket::setup() {
-    if (_domain == -1) {
+    if (_port == -1) {
+		_port = 9999;
 		ws::log(ws::LOG_LVL_INFO, "[SERVER SOCKET] -", "setting up server socket with default values...");
-        _domain = AF_INET;
-        _type = SOCK_STREAM;
-        _protocol = 0;
-        if (_port == -1)
-            _port = 9999;
     } else
 		ws::log(ws::LOG_LVL_INFO, "[SERVER SOCKET] -", "Setting up server socket...");
 

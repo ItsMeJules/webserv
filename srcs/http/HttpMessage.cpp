@@ -6,7 +6,7 @@ HttpMessage::HttpMessage() : _messageBody(NULL) {}
 HttpMessage::HttpMessage(std::string httpVersion) : _httpVersion(httpVersion), _messageBody(NULL) {}
 HttpMessage::HttpMessage(HttpMessage const &message) { *this = message; }
 HttpMessage::~HttpMessage() {
-    delete _messageBody;
+    // delete _messageBody;
 }
 
 // ############## PRIVATE ##############
@@ -36,7 +36,9 @@ bool HttpMessage::headersHasKey(std::string headerTag) const {
 }
 
 bool HttpMessage::headersContains(std::string headerTag, std::string value) const {
-	return _headers.count(headerTag) && _headers.at(headerTag) == value;
+	if (_headers.count(headerTag) == 0)
+		return false;
+	return _headers.at(headerTag) == value;
 }
 
 // ############## GETTERS / SETTERS ##############

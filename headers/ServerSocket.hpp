@@ -29,7 +29,7 @@ class ServerSocket : public ASocket {
 	protected:
 	public:
 		ServerSocket();
-		ServerSocket(int domain, int type, int protocol, int port);
+		ServerSocket(int port);
         ServerSocket(std::string ip, int port);
 		ServerSocket(ServerSocket const &socket);
 		~ServerSocket();

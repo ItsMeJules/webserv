@@ -35,20 +35,20 @@ int main(int ac, char **av) {
         ws::parse_config(std::string(av[1]), Server::servers);
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
-            ServerSocket serverSocket;
-            serverSocket.setup();
-           
-            server->setServerSocket(serverSocket);
+
+            server->getServerSocket().setIp("127.0.0.1");
+            server->getServerSocket().setup();
             server->setup();
         }
-        while (1)
-        {
+        while (1) {
             for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
                 Server *server = *it;
 
-                if (Server::poller->polling(*server) < 0)
+                if (Server::poller->polling(*server) < 0) {
                     ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
-                // delete *it;
+                    delete server;
+                    return 1;
+                }
             }
         }
     }

@@ -33,7 +33,7 @@ namespace ws {
 	const int MEGA = 1000000;
 	const int KILO = 1000;
 
-	const int RECV_BUFFER_SIZE = 20;
+	const int RECV_BUFFER_SIZE = 10000;
 
 	const std::string C_AQUA = "\033[38;5;14m";
 	const std::string C_YELLOW = "\033[38;5;184m";

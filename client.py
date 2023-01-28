@@ -26,7 +26,7 @@ headers = {'Accept': '*/*',
 r = ""
 
 files = {'upload_file': open('srcs/main.cpp','rb')}
-# filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
+#filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(

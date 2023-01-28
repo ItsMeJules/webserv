@@ -41,6 +41,7 @@ HttpResponse &HttpResponse::operator=(HttpResponse const &rhs) {
 	if (this != &rhs) {
         _statusCode = rhs._statusCode;
         _statusPhrase = rhs._statusPhrase;
+        HttpMessage::operator=(rhs);
 	}
 	return *this;
 }

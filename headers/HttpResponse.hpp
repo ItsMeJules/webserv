@@ -30,7 +30,6 @@ class HttpResponse : public HttpMessage {
 
 		const int getStatusCode() const;
 
-
 		HttpResponse &operator=(HttpResponse const &rhs);
 
         static std::map<int, ws::http_status_t> createCodes();
