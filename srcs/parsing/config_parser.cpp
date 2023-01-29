@@ -99,6 +99,21 @@ int ws::checkAutoIndex(std::string index, ServerInfo &serverInfo) {
 	}
 }
 
+int ws::checkLocationAutoIndex(std::string index, Location &locationInfo) {
+	if (index.compare("on") == 0) {
+		locationInfo.setAutoIndex(true);
+		return (0);
+	}
+	else if (index.compare("off") == 0) {
+		locationInfo.setAutoIndex(false);
+		return (0);
+	}
+	else {
+		throw std::invalid_argument(index + "need to ne params by 'on' or 'off' !");
+		return (1);
+	}
+}
+
 int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
 	if ((method.compare("GET") == 0) || (method.compare("POST") == 0) || (method.compare("DELETE") == 0)) {
 		serverInfo.addtoMethod(method);
@@ -390,21 +405,6 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	return 0;
 }
 
-int ws::checkAutoIndex(std::string index, Location &locationInfo) {
-	if (index.compare("on") == 0) {
-		locationInfo.setAutoIndex(true);
-		return (0);
-	}
-	else if (index.compare("off") == 0) {
-		locationInfo.setAutoIndex(false);
-		return (0);
-	}
-	else {
-		std::cerr << "Problem Configuration Files - AUTOINDEX" << std::endl;
-		return (1);
-	}
-}
-
 int ws::checkMethod(std::string method, Location &locationInfo) {
 	if ((method.compare("GET") == 0) || (method.compare("POST") == 0) || (method.compare("DELETE") == 0)) {
 		locationInfo.addtoMethod(method);
@@ -418,6 +418,10 @@ int ws::checkMethod(std::string method, Location &locationInfo) {
 
 int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 	std::vector<std::string> lineArguments = splitStr(cpt.line, ws::WHITE_SPACES);
+	std::vector<std::string> values;
+	std::vector<std::string> method;
+
+	size_t sizeArgumentOne = lineArguments[1].size() - 1;
 
 	for (std::vector<std::string>::iterator it = lineArguments.begin(); it != lineArguments.end(); it++) {
 		std::cout << "Argument: " << *it << std::endl;
@@ -434,7 +438,9 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 			
-
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationIndex: " << location.getIndexPath() << std::endl;
 			break;
 		
 		case AUTOINDEX:
@@ -444,18 +450,30 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 
-			if (checkAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
+			if (checkLocationAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), location) != 0)
 				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
-
+			std::cout << "\tSet in LocationAutoIndex: " << location.hasAutoindex() << std::endl;
 			break;
 
-		case METHOD;
+		case METHOD:
 			if (lineArguments.size() != 2)
 				throw std::length_error("Wrong number of arguments, 2 expected.");
 
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[2] + " must finish with a ';'!");
 			
+			values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), "|");
+			for(std::vector<std::string>::const_iterator it = values.begin(); it != values.end(); ++it)
+			{
+				if (*it != "GET" && *it != "POST" && *it != "DELETE")
+					throw std::invalid_argument(*it + " need to be params by 'GET', 'POST' or 'DELETE' !");
+				location.addtoMethod(*it);
+			}
+			method = location.getMethod();
+			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
+			{
+				std::cout << "\tSet in LocationMethod: " << *it << "\n";
+			}
 			break;
 
 		case UPLOAD:
@@ -465,6 +483,9 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationUpload: " << location.getUploadPath() << std::endl;
 			break;
 
 		case REWRITE:
@@ -474,6 +495,9 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 			
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setRewritePath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationRewrite: " << location.getRewritePath() << std::endl;
 			break;
 
 		case ROOT:
@@ -483,6 +507,9 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
 			
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationRoot: " << location.getRootPath() << std::endl;
 			break;
 		
 		default:

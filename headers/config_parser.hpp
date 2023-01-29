@@ -57,7 +57,7 @@ namespace ws {
     int		                    checkFileExtension(std::string file);
     int		                    checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
     int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);
-	int 	                    checkAutoIndex(std::string index, Location &locationInfo);
+	int 	                    checkLocationAutoIndex(std::string index, Location &locationInfo);
     int		                    checkMethod(std::string method, ServerInfo &serverInfo);
 	int		                    checkMethod(std::string method, Location &locationInfo);
     void	                    parserInit(std::map<std::string, confValues> &Values);
