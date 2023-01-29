@@ -53,7 +53,7 @@ namespace ws {
     int                         checkPortKey(std::string key);
     int                         checkErrorKey(std::string key);
     int		                    parse_server_line(config_parsing_t &cpt, Server &server);
-    int		                    parse_location_line(config_parsing_t &cpt, Location &location);
+    int		                    parseLocationLine(config_parsing_t &cpt, Location &location);
     int		                    checkFileExtension(std::string file);
     int		                    checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
     int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);
