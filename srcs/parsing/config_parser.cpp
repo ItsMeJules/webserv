@@ -110,21 +110,6 @@ int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
 	}
 }
 
-
-// std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
-// {
-//     std::vector<std::string> res;
-
-//     if (str.find(charset) != std::string::npos)
-//     {
-//         res.push_back(str.substr(0, str.find(charset)));
-//         res.push_back(str.substr(str.find(charset) + charset.length(), str.length() - str.find(charset) - charset.length()));
-//     }
-//     else
-//         res.push_back(str);
-//     return res;
-// }
-
 int ws::checkIpKey(std::string key) {
 	const char *tmp_c = key.data();
 	int i = 0;
@@ -218,6 +203,14 @@ std::vector<std::string> ws::splitStr(const std::string &str, const std::string 
 	return res;
 }
 
+void ws::checkPath(std::string const &path) {
+	const char *dir = path.c_str();
+	struct stat sb;
+
+	if (stat(dir, &sb) != 0)
+		throw std::invalid_argument("The path " + path + "doen't exists.");
+}
+
 int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 	std::vector<std::string> lineArguments = splitStr(cpt.line, ws::WHITE_SPACES);
 	std::vector<std::string> values;
@@ -263,12 +256,12 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 				if (checkIpKey(values[0]) == 0)
 					serverInfo.setIp(values[0]);
 				if (checkPortKey(values[1]) == 0)
-					serverInfo.setPort(stoi(values[1]));
+					serverInfo.setPort(ws::stoi(values[1]));
 				std::cout << "\tSet in ServerIp: " << serverInfo.getIp() << std::endl;
 				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
 			} else {
 				if (checkPortKey(lineArguments[1].substr(0, sizeArgumentOne)) == 0)
-					serverInfo.setPort(stoi(lineArguments[1].substr(0, sizeArgumentOne)));
+					serverInfo.setPort(ws::stoi(lineArguments[1].substr(0, sizeArgumentOne)));
 				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
 			}
 			break;
@@ -305,7 +298,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
-			//Include un check Path
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerAutoIndex: " << serverInfo.getIndexPath() << std::endl;
 			break;
@@ -316,7 +309,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
-			//Include un check Path
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerUploadPath: " << serverInfo.getUploadPath() << std::endl;
 			break;
@@ -327,7 +320,7 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 
 			if (lineArguments[1][sizeArgumentOne] != ';')
 				throw std::invalid_argument(lineArguments[1] + " must finish with a ';'!");
-			//Include un check Path
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerRootPath: " << serverInfo.getRootPath() << std::endl;
 			break;
@@ -339,6 +332,8 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			if (lineArguments[2][lineArguments[2].size() - 1] != ';')
 				throw std::invalid_argument(lineArguments[2] + " must finish with a ';'!");
 			
+			checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
+
 			serverInfo.addToCGIS(lineArguments[1], lineArguments[2].substr(0, lineArguments[2].size() - 1));
 			cgi = serverInfo.getCgis();
 			for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it)
@@ -369,11 +364,25 @@ int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
 			break;
 
 		case ERROR_PAGE:
-			tmp = stoi(lineArguments[1]);
+			if (lineArguments.size() != 3)
+				throw std::length_error("Wrong number of arguments, 3 expected.");
+
+			if (lineArguments[2][lineArguments[2].size() - 1] != ';')
+				throw std::invalid_argument(lineArguments[2] + " must finish with a ';'!");
+
+			tmp = ws::stoi(lineArguments[1]);
 			if (HttpResponse::codes.count(tmp) == 0)
 				throw std::invalid_argument("Error, Page_Error : The Error Key doen't exist.");
-			break;
+			
+			checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
 
+			serverInfo.addErrorPage(tmp, lineArguments[2].substr(0, lineArguments[2].size() - 1));
+			errorPage = serverInfo.getError();
+			for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it)
+			{
+				std::cout << "\tSet in ServerErrorPage : First: " << it->first << " Second: " << it->second << "\n";
+			}
+			break;
 
 	default:
 		break;
@@ -648,14 +657,6 @@ int ws::parse_location_line(config_parsing_t &cpt, Location &location) {
 	return 0;
 }
 
-void ws::check_location_path(std::string const &path) {
-	// std::cout << "\t\tpath: " << path << std::endl;
-	// std::ifstream test(path);
-	// if (!test)
-    // 	std::cout << "The file doesn't exist" << std::endl;
-	// Simple Check à implémenter plus tard
-}
-
 int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
     config_parsing_t cpt;
     Server *server = NULL;
@@ -709,7 +710,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 
                     ws::skip_chars(cpt.line.erase(0, 8), ws::WHITE_SPACES); //we erase "location", then we skip the spaces after location
                     cpt.line.erase(cpt.line.find_first_of(ws::WHITE_SPACES)); //we erase any trailing characters after the path
-                    ws::check_location_path(cpt.line);
+                    //ws::check_location_path(cpt.line);
 
                     if (server->getServerInfo().getLocations().count(cpt.line) != 0)
                         throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", location block \"" + cpt.line + "\" already declared.");

@@ -64,7 +64,7 @@ namespace ws {
     std::vector<std::string>    splitStr(const std::string &str, const std::string &charset);
     bool	                    ft_in_charset(char const c, const std::string &charset);
 
-	void	                    check_location_path(std::string const &path);
+	void	                    checkPath(std::string const &path);
     void	                    check_opening_bracket(config_parsing_t const &cpt, std::string const &line);
     int		                    check_closing_bracket(config_parsing_t const &cpt);
 
