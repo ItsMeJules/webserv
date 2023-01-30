@@ -27,7 +27,7 @@ namespace ws {
 	const int POLL_EVENTS_SIZE = 10;
 	const int POLL_WAIT_TIMEOUT = 60 * 1000;
 
-	const int RECV_BUFFER_SIZE = 1000;
+	const int RECV_BUFFER_SIZE = 100;
 
 	const std::string C_AQUA = "\033[38;5;14m";
 	const std::string C_YELLOW = "\033[38;5;184m";
@@ -45,7 +45,10 @@ namespace ws {
 	//ChunkedDataDecoder
 	const int DECODER_CHUNKED_NOT_HEX = -1;
 	const int DECODER_CHUNKED_CHUNK_TOO_BIG = -2;
-	
+
+	// //tmp files
+	const std::string TMP_PATH = "/mnt/nfs/homes/jpeyron/Documents/webserv/tmp";
+	const int SIZE_READ = 8192;
 }
 
 #endif

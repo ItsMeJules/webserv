@@ -105,3 +105,22 @@ bool ws::file_is_reg(std::string const &path) {
 	stat(path.c_str(), &fileInfo);
 	return !S_ISREG(fileInfo.st_mode);
 }
+
+bool ws::make_tmp_file(tmp_file_t &tft) {
+	tft.name += ".XXXXXX";
+
+    std::vector<char> path(tft.name.begin(), tft.name.end());
+    path.push_back('\0');
+
+	tft.fd = mkstemp(&path[0]);
+	if (tft.fd != 1) {
+        tft.name.assign(path.begin(), path.end() - 1);
+		close(tft.fd);
+	}
+	return tft.fd != -1;
+}
+
+void ws::close_tmp_file(ws::tmp_file_t const &tft) {
+	close(tft.fd);
+	unlink(tft.name.c_str());
+}

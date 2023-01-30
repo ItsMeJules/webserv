@@ -25,22 +25,22 @@ headers = {'Accept': '*/*',
             'User-Agent': 'python-requests/2.25.1'}
 r = ""
 
-files = {'upload_file': open('srcs/main.cpp','rb')}
-filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
+files = {'upload_file': open('/mnt/nfs/homes/jpeyron/Downloads/IMG-Worlds-of-Adventure-guide-in-dubai.jpeg','rb')}
+#filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
   fields = {
-    "main.cpp": ("mainlcpp", open("srcs/main.cpp", "rb")),
+    "main.cpp": ("IMG-Worlds-of-Adventure-guide-in-dubai.jpeg", open("/mnt/nfs/homes/jpeyron/Downloads/IMG-Worlds-of-Adventure-guide-in-dubai.jpeg", "rb")),
     'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'
   }
 )
 
 def gen_file():
-  a = m.read(100)
+  a = m.read(4096)
   while a:
     yield a
-    a = m.read(100)
+    a = m.read(4096)
 
 if (len(sys.argv) > 1 and sys.argv[1] == "chunked"):
     r = requests.post(url, data=gen())

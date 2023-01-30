@@ -83,9 +83,6 @@ int ChunkedDataDecoder::decodeInto(std::vector<char> &vec) {
 			ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "contents:\n" + std::string(_actualChunk.content.data(), _actualChunk.content.size()));
 			
 			clearActualChunk();
-
-			if (_tmp.size() == 5 && ws::pos_in_vec("0\r\n\r\n", _tmp) != -1)
-				return readChunkSize(1);
 			return ws::DECODER_PARSE_READY;
 		} else {
 			ws::log(ws::LOG_LVL_ALL, "[ChunkedDataDecoder] -", ws::itos(i) + " were parsed");

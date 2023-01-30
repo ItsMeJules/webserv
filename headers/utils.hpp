@@ -5,10 +5,14 @@
 # include <sstream>
 # include <algorithm>
 # include <vector>
+# include <fstream>
 
 # include <string.h>
 # include <errno.h>
 # include <sys/stat.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
 
 # include "Constants.hpp"
 
@@ -19,6 +23,11 @@ namespace ws {
 		std::string reason;
 		std::string explanation;
 	} http_status_t;
+
+	typedef struct tmp_file_s {
+		int fd;
+		std::string name;
+	} tmp_file_t;
 
 	// CONVERSIONS
 	int stoi(std::string const &str);
@@ -38,6 +47,8 @@ namespace ws {
 	// FILES
 	bool file_exists(std::string const &path);
 	bool file_is_reg(std::string const &path);
+	bool make_tmp_file(tmp_file_t &tft);
+	void close_tmp_file(ws::tmp_file_t const &tft);
 }
 
 #endif

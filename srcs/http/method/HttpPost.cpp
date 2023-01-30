@@ -16,37 +16,47 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	HttpResponse response;
 	DefaultBody *body = new DefaultBody();
 
-	// if (request.getPath()[0] == '/')
-	// 	request.setPath(serverInfo.getRootPath());
+	if (request.getPath()[0] == '/')
+		request.setPath(serverInfo.getRootPath());
 
-	// if (request.getPath() == serverInfo.getRootPath() + "/")
-	// 	request.setPath(serverInfo.getIndexPath());
+	if (request.getPath() == serverInfo.getRootPath() + "/")
+		request.setPath(serverInfo.getIndexPath());
 	
-	// if (formBody != NULL) {
-	// 	request.setPath(request.getPath() + serverInfo.getUploadPath() + "/");
-	// 	FormDataBody::FormDataPart *part = formBody->getFilePart();
-	// 	// if (ws::file_exists(formBody->getFilePart()->_fileName)) {}
+	if (formBody != NULL) {
+		request.setPath(request.getPath() + serverInfo.getUploadPath() + "/");
+		FormDataBody::FormDataPart *part;
+		std::ofstream ofs;
+		std::string filePath;
+		bool opened = false;
+			
+		while ((part = formBody->readForm()) != NULL) {
+			if (part->_headersParsed) {
+				if (part->_directiveName != part->_fileKey)
+					continue ;
 
-	// 	std::ofstream ofs;
-	// 	ofs.open(std::string(request.getPath() + part->_fileName.c_str()).c_str(), std::ofstream::binary | std::ofstream::out);
+				filePath = std::string(request.getPath() + part->_fileName.c_str());
+				if (!ofs.is_open())
+					ofs.open(filePath.c_str(), std::ofstream::binary | std::ofstream::out);
 
-	// 	if (ofs.is_open()) {
-	// 		ofs << std::string(part->_directives[part->_fileKey].data(), part->_directives[part->_fileKey].size());
-	// 		response.setStatusCode(201);
-	// 	} else {
-	// 		response.setStatusCode(500);
-	// 	}
-	// 	ofs.close();
+				if (ofs.is_open()) {
+					ws::log(ws::LOG_LVL_DEBUG, "[HttpPost] -", "data wrote to " + filePath);
+					ofs << part->extractBody();
+					opened = true;
+				}
+			}
+		}
+		if (opened)
+			response.setStatusCode(201);
+		else
+			response.setStatusCode(500);
+		ofs.close();
+		// if (ws::file_exists(formBody->getFilePart()->_fileName)) {}
 
-		// fileBody->createFile(serverInfo.getRootPath() + serverInfo.getUploadPath());
-		// response.setStatusCode(fileBody->fileExists() ? 201 : 500);
-
-		response.setStatusCode(200);
 		body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.setMessageBody(body);
-	// }
+	}
 	return response;
 }
 

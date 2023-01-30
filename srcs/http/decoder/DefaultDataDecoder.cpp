@@ -14,24 +14,25 @@ DefaultDataDecoder::~DefaultDataDecoder() {}
 // ############## PUBLIC ##############
 
 int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
+	if (_tmp.empty() && _sizeRead != _contentLength)
+		return ws::DECODER_WAITING_FOR_RECV;
 	vec.insert(vec.end(), _tmp.begin(), _tmp.end());
 	_sizeRead += _tmp.size();
 
 	if (_sizeRead == _contentLength) {
 		if (!_tmp.empty()) {
 			_tmp.clear();
+			ws::log(ws::LOG_LVL_ALL, "[DefaultDataDecoder] -", "the whole request was read, " + ws::itos(_sizeRead) + " chars were parsed!");
+			return ws::DECODER_PARSE_READY;
+		} else {
 			ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "all data received.");
 			return ws::DECODER_STOP;
 		}
-
-		_tmp.clear();
-		ws::log(ws::LOG_LVL_ALL, "[DefaultDataDecoder] -", "the whole request was read, " + ws::itos(_sizeRead) + " chars were parsed!");
-		return ws::DECODER_PARSE_READY;
 	}
 
-	_tmp.clear();
 	ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "data stored in vector. Left to read " + ws::itos(_contentLength - _sizeRead));
-	return ws::DECODER_WAITING_FOR_RECV;
+	_tmp.clear();
+	return ws::DECODER_PARSE_READY;
 }
 
 // ############## GETTERS / SETTERS ##############

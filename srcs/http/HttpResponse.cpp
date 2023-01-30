@@ -58,8 +58,8 @@ std::map<int, ws::http_status_t> HttpResponse::createCodes() {
     std::map<int, ws::http_status_t> codes;
 
     // succes
-    codes[200] = createStatus("OK", "");
-    codes[201] = createStatus("Created", "");
+    codes[200] = createStatus("OK", "Everything went well.");
+    codes[201] = createStatus("Created", "Content was created.");
 
     // redirection
     codes[300] = createStatus("Multiple Choices", "The requested resource has multiple options available. Please choose one of the options below:");

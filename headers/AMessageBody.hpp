@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include <vector>
+# include <fstream>
 
 # include <unistd.h>
 
@@ -13,6 +14,10 @@
 class AMessageBody {
 	protected:
 		ADataDecoder *_decoder; // think to delete
+		ws::tmp_file_t _tmpFile;
+		
+		std::ofstream _tmpOfStream;
+		std::ifstream _tmpIfStream;
 	public:
 		AMessageBody();
 		AMessageBody(ADataDecoder *decoder);
@@ -20,6 +25,10 @@ class AMessageBody {
 		virtual ~AMessageBody();
 
         virtual int parse(char *body, int &size) = 0;
+		bool writeToFile(std::vector<char> const &vec);
+		bool appendFromFile(std::vector<char> &vec, int size);
+		void destroyTmpFile();
+		virtual AMessageBody *clone() = 0;
 
 		ADataDecoder *getDataDecoder();
 		virtual std::string getBodyStr() = 0;
