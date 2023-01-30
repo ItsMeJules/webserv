@@ -15,14 +15,14 @@ class ChunkedDataDecoder : public ADataDecoder {
 		int _sizeRead;
 
 		void clearActualChunk();
-		int readChunkSize(std::string const &buffer, size_t const &endChunkPos);
+		int readChunkSize(size_t const &endChunkPos);
 		bool checkChunkSize(const char *buffer, int const &bufSize, int const &read);
 	public:
 		ChunkedDataDecoder();
 		ChunkedDataDecoder(ChunkedDataDecoder const &chunkedDataDecoder);
 		~ChunkedDataDecoder();
 
-		int decodeInto(char *buffer, int size, std::vector<char> &vec);
+		int decodeInto(std::vector<char> &vec);
 
 		ChunkedDataDecoder &operator=(ChunkedDataDecoder const &rhs);
 };

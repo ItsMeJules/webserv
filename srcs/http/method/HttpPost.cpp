@@ -18,6 +18,13 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	if (formBody != NULL) {
 		// fileBody->createFile(serverInfo.getRootPath() + serverInfo.getUploadPath());
 		// response.setStatusCode(fileBody->fileExists() ? 201 : 500);
+		DefaultBody *body = new DefaultBody();
+
+		body->append("hello", 5);
+		response.setStatusCode(200);
+		response.addHeader("Content-Type", "text/plain");
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.setMessageBody(body);
 	}
 	return response;
 }

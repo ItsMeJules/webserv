@@ -63,21 +63,21 @@ AMessageBody *RequestParser::getAccordingBodyType() {
 
 const bool RequestParser::parseRequest(char *request, int &byteCount) {
 	if (!_headersReceived) {
-		std::string requestStr = request;
-		size_t endHeaders = std::string(_inReceive.str() + requestStr).find("\r\n\r\n");
+		std::string wholeRequest = std::string(_inReceive.str() + request);
+		size_t endHeaders = wholeRequest.find("\r\n\r\n");
 		
 		if (endHeaders != std::string::npos) {
-			std::string str = emptyAndClearStream() + requestStr;
-			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(str.size()) + " chars from headers.");
+			_inReceive.str("");
+			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(endHeaders) + " chars from headers.");
 
-			parseFirstLine(str.substr(0, str.find("\r\n")));
-			if (!parseHeaders(str.substr(str.find("\r\n") + 2))) // there's no body
+			parseFirstLine(wholeRequest.substr(0, wholeRequest.find("\r\n")));
+			if (!parseHeaders(wholeRequest.substr(wholeRequest.find("\r\n") + 2))) // there's no body
 				_requestParsed = true;
 			else {
-				int bodySize = byteCount - endHeaders - 4;
+				int bodySize = wholeRequest.size() - (endHeaders + 4);
 				ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(bodySize) + " chars from body received with headers.");
 
-				std::vector<char> vector(request + (byteCount - bodySize), request + byteCount + 1);
+				std::vector<char> vector(wholeRequest.data() + (wholeRequest.size() - bodySize), wholeRequest.data() + wholeRequest.size());
 				parseRequest(vector.data(), bodySize); // removes to byteCount header size.
 			}
 		} else {

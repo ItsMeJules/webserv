@@ -13,7 +13,7 @@ class DefaultDataDecoder : public ADataDecoder {
 		DefaultDataDecoder(DefaultDataDecoder const &defaultDataDecoder);
 		~DefaultDataDecoder();
 
-		int decodeInto(char *buffer, int size, std::vector<char> &vec);
+		int decodeInto(std::vector<char> &vec);
 
 		DefaultDataDecoder &operator=(DefaultDataDecoder const &rhs);
 };

@@ -29,7 +29,7 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 		response.setStatusCode(404);
 		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());
 		response.addHeader("Content-Type", "text/plain");
-		response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Connection", "close");
 
 		file.close();
@@ -49,7 +49,7 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	file.read(&fileContent[0], fileSize);
 
 	body->append(fileContent, fileSize);
-	response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
+	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 
 	response.setMessageBody(body);
 	return response;

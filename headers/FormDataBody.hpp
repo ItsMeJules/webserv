@@ -24,8 +24,8 @@ class FormDataBody : public AMessageBody {
 				bool _headersParsed;
 				bool _bodyParsed;
 				
-				void fillContents(int const &begin, int const &end, std::vector<char> &from);
-				bool parseHeaders(FormDataBody const &parent, size_t const &headerEndPos);
+				bool parseHeaders(size_t const &headerEndPos);
+				bool parseBody(FormDataBody &parent, int const &decoderRet);
 
 				FormDataPart &operator=(FormDataPart const &rhs);
 		};
@@ -34,8 +34,8 @@ class FormDataBody : public AMessageBody {
 		std::vector<char> _tmp;
 		std::string _boundary;
 
-		int strPos(std::string str, std::vector<char> const &vec) const;
 		int nextCRLFpos(int pos = 0, int nCRLF = 1) const;
+		void removeLastBoundary();
 		FormDataPart &getNextNeedParsing();
 	public:
 		FormDataBody();
