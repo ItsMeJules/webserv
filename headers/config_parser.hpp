@@ -46,27 +46,23 @@ namespace ws {
         INFO,
     };
 
-    ConfigLineType              get_block_type(config_parsing_t &cpt, std::string line);
+    ConfigLineType              getBlockType(config_parsing_t &cpt, std::string line);
 
-    int		                    parse_config(std::string const &name, std::vector<Server*> &servers);
-    int		                    checkIpKey(std::string key);
-    int                         checkPortKey(std::string key);
-    int                         checkErrorKey(std::string key);
-    int		                    parse_server_line(config_parsing_t &cpt, Server &server);
-    int		                    parseLocationLine(config_parsing_t &cpt, Location &location);
-    int		                    checkFileExtension(std::string file);
-    int		                    checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
     int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);
+    int		                    checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
+	int		                    checkClosingBracket(config_parsing_t const &cpt);
+    int		                    checkFileExtension(std::string file);
+    int		                    checkIpKey(std::string key);
 	int 	                    checkLocationAutoIndex(std::string index, Location &locationInfo);
-    int		                    checkMethod(std::string method, ServerInfo &serverInfo);
-	int		                    checkMethod(std::string method, Location &locationInfo);
-    void	                    parserInit(std::map<std::string, confValues> &Values);
-    std::vector<std::string>    splitStr(const std::string &str, const std::string &charset);
-    bool	                    ft_in_charset(char const c, const std::string &charset);
+    int                         checkPortKey(std::string key);
+    int		                    parseConfig(std::string const &name, std::vector<Server*> &servers);
+    int		                    parseLocationLine(config_parsing_t &cpt, Location &location);
+    int		                    parseServerLine(config_parsing_t &cpt, Server &server);
 
+    void						checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument);
+    void	                    checkOpeningBracket(config_parsing_t const &cpt, std::string const &line);
 	void	                    checkPath(std::string const &path);
-    void	                    check_opening_bracket(config_parsing_t const &cpt, std::string const &line);
-    int		                    check_closing_bracket(config_parsing_t const &cpt);
+    void	                    parserInit(std::map<std::string, confValues> &Values);
 
 };
 

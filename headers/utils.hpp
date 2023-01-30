@@ -31,6 +31,10 @@ namespace ws {
 
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
+
+	// PARSING
+	bool ft_in_charset(char const c, const std::string &charset);
+	std::vector<std::string> splitStr(const std::string &str, const std::string &charset);
 }
 
 #endif

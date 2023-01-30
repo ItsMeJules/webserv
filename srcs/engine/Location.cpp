@@ -24,7 +24,7 @@ const std::string &Location::getRewritePath() const {
 	return _rewritePath;
 }
 
-const bool &Location::hasAutoindex() const {
+bool Location::hasAutoindex() const {
 	return _autoIndex;
 }
 

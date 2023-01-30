@@ -63,3 +63,38 @@ void ws::log(int const &level, std::string const &prefix, std::string const &mes
 		std::cout << "\n error: " << strerror(errno) << std::endl;
 }
 
+bool	ws::ft_in_charset(char const c, const std::string &charset)
+{
+	int	i_charset;
+
+	i_charset = 0;
+	while (charset[i_charset])
+	{
+		if (c == charset[i_charset++])
+			return true;
+	}
+	return false;
+}
+
+std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
+{
+	std::vector<std::string> res;
+	std::string			tmp;
+	size_t			i;
+
+	i = 0;
+	while (i < str.length())
+	{
+		while (i < str.length() && ft_in_charset(str[i], charset))
+			i++;
+		if (i < str.length())
+		{
+			tmp = "";
+			while (i < str.length() && !ft_in_charset(str[i], charset))
+				tmp += str[i++];
+			res.push_back(tmp);
+		}
+	}
+	return res;
+}
+
