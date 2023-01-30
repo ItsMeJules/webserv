@@ -513,19 +513,21 @@ void ws::checkConfiguration(Server *servers) {
 		std::cout << "LOCATION: " << std::endl;
 		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
 			Location loc = *it->second;
-			std::cout << "\t" << it->first << std::endl;
-			std::cout << "\t\tINDEX: \t\t" << loc.getIndexPath() << std::endl;
+			std::cout << "\n\t" << it->first << std::endl;
 			if (loc.getIndexPath().empty())
-				std::cout << "\t\t\t[Index is Empty]" << std::endl;
+				std::cout << "\t\tINDEX: \t\t" << serverInfo.getIndexPath() << std::endl;
+			if (!loc.getIndexPath().empty())
+				std::cout << "\t\tINDEX: \t\t" << loc.getIndexPath() << std::endl;
 			std::cout << "\t\tAUTOINDEX: \t" << serverInfo.hasAutoindex() << std::endl;
 			std::cout << "\t\tMETHOD: " << std::endl;
 			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; }
 			std::cout << "\t\tUPLOAD: \t" << serverInfo.getUploadPath() << std::endl;
 			std::cout << "\t\tREWRITE: \t" << loc.getRewritePath() << std::endl;
-			std::cout << "\t\tROOT: \t" << loc.getRootPath() << std::endl;
 			if (loc.getRootPath().empty())
-				std::cout << "\t\t\t[Root is Empty]" << std::endl;
+				std::cout << "\t\tROOT: \t\t" <<  serverInfo.getRootPath() << std::endl;
+			if (!loc.getRootPath().empty())
+				std::cout << "\t\tROOT: \t\t" <<  loc.getRootPath() << "\n" << std::endl;
 		}
 		std::cout << "----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }
