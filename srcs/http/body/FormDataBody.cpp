@@ -76,7 +76,7 @@ bool FormDataBody::FormDataPart::parseHeaders(size_t const &headerEndPos) {
 		if (fileNamePos != std::string::npos) {
 			fileNamePos += 10; // skips filename="
 			_fileKey = _directiveName;
-			_fileName = headerValue.substr(fileNamePos, headerValue.size() - (fileNamePos + 2));
+			_fileName = headerValue.substr(fileNamePos, headerValue.size() - (fileNamePos + 1));
 			
 			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "file " + _fileName + " with directive " + _directiveName + " was parsed.");
 		} else {
@@ -104,6 +104,8 @@ bool FormDataBody::FormDataPart::parseBody(FormDataBody &parent, int const &deco
 			parent._tmp.push_back(body[i]);
 		body.resize(endChunkPos);
 		ws::log(ws::LOG_LVL_DEBUG, "[FormDataBody] -", "form data has parsed it's whole body, contents:\n" + std::string(parent._tmp.data(), parent._tmp.size()));
+	} else {
+		
 	}
 	return true;
 }
@@ -113,8 +115,10 @@ FormDataBody::FormDataPart &FormDataBody::FormDataPart::operator=(FormDataPart c
 		_headers = rhs._headers;
 		_directives = rhs._directives;
 		_directiveName = rhs._directiveName;
+		_fileKey = rhs._fileKey;
 		_fileName = rhs._fileName;
 		_contents = rhs._contents;
+		_headersParsed = rhs._headersParsed;
 		_bodyParsed = rhs._bodyParsed;
 	}
 	return *this;
@@ -165,9 +169,20 @@ int FormDataBody::parse(char *body, int &size) {
 
 // ############## GETTERS / SETTERS ##############
 
-std::string FormDataBody::getBodyStr() {
-	std::string body;
+FormDataBody::FormDataPart *FormDataBody::getFilePart() {
+	FormDataPart *part;
+	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++) {
+		part = *it;
+		if (!part->_fileKey.empty())
+			return part;
+	}
+	return NULL;
+}
 
+std::string FormDataBody::getBodyStr() {
+	std::cout << "test1" << std::endl;
+	std::string body;
+	std::cout << "test" << std::endl;
 	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++) {
 		FormDataPart part = **it;
 		

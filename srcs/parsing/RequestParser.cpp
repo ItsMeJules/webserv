@@ -63,7 +63,8 @@ AMessageBody *RequestParser::getAccordingBodyType() {
 
 const bool RequestParser::parseRequest(char *request, int &byteCount) {
 	if (!_headersReceived) {
-		std::string wholeRequest = std::string(_inReceive.str() + request);
+		std::string recv = _inReceive.str();
+		std::string wholeRequest = recv + std::string(request, byteCount);
 		size_t endHeaders = wholeRequest.find("\r\n\r\n");
 		
 		if (endHeaders != std::string::npos) {

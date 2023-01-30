@@ -18,7 +18,7 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	std::string requestedPath = request.getPath();
 
 	if (request.getPath()[0] == '/')
-		request.setPath(info.getRootPath() + request.getPath());
+		request.setPath(info.getRootPath());
 
 	if (request.getPath() == info.getRootPath() + "/")
 		request.setPath(info.getIndexPath());

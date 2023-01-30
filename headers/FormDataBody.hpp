@@ -6,7 +6,7 @@
 # include <map>
 
 class FormDataBody : public AMessageBody {
-	private:
+	public:
 		class FormDataPart {
 			public:
 				FormDataPart();
@@ -29,7 +29,7 @@ class FormDataBody : public AMessageBody {
 
 				FormDataPart &operator=(FormDataPart const &rhs);
 		};
-
+	private:
 		std::vector<FormDataPart*> _parts;
 		std::vector<char> _tmp;
 		std::string _boundary;
@@ -45,6 +45,8 @@ class FormDataBody : public AMessageBody {
 
         int parse(char *body, int &size);
 
+		std::vector<FormDataPart*> getDataParts();
+		FormDataPart *getFilePart();
 		std::string getBodyStr();
 
 		FormDataBody &operator=(FormDataBody const &rhs);
