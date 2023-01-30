@@ -48,7 +48,7 @@ HttpResponse &HttpResponse::operator=(HttpResponse const &rhs) {
 
 ws::http_status_t HttpResponse::createStatus(std::string reason, std::string explanation) {
     ws::http_status_t status;
-    
+
     status.reason = reason;
     status.explanation = explanation;
     return status;
@@ -80,4 +80,16 @@ std::map<int, ws::http_status_t> HttpResponse::createCodes() {
     codes[501] = createStatus("Not Implemented", "The HTTP method is not yet supported.");
     codes[505] = createStatus("HTTP Version Non supported", "The HTTP version is not yet supported.");
     return codes;
+}
+
+std::string	HttpResponse::generateDate(void)
+{
+	char			buffer[100];
+	struct timeval	tv;
+	struct tm		*gmt;
+
+	gettimeofday(&tv, NULL);
+	gmt = gmtime(&tv.tv_sec);
+	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
+	return buffer;
 }

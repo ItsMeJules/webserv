@@ -4,6 +4,8 @@
 # include <string>
 
 # include <unistd.h>
+# include <sys/time.h>
+
 
 # include "HttpMessage.hpp"
 # include "utils.hpp"
@@ -29,10 +31,11 @@ class HttpResponse : public HttpMessage {
 		void setStatusCode(int statusCode);
 
 		const int getStatusCode() const;
+		std::string	generateDate();
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 
         static std::map<int, ws::http_status_t> createCodes();
 };
 
-#endif	
+#endif

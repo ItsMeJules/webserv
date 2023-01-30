@@ -17,11 +17,6 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	struct stat fileInfo;
 	std::string requestedPath = request.getPath();
 
-	if (response.getStatusCode() == 200)
-	{
-		std::cout << "CEST OK" << std::endl;
-	}
-
 	if (request.getPath()[0] == '/')
 		request.setPath(info.getRootPath() + request.getPath());
 
@@ -38,6 +33,7 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBody().size() - 1));
 		response.addHeader("Connection", "close");
+		response.generateDate();
 
 		file.close();
 		response.setMessageBody(body);
