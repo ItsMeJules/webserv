@@ -46,6 +46,13 @@ namespace ws {
         INFO,
     };
 
+    template<typename To_String>
+        std::string to_string(const To_String & value) {    
+            std::ostringstream oss;
+            oss << value;
+            return oss.str();
+    }
+
     ConfigLineType              getBlockType(config_parsing_t &cpt, std::string line);
 
     int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);

@@ -167,9 +167,10 @@ void ws::checkPath(std::string const &path) {
 
 void ws::checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument) {
 	size_t	sizeArgument = argument.size() - 1;
+	std::string expect = to_string(argtExpect);
 	
 	if (nbArguments != argtExpect)
-		throw std::invalid_argument(argtExpect + " Arguments expected.");
+		throw std::invalid_argument(to_string(argtExpect) + " Arguments expected.");
 
 	if (argument[sizeArgument] != ';')
 		throw std::invalid_argument(argument + " is not a valid name for a server. Missing ';' at the end of the line!");
