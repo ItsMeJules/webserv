@@ -16,10 +16,10 @@ int ws::checkClosingBracket(config_parsing_t const &cpt) {
 }
 
 ws::ConfigLineType ws::getBlockType(config_parsing_t &cpt, std::string line) {
-	if (line.rfind("html", 0) != std::string::npos) {
+	if (line.rfind("http", 0) != std::string::npos) {
 		ws::skip_chars(line.erase(0, 4), ws::WHITE_SPACES); //skips the spaces after the block declaration
         ws::checkOpeningBracket(cpt, line);
-        return HTML;
+        return HTTP;
 	} else if (line.rfind("server", 0) != std::string::npos) {
         ws::skip_chars(line.erase(0, 6), ws::WHITE_SPACES); //skips the spaces after the block declaration
         ws::checkOpeningBracket(cpt, line);
@@ -269,15 +269,18 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			break;
 		
 		case METHOD:
+			method = serverInfo.getMethod();
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), "|");
 			for(std::vector<std::string>::const_iterator it = values.begin(); it != values.end(); ++it)
 			{
 				if (HttpRequest::methods.count(*it) == 0)
 					throw std::invalid_argument(*it + " need to be params by 'GET', 'POST' or 'DELETE' !");
-				serverInfo.addtoMethod(*it);
+				if (std::find(method.begin(), method.end(), *it) != method.end())
+					continue;
+				else
+					serverInfo.addtoMethod(*it);
 			}
-			method = serverInfo.getMethod();
 			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
 			{
 				std::cout << "\tSet in ServerMethod: " << *it << "\n";
@@ -337,15 +340,18 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			break;
 
 		case METHOD:
+			method = location.getMethod();
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), "|");
 			for(std::vector<std::string>::const_iterator it = values.begin(); it != values.end(); ++it)
 			{
 				if (HttpRequest::methods.count(*it) == 0)
 					throw std::invalid_argument(*it + " need to be params by 'GET', 'POST' or 'DELETE' !");
-				location.addtoMethod(*it);
+				if (std::find(method.begin(), method.end(), *it) != method.end())
+					continue;
+				else
+					location.addtoMethod(*it);
 			}
-			method = location.getMethod();
 			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
 			{
 				std::cout << "\tSet in LocationMethod: " << *it << "\n";
@@ -385,9 +391,11 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
     Server *server = NULL;
     Location *location = NULL;
     ConfigLineType lineType;
+	FILE *pFile;
 
 	if (ws::checkFileExtension(name))
 		return 1;
+
 	parserInit(cpt.configKeys);
 	cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
@@ -411,10 +419,10 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
 
         lineType = getBlockType(cpt, cpt.line);
         switch (cpt.blockLevel) {
-			case 0: // check if we are inside the HTML, else it's dead
-				if (lineType != HTML)
-                    throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only html blocks can be found at this level.");
-				std::cout << "html line: " << cpt.line <<std::endl;
+			case 0: // check if we are inside the http, else it's dead
+				if (lineType != HTTP)
+                    throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only http blocks can be found at this level.");
+				std::cout << "http line: " << cpt.line <<std::endl;
 				cpt.blockLevel++;
 				break;
 
