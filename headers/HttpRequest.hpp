@@ -14,14 +14,16 @@
 
 class HttpRequest : public HttpMessage {
 	private:
-		static std::map<std::string, HttpMethod*> methods;
-
 		HttpMethod *_method;
 		std::string _path;
 
 		std::vector<std::string> _data;
 		std::string	_query;
 		bool	_isCgi;
+
+	public:
+		static std::map<std::string, HttpMethod*> methods;
+
 	public:
 		HttpRequest();
 		HttpRequest(HttpRequest const &httpRequest);

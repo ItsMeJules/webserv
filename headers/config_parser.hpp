@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include <vector>
+# include <map>
 # include <fstream>
 # include <locale>
 # include <string>
@@ -14,20 +15,6 @@
 # include "Constants.hpp"
 
 namespace ws {
-
-    typedef struct config_parsing_s {
-        std::ifstream file;
-        std::string line;
-        int lineNumber;
-        int blockLevel;
-    } config_parsing_t;
-
-    enum ConfigLineType {
-        HTML,
-        SERVER,
-        LOCATION,
-        INFO,
-    };
 
     enum confValues {
         ERROR,
@@ -42,26 +29,48 @@ namespace ws {
         UPLOAD,
         ROOT,
         REWRITE
-};
+    };
 
-    ConfigLineType get_block_type(config_parsing_t &cpt, std::string line);
+    typedef struct config_parsing_s {
+        std::ifstream file;
+        std::string line;
+        int lineNumber;
+        int blockLevel;
+        std::map<std::string, confValues> configKeys;
+    } config_parsing_t;
 
-    int		parse_config(std::string const &name, std::vector<Server*> &servers);
-    int		check_error_page_key(std::string key);
-    int		parse_server_line(config_parsing_t &cpt, Server &server);
-    int		parse_location_line(config_parsing_t &cpt, Location &location);
-    int		checkFileExtension(std::string file);
-    int		checkPort(int port, ServerSocket &socketInfo);
-    int		checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
-    int		checkAutoIndex(std::string index, ServerInfo &serverInfo);
-	int 	checkAutoIndex(std::string index, Location &locationInfo);
-    int		checkMethod(std::string method, ServerInfo &serverInfo);
-	int		checkMethod(std::string method, Location &locationInfo);
-    void	parserInit(std::map<std::string, confValues> &Values);
+    enum ConfigLineType {
+        HTTP,
+        SERVER,
+        LOCATION,
+        INFO,
+    };
 
-	void	check_location_path(std::string const &path);
-    void	check_opening_bracket(config_parsing_t const &cpt, std::string const &line);
-    int		check_closing_bracket(config_parsing_t const &cpt);
+    template<typename To_String>
+        std::string to_string(const To_String & value) {    
+            std::ostringstream oss;
+            oss << value;
+            return oss.str();
+    }
+
+    ConfigLineType              getBlockType(config_parsing_t &cpt, std::string line);
+
+    int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);
+    int		                    checkClientMaxBodySize(std::string size, ServerInfo &serverInfo);
+	int		                    checkClosingBracket(config_parsing_t const &cpt);
+    int		                    checkFileExtension(std::string file);
+    int		                    checkIpKey(std::string key);
+	int 	                    checkLocationAutoIndex(std::string index, Location &locationInfo);
+    int                         checkPortKey(std::string key);
+    int		                    parseConfig(std::string const &name, std::vector<Server*> &servers);
+    int		                    parseLocationLine(config_parsing_t &cpt, Location &location);
+    int		                    parseServerLine(config_parsing_t &cpt, Server &server);
+
+    void						checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument);
+    void                        checkConfiguration(Server *servers);
+    void	                    checkOpeningBracket(config_parsing_t const &cpt, std::string const &line);
+	void	                    checkPath(std::string const &path);
+    void	                    parserInit(std::map<std::string, confValues> &Values);
 
 };
 

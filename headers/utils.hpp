@@ -49,6 +49,10 @@ namespace ws {
 	bool file_is_reg(std::string const &path);
 	bool make_tmp_file(tmp_file_t &tft);
 	void close_tmp_file(ws::tmp_file_t const &tft);
+	
+	// PARSING
+	bool ft_in_charset(char const c, const std::string &charset);
+	std::vector<std::string> splitStr(const std::string &str, const std::string &charset);
 }
 
 #endif
