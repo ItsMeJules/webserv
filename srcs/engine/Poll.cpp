@@ -21,11 +21,11 @@ std::string const Poll::formatEvents(int const &events) const {
 
 // ############## PUBLIC ##############
 
-bool const Poll::init() {
+bool Poll::init() {
 	return true;
 } // Not needed for classic polling
 
-bool const Poll::pollFd(int fd, int events) {
+bool Poll::pollFd(int fd, int events) {
 	struct pollfd event;
 	event.fd = fd;
     event.events = events;
@@ -37,7 +37,7 @@ bool const Poll::pollFd(int fd, int events) {
 	return true;
 }
 
-bool const Poll::deleteFd(int fd) {
+bool Poll::deleteFd(int fd) {
 	// pas ouf je reitere dans les fd co. 
 	// il faudrait que je change l'interface IPoll
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
@@ -49,7 +49,7 @@ bool const Poll::deleteFd(int fd) {
 	return true;
 }
 
-const bool Poll::modFd(int fd, int events) {
+bool Poll::modFd(int fd, int events) {
 	// pas ouf je reitere dans les fd co. 
 	// il faudrait que je change l'interface IPoll
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
@@ -63,7 +63,7 @@ const bool Poll::modFd(int fd, int events) {
 	return false;
 }
 
-int const Poll::polling(Server &server) {
+int Poll::polling(Server &server) {
 	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), ws::POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
 		ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "waiting failed!", true);
@@ -119,11 +119,11 @@ int const Poll::polling(Server &server) {
 }
 
 
-int const Poll::pollOutEvent() const {
+int Poll::pollOutEvent() const {
 	return POLLOUT;
 } // Uniquement pour les clients
 
-int const Poll::pollInEvent() const {
+int Poll::pollInEvent() const {
     return POLLIN;
 } // Uniquement pour le server
 

@@ -21,14 +21,14 @@ class Poll : public IPoll {
 		Poll(Poll const &Poll);
 		~Poll();
 
-		bool const init();
-		bool const pollFd(int fd, int event);
-		bool const deleteFd(int fd);
-        bool const modFd(int fd, int event);
-		int const polling(Server &server);
+		bool init();
+		bool pollFd(int fd, int event);
+		bool deleteFd(int fd);
+        bool modFd(int fd, int event);
+		int polling(Server &server);
 
-		int const pollOutEvent() const;
-        int const pollInEvent() const;
+		int pollOutEvent() const;
+        int pollInEvent() const;
 
 		Poll &operator=(Poll const &rhs);
 };

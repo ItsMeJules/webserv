@@ -83,7 +83,7 @@ void FormDataBody::FormDataPart::parseHeaders() {
 
 void FormDataBody::FormDataPart::parseBody(FormDataBody &parent) {
 	std::vector<char> &body = _directives[_directiveName];
-	for (int i = 0; i < parent._tmp.size(); i++)
+	for (std::vector<char>::size_type i = 0; i < parent._tmp.size(); i++)
 		body.push_back(parent._tmp[i]);
 	parent._tmp.clear();
 
@@ -149,7 +149,6 @@ AMessageBody *FormDataBody::clone() {
 
 FormDataBody::FormDataPart *FormDataBody::readForm() {
 	size_t headerStartPos = _boundary.size() + 4;
-	static int tour = 0;
 	
 	if (_tmp.empty()) {
 		if (!AMessageBody::_tmpIfStream.is_open())

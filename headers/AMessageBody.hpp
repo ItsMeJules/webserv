@@ -26,7 +26,7 @@ class AMessageBody {
 
         virtual int parse(char *body, int &size) = 0;
 		bool writeToFile(std::vector<char> const &vec);
-		bool appendFromFile(std::vector<char> &vec, int size);
+		bool appendFromFile(std::vector<char> &vec, std::vector<char>::size_type size);
 		void destroyTmpFile();
 		virtual AMessageBody *clone() = 0;
 

@@ -31,7 +31,7 @@ void HttpResponse::setStatusCode(int statusCode) {
     _statusPhrase = codes[_statusCode];
 }
 
-const int HttpResponse::getStatusCode() const {
+const int &HttpResponse::getStatusCode() const {
     return _statusCode;
 }
 

@@ -28,7 +28,7 @@ class HttpResponse : public HttpMessage {
 
 		void setStatusCode(int statusCode);
 
-		const int getStatusCode() const;
+		const int &getStatusCode() const;
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 

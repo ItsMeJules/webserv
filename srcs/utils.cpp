@@ -31,7 +31,7 @@ std::string &ws::skip_chars(std::string &str, std::string const &toSkip) {
 }
 
 bool ws::string_in_range(std::string const &range, std::string const &str, size_t npos) {
-    for (int i = 0; i < str.size() && npos != 0; i++, npos--) {
+    for (std::string::size_type i = 0; i < str.size() && npos != 0; i++, npos--) {
         if (range.find(str[i]) == std::string::npos)
             return false;
     }
@@ -43,8 +43,8 @@ char *ws::char_array(std::string const &str, int end, int begin) {
 }
 
 int ws::pos_in_vec(std::string const &str, std::vector<char> const &vec) {
-	int i;
-	int j;
+	std::vector<char>::size_type i;
+	std::vector<char>::size_type j;
 
 	for (i = 0; i < vec.size(); i++) {
 		j = 0;

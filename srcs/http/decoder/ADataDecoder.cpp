@@ -23,7 +23,7 @@ void ADataDecoder::addBuffer(const char *buffer, size_t const &size) {
 	if (_tmp.capacity() < size)
 		_tmp.reserve(_tmp.size() + size);
 		
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 		_tmp.push_back(buffer[i]);
 }
 

@@ -33,11 +33,11 @@ class RequestParser {
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
-		const bool parseRequest(char *request, int &byteCount);
+		bool parseRequest(char *request, int &byteCount);
         void clear();
 
 		HttpRequest &getHttpRequest();
-		const bool isRequestParsed() const;
+		const bool &isRequestParsed() const;
 
 		RequestParser &operator=(RequestParser const &rhs);
 };

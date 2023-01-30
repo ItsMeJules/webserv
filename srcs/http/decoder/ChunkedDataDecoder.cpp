@@ -36,7 +36,7 @@ int ChunkedDataDecoder::readChunkSize(size_t const &endChunkSizePos) {
 	}
 }
 
-bool ChunkedDataDecoder::checkChunkSize(const char *buffer, int const &bufSize, int const &read) {
+bool ChunkedDataDecoder::checkChunkSize(int const &bufSize, int const &read) {
 	if (read != bufSize && read + 2 <= bufSize) {
 		ws::log(ws::LOG_LVL_ERROR, "[ChunkedDataDecoder] -",
 			"error while reading a chunk, the chunk size is bigger (" + ws::itos(_actualChunk.content.size()) + ") "
@@ -64,19 +64,22 @@ int ChunkedDataDecoder::decodeInto(std::vector<char> &vec) {
 		}
 		return readChunkSize(chunkEndPos);
 	} else {
-		int i = 0;
-		for (; i < _tmp.size() && _sizeRead + i < _actualChunk.size; i++)
+		std::vector<char>::size_type i = 0;
+		size_t chunkSize = _actualChunk.size;
+		
+		for (; i < _tmp.size() && _sizeRead + i < chunkSize; i++)
 			_actualChunk.content.push_back(_tmp[i]);
 		_sizeRead += i;
+
 		ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", ws::itos(_actualChunk.size - _sizeRead) + " chars left to read.");
 		
-		if (_sizeRead > _actualChunk.size) {
+		if (_sizeRead > chunkSize) {
 			ws::log(ws::LOG_LVL_ERROR, "[ChunkedDataDecoder] -",
 				"error while reading a chunk, the chunk size is bigger (" + ws::itos(_actualChunk.content.size()) + ") "
 				+ "than the expected size (" + ws::itos(_actualChunk.size) + ")");
 			ws::log(ws::LOG_LVL_DEBUG, "[ChunkedDataDecoder] -", "contents:\n" + std::string(_actualChunk.content.data(), _actualChunk.content.size()));
 			return ws::DECODER_CHUNKED_CHUNK_TOO_BIG;
-		} else if (_sizeRead == _actualChunk.size) {
+		} else if (_sizeRead == chunkSize) {
 			vec.insert(vec.end(), _actualChunk.content.begin(), _actualChunk.content.end());
 			_tmp.erase(_tmp.begin(), _tmp.begin() + i + (i + 2 >= _tmp.size() ? 0 : 2));
 			ws::log(ws::LOG_LVL_ALL, "[ChunkedDataDecoder] -", "a chunk of " + ws::itos(_actualChunk.size) + " chars was parsed");

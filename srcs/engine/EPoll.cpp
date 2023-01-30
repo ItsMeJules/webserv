@@ -28,7 +28,7 @@ std::string const EPoll::formatEvents(int const &events) const {
 
 // ############## PUBLIC ##############
 
-const bool EPoll::init() {
+bool EPoll::init() {
 	ws::log(ws::LOG_LVL_INFO, "[EPOLL] -", "creating poll instance");
 	_epollFd = epoll_create(10); //Nombre arbitraire (voir man page)
 	if (_epollFd == -1)
@@ -38,7 +38,7 @@ const bool EPoll::init() {
 	return _epollFd != -1;
 }
 
-const bool EPoll::pollFd(int fd, int events) {
+bool EPoll::pollFd(int fd, int events) {
 	struct epoll_event event;
 	event.events = events;
 	event.data.fd = fd;
@@ -52,7 +52,7 @@ const bool EPoll::pollFd(int fd, int events) {
 	return ret != -1;
 }
 
-const bool EPoll::deleteFd(int fd) {
+bool EPoll::deleteFd(int fd) {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
 		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to delete fd: " + ws::itos(fd) + " from polling list!", true);
@@ -61,7 +61,7 @@ const bool EPoll::deleteFd(int fd) {
 	return ret != -1;
 }
 
-const bool EPoll::modFd(int fd, int events) {
+bool EPoll::modFd(int fd, int events) {
     struct epoll_event event;
     event.events = events;
     event.data.fd = fd;
@@ -75,7 +75,7 @@ const bool EPoll::modFd(int fd, int events) {
     return ret != -1;
 }
 
-const int EPoll::polling(Server &server) {
+int EPoll::polling(Server &server) {
 	struct epoll_event events[ws::POLL_EVENTS_SIZE];
 
 	int readyFdAmount = epoll_wait(_epollFd, events, ws::POLL_MAX_EVENTS, ws::POLL_WAIT_TIMEOUT);
@@ -143,11 +143,11 @@ const int EPoll::polling(Server &server) {
 }
 
 
-const int EPoll::pollOutEvent() const {
+int EPoll::pollOutEvent() const {
 	return EPOLLOUT;
 }
 
-const int EPoll::pollInEvent() const {
+int EPoll::pollInEvent() const {
     return EPOLLIN;
 }
 

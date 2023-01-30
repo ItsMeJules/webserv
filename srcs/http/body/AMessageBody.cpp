@@ -24,7 +24,7 @@ bool AMessageBody::writeToFile(std::vector<char> const &vec) {
 	return true;
 }
 
-bool AMessageBody::appendFromFile(std::vector<char> &vec, int readSize) {
+bool AMessageBody::appendFromFile(std::vector<char> &vec, std::vector<char>::size_type readSize) {
 	char buffer[readSize];
 
 	if (vec.size() < readSize)

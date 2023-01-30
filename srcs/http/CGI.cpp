@@ -149,6 +149,8 @@ std::string	Cgi::execute(const std::string	&_binary)
 
 void Cgi::get_response(HttpRequest &request, Server &server)
 {
+	(void)server;
+	(void)request;
 // 	if (request.IsCgi())
 // 	{
 // 		Cgi cgi(request, server);
@@ -160,6 +162,8 @@ void Cgi::get_response(HttpRequest &request, Server &server)
 
 void	Cgi::post_response(HttpRequest &request, Server &server)
 {
+	(void)server;
+	(void)request;
 	// if (request.IsCgi())
 	// {
 	// 	Cgi cgi(request, server);

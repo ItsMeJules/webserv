@@ -20,14 +20,14 @@ class EPoll : public IPoll {
 		EPoll(EPoll const &ePoll);
 		~EPoll();
 
-		bool const init();
-		bool const pollFd(int fd, int event);
-		bool const deleteFd(int fd);
-        bool const modFd(int fd, int event);
-		int const polling(Server &server);
-		
-		int const pollOutEvent() const;
-        int const pollInEvent() const;
+		bool init();
+		bool pollFd(int fd, int event);
+		bool deleteFd(int fd);
+        bool modFd(int fd, int event);
+		int polling(Server &server);
+
+		int pollOutEvent() const;
+        int pollInEvent() const;
 
 		EPoll &operator=(EPoll const &rhs);
 };
