@@ -67,6 +67,7 @@ namespace ws {
     int		                    parseServerLine(config_parsing_t &cpt, Server &server);
 
     void						checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument);
+    void                        checkConfiguration(Server *servers);
     void	                    checkOpeningBracket(config_parsing_t const &cpt, std::string const &line);
 	void	                    checkPath(std::string const &path);
     void	                    parserInit(std::map<std::string, confValues> &Values);

@@ -40,7 +40,7 @@ bool ServerSocket::setReusable() {
 		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully set socket on fd: " + ws::itos(_fd) + " reusable");
 		return true;
 	}
-	ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while binding fd: " + ws::itos(_fd) + "!", true);
+	ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while setting socket reusable fd: " + ws::itos(_fd) + "!", true);
 	return false;
 }
 

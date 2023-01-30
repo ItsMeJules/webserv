@@ -88,10 +88,6 @@ ServerInfo &Server::getServerInfo() {
     return _serverInfo;
 }
 
-std::string Server::getServerName() const {
-	return _name;
-}
-
 void Server::setServerSocket(ServerSocket serverSocket) {
 	_socket = serverSocket;
 }

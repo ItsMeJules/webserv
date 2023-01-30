@@ -4,9 +4,13 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 ServerInfo::ServerInfo() {
-	_autoindex = false;
 	_maxBodySize = 1000000;
-	_serverName = "localhost";
+	_autoindex = false;
+	_serverName = "";
+	_rootPath = "html";
+	_indexPath = "index.html";
+	_ip = "0.0.0.0";
+	_port = 8000;
 }
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) {
 	*this = serverInfo;
@@ -132,12 +136,10 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_uploadPath = rhs._uploadPath;
 		_method = rhs._method;
 		_cgis = rhs._cgis;
-		_locations = rhs._locations;
 		_errorPage = rhs._errorPage;
 
-		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
-			
-		}
+		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++)
+			_locations.insert(std::make_pair(it->first, new Location(*it->second)));
 		
 	}
 

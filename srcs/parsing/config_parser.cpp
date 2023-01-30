@@ -392,7 +392,6 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
     Server *server = NULL;
     Location *location = NULL;
     ConfigLineType lineType;
-	FILE *pFile;
 
 	if (ws::checkFileExtension(name))
 		return 1;
@@ -474,4 +473,59 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
         throw std::invalid_argument("Missing closing bracket!");
     std::cout << "whole file is parsed" << std::endl;
    return 0;
+}
+
+void ws::checkConfiguration(Server *servers) {
+		ServerInfo &serverInfo = servers->getServerInfo();
+		std::map<std::string, std::string> cgi;
+		std::vector<std::string> method;
+		std::map<int, std::string> errorPage;
+		std::map<std::string, Location*> location;
+
+		method = serverInfo.getMethod();
+		errorPage = serverInfo.getError();
+		cgi = serverInfo.getCgis();
+		location = serverInfo.getLocations();
+
+		std::cout << "\n----------------------------------SETUP SERVER----------------------------------" << std::endl;
+		std::cout << "IP: \t\t\t" << serverInfo.getIp() << std::endl;
+		std::cout << "PORT: \t\t\t" << serverInfo.getPort() << std::endl;
+		std::cout << "NAME: \t\t\t" << serverInfo.getServerName() << std::endl;
+		std::cout << "ROOT: \t\t\t" << serverInfo.getRootPath() << std::endl;
+		std::cout << "CLIENT_MAX_SIZE_BODY:\t" << serverInfo.getMaxBodySize() << std::endl;
+		std::cout << "INDEX: \t\t\t" << serverInfo.getIndexPath() << std::endl;
+		if (serverInfo.getUploadPath().empty())
+			std::cout << "\t[Upload is Empty]" << std::endl;
+		std::cout << "UPLOAD: \t\t" << serverInfo.getUploadPath() << std::endl;
+		std::cout << "AUTOINDEX: \t\t" << serverInfo.hasAutoindex() << std::endl;
+		std::cout << "METHOD: \t\t" << std::endl;
+		for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
+			std::cout << "\t\t\t- " << *it << "\n";
+		}
+		std::cout << "CGIS: " << std::endl;
+		for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it) {
+			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
+		}
+		std::cout << "ERROR_PAGES: " << std::endl;
+		for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
+			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
+		}
+		std::cout << "LOCATION: " << std::endl;
+		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
+			Location loc = *it->second;
+			std::cout << "\t" << it->first << std::endl;
+			std::cout << "\t\tINDEX: \t\t" << loc.getIndexPath() << std::endl;
+			if (loc.getIndexPath().empty())
+				std::cout << "\t\t\t[Index is Empty]" << std::endl;
+			std::cout << "\t\tAUTOINDEX: \t" << serverInfo.hasAutoindex() << std::endl;
+			std::cout << "\t\tMETHOD: " << std::endl;
+			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
+				std::cout << "\t\t\t\t- " << *it << "\n"; }
+			std::cout << "\t\tUPLOAD: \t" << serverInfo.getUploadPath() << std::endl;
+			std::cout << "\t\tREWRITE: \t" << loc.getRewritePath() << std::endl;
+			std::cout << "\t\tROOT: \t" << loc.getRootPath() << std::endl;
+			if (loc.getRootPath().empty())
+				std::cout << "\t\t\t[Root is Empty]" << std::endl;
+		}
+		std::cout << "----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }
