@@ -63,6 +63,8 @@ bool ServerSocket::bindTo() {
 	_address.sin_addr.s_addr = _ip.empty() ? INADDR_ANY : inet_addr(_ip.c_str());
 	_address.sin_port = htons(_port);
 
+	std::cout << _domain << "|" << _ip.empty() << ": " << _ip << "|" << _port << std::endl;
+
 	bool bound = bind(_fd, (struct sockaddr *)&_address, sizeof(_address)) == 0;
 	if (bound)
 		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully bound fd: " + ws::itos(_fd));

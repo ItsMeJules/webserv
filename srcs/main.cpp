@@ -33,12 +33,13 @@ int main(int ac, char **av) {
         delete Server::poller;
     } else {
         ws::parseConfig(std::string(av[1]), Server::servers);
-        std::cout << Server::servers.size() << std::endl;
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
 
             ws::checkConfiguration(server);
-            server->getServerSocket().setIp("127.0.0.1");
+            
+            server->getServerSocket().setIp(server->getServerInfo().getIp());
+            server->getServerSocket().setPort(server->getServerInfo().getPort());
             server->getServerSocket().setup();
             server->setup();
         }
