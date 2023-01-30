@@ -16,12 +16,24 @@ HttpResponse HttpGet::execute(ServerInfo const &info, HttpRequest &request) {
 	std::ifstream file;
 	struct stat fileInfo;
 	std::string requestedPath = request.getPath();
+	_isCgi = true;
 
 	if (request.getPath()[0] == '/')
 		request.setPath(info.getRootPath() + request.getPath());
 
 	if (request.getPath() == info.getRootPath() + "/")
 		request.setPath(info.getIndexPath());
+
+	if (_isCgi)
+	{
+		std::cout << "is in cgi" << std::endl;
+		std::string output;
+		Cgi cgi;
+		HttpRequest request;
+		Server		server;
+
+		output = cgi.execute(requestedPath);
+	}
 
 	stat(request.getPath().c_str(), &fileInfo);
 	file.open(request.getPath().c_str(), std::fstream::ate);

@@ -1,10 +1,14 @@
 #include "CGI.hpp"
-
-
+# include <ostream>
 
 //http://www.wijata.com/cgi/cgispec.html#4.0  GO GO GO
 
 Cgi::Cgi(){}
+
+Cgi::Cgi(HttpRequest &request, Server &server, ServerInfo &serverInfo) : _inputBody(request.getMessageBody()->getBodyStr())
+{
+	this->initEnv(request, server, serverInfo);
+}
 
 Cgi	&Cgi::operator=(Cgi const &src)
 {
@@ -16,7 +20,7 @@ Cgi	&Cgi::operator=(Cgi const &src)
 	return *this;
 }
 
-Cgi::Cgi(HttpRequest &request, Server &server)
+void	Cgi::initEnv(HttpRequest &request, Server &server, ServerInfo &serverInfo)
 {
 	std::map<std::string, std::string> headers = request.getHeaders();
 	std::string content_type = "text/html";
@@ -25,11 +29,11 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 		_env["AUTH_TYPE"] = headers["Authorization"];
 	_env["STATUS_CODE"] = "200"; // can't be another one
 	_env["CGI"] = "CGI/1.1";
-	_env["SCRIPT_NAME"] = request.getPath();
+	_env["SCRIPT_NAME"] = "./www/cgi/script.php";
 	_env["REQUEST_METHOD"] = request.getMethod()->getName();
 	_env["CONTENT_LENGTH"] = ws::itos(_inputBody.length());
 	_env["CONTENT_TYPE"] = content_type;
-	_env["PATH_INFO"] = request.getPath();
+	_env["PATH_INFO"] = "./www/cgi/script.php";
 	_env["QUERY_STRING"] = request.getQuery();
 	_env["REMOTE_ADDR"] = ws::itos(server.getServerSocket().getPort());
 	_env["REMOTE_IDENT"] = headers["Authorization"];
@@ -43,29 +47,25 @@ Cgi::Cgi(HttpRequest &request, Server &server)
 	_env["SERVER_PORT"] = ws::itos(server.getServerSocket().getPort());
 	_env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_env["SERVER_SOFTWARE"] = "Webservgang";
+
+	_env.insert(serverInfo.getCgis().begin(), serverInfo.getCgis().end());
 }
 
 Cgi::~Cgi() {}
 
-void	Cgi::setInputBody(std::string inputBody)
-{
-	_inputBody = inputBody;
-}
-
-void	Cgi::setEnv(std::map<std::string, std::string> env)
-{
-	_env = env;
-}
 
 char **Cgi::envToTab(void)
 {
 	char **env = new char *[_env.size() + 1];
-	int i;
-	i = 0;
+	std::cout << "size de env = " << _env.size() << std::endl;
+	int i = 0;
+	std::cout << "_env[0] = " << _env[0] << std::endl;
 
-	for(std::map<std::string, std::string>::iterator it = _env.begin(); it != _env.end(); it++)
+	for (std::map<std::string, std::string>::iterator it = _env.begin(); it != _env.end(); it++)
 	{
+		std::cout << "entre dans le for du env to tab" << std::endl;
 		std::string tmp = it->first + "=" + it->second;
+		std::cout << "TMP DANS ENVTOTAB =" << tmp << std::endl;
 		env[i] = new char[tmp.size() + 1];
 		env[i] = strcpy(env[i], (char*)tmp.c_str());
 	}
@@ -83,6 +83,7 @@ std::string	Cgi::execute(const std::string	&_binary)
 
 	try
 	{
+		std::cout << "is in the try" << std::endl;
 		env = envToTab();
 	}
 	catch(const std::exception& e)
@@ -90,6 +91,7 @@ std::string	Cgi::execute(const std::string	&_binary)
 		std::cerr << e.what() << '\n';
 	}
 
+	std::cout << "entre dans cgi" << std::endl;
 	FILE *input_file = tmpfile();
 	FILE *output_file = tmpfile();
 
@@ -106,15 +108,16 @@ std::string	Cgi::execute(const std::string	&_binary)
 		std::cerr << "CRASH" << std::endl;
 		return "500";
 	}
-	// else if (!pid)
-	// {
-	// 	char * const * nll = NULL;
-	// 	dup2(input_fd, STDIN_FILENO);
-	// 	dup2(output_fd, STDOUT_FILENO);
-	// 	execve(_binary.c_str(), nll, env);//il faut crer une fonction qui retourne un tab
-	// 	std::cerr << "crash de execve" << std::endl;
-	// 	return "500";
-	// }
+	else if (!pid)
+	{
+		char * const * nll = NULL;
+		dup2(input_fd, STDIN_FILENO);
+		dup2(output_fd, STDOUT_FILENO);
+		execve("/usr/bin/php-cgi", nll, env);
+		std::cout << "BINARY = " << _binary << std::endl;
+		std::cerr << "crash de execve" << std::endl;
+		return "500";
+	}
 	else
 	{
 		char	tmp[BUFFER_SIZE] = {0};
@@ -146,25 +149,27 @@ std::string	Cgi::execute(const std::string	&_binary)
 }
 
 
-
-void Cgi::get_response(HttpRequest &request, Server &server)
+void	Cgi::setInputBody(std::string inputBody)
 {
-// 	if (request.IsCgi())
-// 	{
-// 		Cgi cgi(request, server);
-// 		int i = 0;
-// 		int j = _response.size() - 2;
-// 		_response = cgi.execute(request.);
-// 	}
+	_inputBody = inputBody;
 }
 
-void	Cgi::post_response(HttpRequest &request, Server &server)
+void	Cgi::setEnv(std::map<std::string, std::string> env)
 {
-	// if (request.IsCgi())
-	// {
-	// 	Cgi cgi(request, server);
-	// 	int i = 0;
-	// 	int j = _response.size() - 2;
-	// 	_response = cgi.execute(request.IsCgi());
-	// }
+	_env = env;
+}
+std::map<std::string, std::string> Cgi::getEnv() const
+{
+	return _env;
+}
+
+std::string	Cgi::getInputBody() const
+{
+	return _inputBody;
+}
+
+std::ostream &			operator<<( std::ostream & o, Cgi const & i )
+{
+	o << "INPUT BODY = " << i.getInputBody() << std::endl;
+	return o;
 }

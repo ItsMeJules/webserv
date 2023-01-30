@@ -6,6 +6,7 @@
 
 # include "HttpMethod.hpp"
 # include "DefaultBody.hpp"
+# include "CGI.hpp"
 
 class HttpGet : public HttpMethod {
 	private:
