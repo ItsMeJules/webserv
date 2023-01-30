@@ -2,10 +2,10 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port), _type(SOCK_STREAM), _protocol(0) {}
-ServerSocket::ServerSocket(int port) : _domain(AF_INET), _port(port), _type(SOCK_STREAM) {}
+ServerSocket::ServerSocket(std::string ip, int port) : _type(SOCK_STREAM), _protocol(0), _port(port), _ip(ip) {}
+ServerSocket::ServerSocket(int port) : _domain(AF_INET), _type(SOCK_STREAM), _port(port) {}
 
-ServerSocket::ServerSocket() : _domain(AF_INET), _port(-1), _type(SOCK_STREAM), _protocol(0) {}
+ServerSocket::ServerSocket() : _domain(AF_INET), _type(SOCK_STREAM), _protocol(0), _port(-1) {}
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
 ServerSocket::~ServerSocket() {}

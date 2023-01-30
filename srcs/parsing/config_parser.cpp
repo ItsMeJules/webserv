@@ -50,7 +50,7 @@ int ws::checkFileExtension(std::string file) {
 		std::cerr << "Problem Configuration Files - Error: Can't open the file" << std::endl;
 		return (1); }
 	path.close();
-	if (file.rfind(".conf") == -1 || !(file.size() > 5)) {
+	if (file.rfind(".conf") == static_cast<unsigned long>(-1) || !(file.size() > 5)) {
 		std::cerr << "Problem Configuration Files - The File extension is not .conf" << std::endl;
 		return (1);
 	}
@@ -60,7 +60,6 @@ int ws::checkFileExtension(std::string file) {
 int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	int len = size.size();
 	int i = 0;
-	int mult = 0;
 	int sizeBody = atoi(size.c_str());
 
 	for (; i < len; i++)
@@ -138,7 +137,7 @@ int ws::checkPortKey(std::string key) {
 		else
 			throw std::invalid_argument("Error, Invalid Listen : Port can only contain number.");
 	}
-	if (p_tmp < 0 && p_tmp > 65535)
+	if (p_tmp < 0 || p_tmp > 65535)
 		throw std::invalid_argument("Error, Invalid Listen : Port can only be between 0 and 65535.");
 	return 0;
 }
@@ -456,11 +455,12 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
                 break ;
 
             case 3: //we are inside location block
-                if (lineType != INFO)
+                if (lineType != INFO) {
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ": \"" + cpt.line +
                                                 "\" is invalid. There can't be a location block inside another location block.");
-                    if(parseLocationLine(cpt, *location) == 1)
-						return 1;
+				}
+                if (parseLocationLine(cpt, *location) == 1)
+					return 1;
                 break ;
 
             default:

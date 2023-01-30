@@ -1,8 +1,8 @@
 #ifdef __linux__
 # include "EPoll.hpp"
 # include <stdio.h>
-#include <iostream>
-#include <string>
+# include <iostream>
+# include <string>
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -67,10 +67,12 @@ bool EPoll::modFd(int fd, int events) {
     event.data.fd = fd;
 
     int ret = epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &event);
-    if (ret == -1)
+    if (ret == -1) {
         ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to modify fd: " + ws::itos(fd) + "!", true);
-    else
-        ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "successfully modified fd: " + ws::itos(fd));
+	} else {
+    	ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "successfully modified fd: " + ws::itos(fd));
+	}
+
 	ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events));
     return ret != -1;
 }
@@ -114,7 +116,6 @@ int EPoll::polling(Server &server) {
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
                 HttpResponse response;
-                DefaultBody *body = new DefaultBody();
 
 				if (!client.hasRequestFailed())
 					response = client.getHttpRequest().execute(server.getServerInfo());
@@ -122,10 +123,6 @@ int EPoll::polling(Server &server) {
 					response.setStatusCode(400);
 					response.addHeader("Connection", "close");
 				}
-				// body->append("Hello World!", 13);
-                // response.addHeader("Content-Type", "text/plain");
-                // response.addHeader("Content-Length", ws::itos(body->getBodySize());
-                // response.setMessageBody(body);
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)
 					server.disconnect(client);
