@@ -25,7 +25,7 @@ class Location {
 		const std::string &getRootPath() const;
 		const std::string &getUploadPath() const;
 		const std::string &getRewritePath() const;
-		bool hasAutoindex() const;
+		const bool &hasAutoindex() const;
 		const std::vector<std::string> &getMethod() const;
 
 		void  setIndexPath(std::string Path);
