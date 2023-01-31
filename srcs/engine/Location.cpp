@@ -24,7 +24,7 @@ const std::string &Location::getRewritePath() const {
 	return _rewritePath;
 }
 
-bool Location::hasAutoindex() const {
+const bool &Location::hasAutoindex() const {
 	return _autoIndex;
 }
 
@@ -61,7 +61,11 @@ void  Location::addtoMethod(std::string Method) {
 Location &Location::operator=(Location const &rhs) {
 	if (this != &rhs) {
 		_indexPath = rhs._indexPath;
+		_rootPath = rhs._rootPath;
+		_uploadPath = rhs._uploadPath;
+		_rewritePath = rhs._rewritePath;
 		_autoIndex = rhs._autoIndex;
+		_method = rhs._method;
 	}
 	return *this;
 }

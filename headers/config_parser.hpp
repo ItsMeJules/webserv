@@ -53,6 +53,8 @@ namespace ws {
             return oss.str();
     }
 
+    bool                        isPathExist(const std::string &s);
+
     ConfigLineType              getBlockType(config_parsing_t &cpt, std::string line);
 
     int		                    checkAutoIndex(std::string index, ServerInfo &serverInfo);
