@@ -6,7 +6,7 @@ HttpPost::HttpPost() {}
 HttpPost::HttpPost(HttpPost const &httpPost) { *this = httpPost; }
 HttpPost::~HttpPost() {}
 
-// ############## PRIVATE ############## 
+// ############## PRIVATE ##############
 
 bool HttpPost::writePartToFile(FormDataBody::FormDataPart &part, std::string const &filePath, std::ofstream &ofs) {
 	if (!ofs.is_open())
@@ -27,7 +27,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 	HttpResponse response;
 	DefaultBody *body = new DefaultBody();
-	request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
+	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
 	if (formBody != NULL) {
@@ -36,7 +36,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 		bool success = true;
 		data.requestedPath += serverInfo.getUploadPath();
-		
+
 		while ((part = formBody->readForm()) != NULL) {
 			if (!part->_headersParsed || part->_directiveName != part->_fileKey)
 				continue ;
@@ -50,7 +50,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 		ofs.close();
 
 		body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
-		
+
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 

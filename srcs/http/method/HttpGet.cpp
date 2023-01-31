@@ -28,14 +28,14 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	HttpResponse response;
 
 	DefaultBody *body = new DefaultBody();
-	request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
+	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 	std::ifstream fileStream;
 	struct stat fileInfo;
-	Cgi *cgi = new Cgi();
+	Cgi *cgi = new Cgi(serverInfo.getCgis());
 
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 		std::cout << "entre dans la condition des cgis" << std::endl;
-		cgi->executeGet(request);
+		cgi->executeGet(request, data);
 	}
 	else if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
@@ -72,6 +72,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	response.setMessageBody(body);
 
+	delete cgi;
 	fileStream.close();
 	return response;
 }

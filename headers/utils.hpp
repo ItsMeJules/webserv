@@ -24,6 +24,15 @@ namespace ws {
 		std::string explanation;
 	} http_status_t;
 
+	typedef struct request_data_s {
+		std::string requestedPath;
+		std::string fileName;
+		std::string fileExtension;
+		std::string query;
+
+		size_t fileSize;
+	} request_data_t;
+
 	typedef struct tmp_file_s {
 		int fd;
 		std::string name;
