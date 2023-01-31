@@ -1,0 +1,54 @@
+body {
+    background-color: #0e1114;
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    margin: 2%;
+	align-items: center;
+	text-align: center;
+}
+
+h1 {
+    font-size: 6vmin;
+}
+
+span {
+	color: #01e6cd;
+}
+
+div.content {
+    height: 73vh;
+    font-size: 20px;
+    padding: 1vh;
+}
+
+h2 {
+    font-size: 5vmin;
+}
+
+.button{
+	margin-top: 5vh;
+    background-color: #0e1114;
+	border-radius: 29px;
+	border: 1px solid white;
+	color: white;
+	font-size: 15px;
+    padding: 10px 45px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.button:hover{
+	background-color: white;
+	color: #0e1114;
+	border-color: #0e1114;
+	transition: 0.3s;
+}
+
+div.container-text {
+    padding: 1rem;
+}
+
+a {
+	text-decoration: none;
+	color: #01e6cd;
+}
