@@ -31,7 +31,7 @@ std::string &ws::skip_chars(std::string &str, std::string const &toSkip) {
 }
 
 bool ws::string_in_range(std::string const &range, std::string const &str, size_t npos) {
-    for (int i = 0; i < str.size() && npos != 0; i++, npos--) {
+    for (std::string::size_type i = 0; i < str.size() && npos != 0; i++, npos--) {
         if (range.find(str[i]) == std::string::npos)
             return false;
     }
@@ -43,8 +43,8 @@ char *ws::char_array(std::string const &str, int end, int begin) {
 }
 
 int ws::pos_in_vec(std::string const &str, std::vector<char> const &vec) {
-	int i;
-	int j;
+	std::vector<char>::size_type i;
+	std::vector<char>::size_type j;
 
 	for (i = 0; i < vec.size(); i++) {
 		j = 0;
@@ -204,3 +204,57 @@ bool ws::file_is_reg(std::string const &path) {
 	stat(path.c_str(), &fileInfo);
 	return !S_ISREG(fileInfo.st_mode);
 }
+
+bool ws::make_tmp_file(tmp_file_t &tft) {
+	tft.name += ".XXXXXX";
+
+    std::vector<char> path(tft.name.begin(), tft.name.end());
+    path.push_back('\0');
+
+	tft.fd = mkstemp(&path[0]);
+	if (tft.fd != 1) {
+        tft.name.assign(path.begin(), path.end() - 1);
+		close(tft.fd);
+	}
+	return tft.fd != -1;
+}
+
+void ws::close_tmp_file(ws::tmp_file_t const &tft) {
+	close(tft.fd);
+	unlink(tft.name.c_str());
+}
+bool	ws::ft_in_charset(char const c, const std::string &charset)
+{
+	int	i_charset;
+
+	i_charset = 0;
+	while (charset[i_charset])
+	{
+		if (c == charset[i_charset++])
+			return true;
+	}
+	return false;
+}
+
+std::vector<std::string> ws::splitStr(const std::string &str, const std::string &charset)
+{
+	std::vector<std::string> res;
+	std::string			tmp;
+	size_t			i;
+
+	i = 0;
+	while (i < str.length())
+	{
+		while (i < str.length() && ft_in_charset(str[i], charset))
+			i++;
+		if (i < str.length())
+		{
+			tmp = "";
+			while (i < str.length() && !ft_in_charset(str[i], charset))
+				tmp += str[i++];
+			res.push_back(tmp);
+		}
+	}
+	return res;
+}
+

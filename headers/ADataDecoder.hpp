@@ -20,7 +20,7 @@ class ADataDecoder {
 		virtual ~ADataDecoder();
 
 		virtual int decodeInto(std::vector<char> &vec) = 0;
-		void addBuffer(const char *buffer, size_t const &size);
+		void addBuffer(const char *buffer, size_t const &readSize);
 
 		bool hasData();
 

@@ -2,10 +2,10 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerSocket::ServerSocket(std::string ip, int port) : _ip(ip), _port(port), _type(SOCK_STREAM), _protocol(0) {}
-ServerSocket::ServerSocket(int port) : _domain(AF_INET), _port(port), _type(SOCK_STREAM) {}
+ServerSocket::ServerSocket(std::string ip, int port) : _type(SOCK_STREAM), _protocol(0), _port(port), _ip(ip) {}
+ServerSocket::ServerSocket(int port) : _domain(AF_INET), _type(SOCK_STREAM), _port(port) {}
 
-ServerSocket::ServerSocket() : _domain(AF_INET), _port(-1), _type(SOCK_STREAM), _protocol(0) {}
+ServerSocket::ServerSocket() : _domain(AF_INET), _type(SOCK_STREAM), _protocol(0), _port(-1) {}
 
 ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
 ServerSocket::~ServerSocket() {}
@@ -40,7 +40,7 @@ bool ServerSocket::setReusable() {
 		ws::log(ws::LOG_LVL_SUCCESS, "[SERVER SOCKET] -", "successfully set socket on fd: " + ws::itos(_fd) + " reusable");
 		return true;
 	}
-	ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while binding fd: " + ws::itos(_fd) + "!", true);
+	ws::log(ws::LOG_LVL_ERROR, "[SERVER SOCKET] -", "error while setting socket reusable fd: " + ws::itos(_fd) + "!", true);
 	return false;
 }
 
@@ -62,6 +62,8 @@ bool ServerSocket::bindTo() {
 	_address.sin_family = _domain;
 	_address.sin_addr.s_addr = _ip.empty() ? INADDR_ANY : inet_addr(_ip.c_str());
 	_address.sin_port = htons(_port);
+
+	std::cout << _domain << "|" << _ip.empty() << ": " << _ip << "|" << _port << std::endl;
 
 	bool bound = bind(_fd, (struct sockaddr *)&_address, sizeof(_address)) == 0;
 	if (bound)

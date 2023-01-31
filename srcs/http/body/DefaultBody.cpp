@@ -24,11 +24,14 @@ int DefaultBody::parse(char *body, int &size) {
 	return ret == ws::DECODER_STOP;
 }
 
+AMessageBody *DefaultBody::clone() {
+	return new DefaultBody(*this);
+}
+
 void DefaultBody::append(std::string str, int size) {
 	for (int i = 0; i < size; i++)
 		_body.push_back(str[i]);
 }
-
 
 // ############## GETTERS / SETTERS ##############
 

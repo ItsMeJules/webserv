@@ -13,6 +13,7 @@ class DefaultBody : public AMessageBody {
 		~DefaultBody();
 
         int parse(char *body, int &size);
+		AMessageBody *clone();
 		void append(std::string str, int size);
 
 		int getBodySize();

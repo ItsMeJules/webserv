@@ -61,7 +61,7 @@ AMessageBody *RequestParser::getAccordingBodyType() {
 
 // ############## PUBLIC ##############
 
-const bool RequestParser::parseRequest(char *request, int &byteCount) {
+bool RequestParser::parseRequest(char *request, int &byteCount) {
 	if (!_headersReceived) {
 		std::string recv = _inReceive.str();
 		std::string wholeRequest = recv + std::string(request, byteCount);
@@ -114,7 +114,7 @@ HttpRequest &RequestParser::getHttpRequest() {
 	return _httpRequest;
 }
 
-const bool RequestParser::isRequestParsed() const {
+const bool &RequestParser::isRequestParsed() const {
 	return _requestParsed;
 }
 

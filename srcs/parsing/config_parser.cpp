@@ -1,12 +1,12 @@
 #include "config_parser.hpp"
 
-void ws::check_opening_bracket(config_parsing_t const &cpt, std::string const &line) {
+void ws::checkOpeningBracket(config_parsing_t const &cpt, std::string const &line) {
     if (line[0] != '{' || line.size() > 1)
         throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ": \"" + line + "\" is invalid! ("
                                     + (line.size() > 1 ? "extra chars on bracket" : "line should end with a bracket") + ").");
 }
 
-int ws::check_closing_bracket(config_parsing_t const &cpt) {
+int ws::checkClosingBracket(config_parsing_t const &cpt) {
     if (cpt.line[0] == '}') {
         if (cpt.line.size() == 1)
             return 1;
@@ -15,21 +15,21 @@ int ws::check_closing_bracket(config_parsing_t const &cpt) {
     return 0;
 }
 
-ws::ConfigLineType ws::get_block_type(config_parsing_t &cpt, std::string line) {
-	if (line.rfind("html", 0) != std::string::npos) {
+ws::ConfigLineType ws::getBlockType(config_parsing_t &cpt, std::string line) {
+	if (line.rfind("http", 0) != std::string::npos) {
 		ws::skip_chars(line.erase(0, 4), ws::WHITE_SPACES); //skips the spaces after the block declaration
-        ws::check_opening_bracket(cpt, line);
-        return HTML;
+        ws::checkOpeningBracket(cpt, line);
+        return HTTP;
 	} else if (line.rfind("server", 0) != std::string::npos) {
         ws::skip_chars(line.erase(0, 6), ws::WHITE_SPACES); //skips the spaces after the block declaration
-        ws::check_opening_bracket(cpt, line);
+        ws::checkOpeningBracket(cpt, line);
         return SERVER;
     } else if (line.rfind("location", 0) != std::string::npos) {
         ws::skip_chars(line.erase(0, 8), ws::WHITE_SPACES); //skips the spaces before the path
         if (line[0] == '/') {
             ws::skip_chars(line, ws::CONFIG_PATH_LETTERS); //skips the path
             ws::skip_chars(line, ws::WHITE_SPACES); //skips the spaces after the path
-            ws::check_opening_bracket(cpt, line);
+            ws::checkOpeningBracket(cpt, line);
             return LOCATION;
         } else
             throw std::invalid_argument("Location path must be absolute! String: \"" + cpt.line + "\" is invalid!");
@@ -50,28 +50,16 @@ int ws::checkFileExtension(std::string file) {
 		std::cerr << "Problem Configuration Files - Error: Can't open the file" << std::endl;
 		return (1); }
 	path.close();
-	if (file.rfind(".conf") == -1 || !(file.size() > 5)) {
+	if (file.rfind(".conf") == static_cast<unsigned long>(-1) || !(file.size() > 5)) {
 		std::cerr << "Problem Configuration Files - The File extension is not .conf" << std::endl;
 		return (1);
 	}
 	return (0);
 }
 
-int ws::checkPort(int port, ServerSocket &socketInfo) {
-	if (port > 0 && port < 65535) {
-		socketInfo.setPort(port);
-		return (0);
-	}
-	else {
-		std::cerr << "Problem Configuration Files - LISTEN" << std::endl;
-		return (1);
-	}
-}
-
 int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	int len = size.size();
 	int i = 0;
-	int mult = 0;
 	int sizeBody = atoi(size.c_str());
 
 	for (; i < len; i++)
@@ -81,13 +69,13 @@ int ws::checkClientMaxBodySize(std::string size, ServerInfo &serverInfo) {
 	if (i != len)
 	{
 		if (size[i] == 'G' && i == len - 1)
-			sizeBody *= 1000000000;
+			sizeBody *= GIGA;
 		else if (size[i] == 'M' && i == len - 1)
-			sizeBody *= 1000000;
+			sizeBody *= MEGA;
 		else if (size[i] == 'K' && i == len - 1)
-			sizeBody *= 1000;
+			sizeBody *= KILO;
 		else {
-			std::cerr << "Problem Configuration Files - CLIENTMAXBODYSIZE" << std::endl;
+			throw std::invalid_argument(size + " must finish with a 'G', 'M' or a 'K' !");
 			return (1);
 		}
 	}
@@ -105,30 +93,53 @@ int ws::checkAutoIndex(std::string index, ServerInfo &serverInfo) {
 		return (0);
 	}
 	else {
-		std::cerr << "Problem Configuration Files - AUTOINDEX" << std::endl;
+		throw std::invalid_argument(index + "need to be params by 'on' or 'off' !");
 		return (1);
 	}
 }
 
-int ws::checkMethod(std::string method, ServerInfo &serverInfo) {
-	if ((method.compare("GET") == 0) || (method.compare("POST") == 0) || (method.compare("DELETE") == 0)) {
-		serverInfo.addtoMethod(method);
+int ws::checkLocationAutoIndex(std::string index, Location &locationInfo) {
+	if (index.compare("on") == 0) {
+		locationInfo.setAutoIndex(true);
+		return (0);
+	}
+	else if (index.compare("off") == 0) {
+		locationInfo.setAutoIndex(false);
 		return (0);
 	}
 	else {
-		std::cerr << "Problem Configuration Files - METHOD" << std::endl;
+		throw std::invalid_argument(index + "need to ne params by 'on' or 'off' !");
 		return (1);
 	}
 }
 
-int ws::check_error_page_key(std::string key) {
-	int	check;
-	int key_err = 0;
-	const char* tmp_c = key.data();
-	if (isdigit(tmp_c[0]))
-		return (1);
-	else
-		return 0;
+int ws::checkIpKey(std::string key) {
+	const char *tmp_c = key.data();
+	int i = 0;
+	while (tmp_c[i]) {
+		if ((tmp_c[i] >= '0' && tmp_c[i] <= '9' ) || tmp_c[i] == '.')
+			i++;
+		else
+			throw std::invalid_argument("Error, Invalid Listen : Can have only an IP & Port.");
+	}
+	return 0;
+}
+
+int ws::checkPortKey(std::string key) {
+	const char *tmp = key.c_str();
+	int p_tmp = atoi(tmp);
+	int i = 0;
+
+	while (tmp[i])
+	{
+		if (tmp[i] >= '0' && tmp[i] <= '9')
+			i++;
+		else
+			throw std::invalid_argument("Error, Invalid Listen : Port can only contain number.");
+	}
+	if (p_tmp < 0 || p_tmp > 65535)
+		throw std::invalid_argument("Error, Invalid Listen : Port can only be between 0 and 65535.");
+	return 0;
 }
 
 void ws::parserInit(std::map<std::string, confValues> &matchValues) {
@@ -145,283 +156,237 @@ void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 	matchValues["rewrite"] = REWRITE;
 }
 
-int ws::parse_server_line(config_parsing_t &cpt, Server &server) {
-    std::cout << "\tserver line: " << cpt.line << std::endl;
-    char *cstr = new char [cpt.line.length()+1];
-    strcpy (cstr, cpt.line.c_str());
-    char *p = ::strtok (cstr, " ");
-	std::string str = std::string(p);
+void ws::checkPath(std::string const &path) {
+	const char *dir = path.c_str();
+	struct stat sb;
 
-	std::map<std::string, confValues> matchValues;
-	parserInit(matchValues);
+	if (stat(dir, &sb) != 0)
+		throw std::invalid_argument("The path " + path + " doesn't exists.");
+}
 
-	int val;
-	std::string key = "NULL";
-	std::string path = "NULL";
+void ws::checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument) {
+	size_t	sizeArgument = argument.size() - 1;
+	std::string expect = to_string(argtExpect);
+	
+	if (nbArguments != argtExpect)
+		throw std::invalid_argument(to_string(argtExpect) + " Arguments expected.");
+
+	if (argument[sizeArgument] != ';')
+		throw std::invalid_argument(argument + " is not a valid name for a server. Missing ';' at the end of the line!");
+}
+
+int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
+	std::vector<std::string> lineArguments = splitStr(cpt.line, ws::WHITE_SPACES);
+	std::vector<std::string> values;
+	std::map<std::string, std::string> cgi;
+	std::vector<std::string> method;
+	std::map<int, std::string> errorPage;
+	int	tmp = 0;
+
 	ServerInfo &serverInfo = server.getServerInfo();
-	ServerSocket &socketInfo = server.getServerSocket();
-	switch (matchValues[str])
-	{
+	size_t sizeArgumentOne = lineArguments[1].size() - 1;
+
+	for (std::vector<std::string>::iterator it = lineArguments.begin(); it != lineArguments.end(); it++) {
+		std::cout << "Argument: " << *it << std::endl;
+	}
+	if (cpt.configKeys.count(lineArguments[0]) == 0)
+		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
+	
+	switch (cpt.configKeys[lineArguments[0]]) {
 		case NAME:
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				serverInfo.setServerName(p);
-				p = strtok(NULL," ,|;");
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			if (ws::string_in_range(lineArguments[1], ws::AL_NUM, sizeArgumentOne))
+				throw std::invalid_argument(lineArguments[1] + " is not a valid name for a server. Only alnum chars are accepted!");
+
+			serverInfo.setServerName(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in ServerName: " << serverInfo.getServerName() << std::endl;
+			break;
+
+		case LISTEN:
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			if (lineArguments[1].find(":") != std::string::npos) {
+				values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), ":"); 
+				if (checkIpKey(values[0]) == 0)
+					serverInfo.setIp(values[0]);
+				if (checkPortKey(values[1]) == 0)
+					serverInfo.setPort(ws::stoi(values[1]));
+				std::cout << "\tSet in ServerIp: " << serverInfo.getIp() << std::endl;
+				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
+			} else {
+				if (checkPortKey(lineArguments[1].substr(0, sizeArgumentOne)) == 0)
+					serverInfo.setPort(ws::stoi(lineArguments[1].substr(0, sizeArgumentOne)));
+				std::cout << "\tSet in ServerPort: " << serverInfo.getPort() << std::endl;
 			}
 			break;
 
-		case LISTEN: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				int p_tmp = atoi(p);
-				if (checkPort(p_tmp, socketInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
+		case CLIENT_MAX_BODY:
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			if (checkClientMaxBodySize(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
+				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "must finish with a 'G', 'M' or a 'K' !");
+
+			std::cout << "\tSet in ServerClientBodySizeMax: " << serverInfo.getMaxBodySize() << std::endl;
+			break;
+
+		case AUTOINDEX:
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			if (checkAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
+				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
+
+			std::cout << "\tSet in ServerAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
+			break;
+
+		case INDEX:
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			serverInfo.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in ServerAutoIndex: " << serverInfo.getIndexPath() << std::endl;
+			break;
+
+		case UPLOAD:
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			serverInfo.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in ServerUploadPath: " << serverInfo.getUploadPath() << std::endl;
+			break;
+
+		case ROOT:
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			serverInfo.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in ServerRootPath: " << serverInfo.getRootPath() << std::endl;
+			break;
+
+		case CGI:
+			checkerArguments(lineArguments.size(), 3, lineArguments[2]);		
+			checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
+
+			serverInfo.addToCGIS(lineArguments[1], lineArguments[2].substr(0, lineArguments[2].size() - 1));
+			cgi = serverInfo.getCgis();
+			for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it)
+			{
+				std::cout << "\tSet in ServerCGI : First: " << it->first << " Second: " << it->second << "\n";
 			}
 			break;
 		
-		case CLIENT_MAX_BODY: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string size = std::string(p);
-				if (checkClientMaxBodySize(size, serverInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-
-		case AUTOINDEX: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string index = std::string(p);
-				if (checkAutoIndex(index, serverInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-
-		case METHOD: // Checker --> OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string method = std::string(p);
-				if (checkMethod(method, serverInfo))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-		
-		case CGI: // OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				if (p[0] == '.')
-					key = std::string(p);
+		case METHOD:
+			method = serverInfo.getMethod();
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), "|");
+			for(std::vector<std::string>::const_iterator it = values.begin(); it != values.end(); ++it)
+			{
+				if (HttpRequest::methods.count(*it) == 0)
+					throw std::invalid_argument(*it + " need to be params by 'GET', 'POST' or 'DELETE' !");
+				if (std::find(method.begin(), method.end(), *it) != method.end())
+					continue;
 				else
-					path = std::string(p);
-				if (key != "NULL" && path != "NULL")
-					serverInfo.addToCGIS(key, path);
-				p = strtok(NULL," ,|;");
+					serverInfo.addtoMethod(*it);
+			}
+			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
+			{
+				std::cout << "\tSet in ServerMethod: " << *it << "\n";
 			}
 			break;
 
-		case INDEX: // OK
-			p = strtok(NULL, " ,|;");
-			while (p!=0) {
-				serverInfo.setIndexPath(p);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-		
-		case ERROR_PAGE: // OK
-			p = strtok(NULL, " ,|;");
-			while (p!=0) {
-				std::string value = std::string(p);
-				int size = value.size();
-				if ((size == 3) && (check_error_page_key(value) == 1))
-					val = atoi(p);
-				if (val <= 600 && val >= 100)
-					path = std::string(p);
-				if (path != "NULL" && val != 0)
-					serverInfo.addErrorPage(val, path);
-				else {
-					std::cerr << "Problem Configuration Files - ERROR_PAGE" << std::endl;
-					return 1;
-				}
-				p = strtok(NULL, " ,|;");
-			}
-			break;
+		case ERROR_PAGE:
+			checkerArguments(lineArguments.size(), 3, lineArguments[2]);
+			tmp = ws::stoi(lineArguments[1]);
+			if (HttpResponse::codes.count(tmp) == 0)
+				throw std::invalid_argument("Error, Page_Error : The Error Key doen't exist.");
+			
+			checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
 
-		case UPLOAD: // OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				serverInfo.setUploadPath(p);
-				p = strtok(NULL," ,|;");
-			}
-			break;
-
-		case ROOT: // OK
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				serverInfo.setRootPath(p);
-				p = strtok(NULL," ,|;");
+			serverInfo.addErrorPage(tmp, lineArguments[2].substr(0, lineArguments[2].size() - 1));
+			errorPage = serverInfo.getError();
+			for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it)
+			{
+				std::cout << "\tSet in ServerErrorPage : First: " << it->first << " Second: " << it->second << "\n";
 			}
 			break;
 
 		default:
-			std::cerr << "Problem Configuration Files - DEFAULT_ERROR" << std::endl;
+			throw std::invalid_argument("Default Error, the word " + lineArguments[0] + " doesn't exist.");
 			break;
 	}
-	
-	// std::cout << "\t\tName: " << serverInfo.getServerName() << std::endl;
-	// std::cout << "\t\tListen: " << socketInfo.getPort() << std::endl;
-	// std::cout << "\t\tClient_Size_Body_: " << serverInfo.getMaxBodySize() << std::endl;
-	// std::cout << "\t\tAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
-	// std::vector<std::string> test1 = serverInfo.getMethod();
-	// std::cout << "\t\tMethod: " << " \t";
-	// for (std::vector<std::string>::const_iterator i = test1.begin(); i != test1.end(); ++i)
-    // 	std::cout << *i << ' ';
-	// std::cout << std::endl;
-	// std::map<std::string, std::string> test2 = serverInfo.getCgis();
-	// std::cout << "\t\tCGIS: " << " \t";
-    // for (std::map<std::string, std::string>::const_iterator it = test2.begin(); it != test2.end(); ++it) {
-    //     std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
-    // }
-	// std::cout << std::endl;
-	// std::map<int, std::string> test3 = serverInfo.getError();
-	// std::cout << "\t\tIndex: " << serverInfo.getIndexPath() << std::endl;
-	// 	std::cout << "\t\tError_Page: " << " \t";
-    // for (std::map<int, std::string>::const_iterator it = test3.begin(); it != test3.end(); ++it) {
-    //     std::cout << "{" << (*it).first << ": " << (*it).second << "} ";
-    // }
-	// std::cout << std::endl;
-	// std::cout << "\t\tUpload: " << serverInfo.getUploadPath() << std::endl;
-	// std::cout << "\t\tRoot: " << serverInfo.getRootPath() << std::endl;
-	delete[] cstr;
 	return 0;
 }
 
-int ws::checkAutoIndex(std::string index, Location &locationInfo) {
-	if (index.compare("on") == 0) {
-		locationInfo.setAutoIndex(true);
-		return (0);
-	}
-	else if (index.compare("off") == 0) {
-		locationInfo.setAutoIndex(false);
-		return (0);
-	}
-	else {
-		std::cerr << "Problem Configuration Files - AUTOINDEX" << std::endl;
-		return (1);
-	}
-}
+int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
+	std::vector<std::string> lineArguments = splitStr(cpt.line, ws::WHITE_SPACES);
+	std::vector<std::string> values;
+	std::vector<std::string> method;
 
-int ws::checkMethod(std::string method, Location &locationInfo) {
-	if ((method.compare("GET") == 0) || (method.compare("POST") == 0) || (method.compare("DELETE") == 0)) {
-		locationInfo.addtoMethod(method);
-		return (0);
+	size_t sizeArgumentOne = lineArguments[1].size() - 1;
+
+	for (std::vector<std::string>::iterator it = lineArguments.begin(); it != lineArguments.end(); it++) {
+		std::cout << "Argument: " << *it << std::endl;
 	}
-	else {
-		std::cerr << "Problem Configuration Files - METHOD" << std::endl;
-		return (1);
-	}
-}
 
-int ws::parse_location_line(config_parsing_t &cpt, Location &location) {
-    std::cout << "\t\t\tlocation line: " << cpt.line << std::endl;
-    char *cstr = new char [cpt.line.length()+1];
-    strcpy (cstr, cpt.line.c_str());
-    char *p = ::strtok (cstr, " ");
-	std::string str = std::string(p);
-
-	std::map<std::string, confValues> matchValues;
-	parserInit(matchValues);
-
-	Location loc = location;
-	switch (matchValues[str])
-	{
+	if (cpt.configKeys.count(lineArguments[0]) == 0)
+		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
+	
+	switch(cpt.configKeys[lineArguments[0]]) {
 		case INDEX:
-			p = strtok(NULL, " ,|;");
-			while (p!=0)
-			{
-				location.setIndexPath(p);
-				p = strtok(NULL," ,|;");
-			}
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationIndex: " << location.getIndexPath() << std::endl;
 			break;
-
+		
 		case AUTOINDEX:
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string index = std::string(p);
-				if (checkAutoIndex(index, location))
-					return (1);
-				p = strtok(NULL," ,|;");
-			}
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			if (checkLocationAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), location) != 0)
+				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
+			std::cout << "\tSet in LocationAutoIndex: " << location.hasAutoindex() << std::endl;
 			break;
 
 		case METHOD:
-			p = strtok(NULL," ,|;");
-			while (p!=0) {
-				std::string method = std::string(p);
-				if (checkMethod(method, location))
-					return (1);
-				p = strtok(NULL," ,|;");
+			method = location.getMethod();
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), "|");
+			for(std::vector<std::string>::const_iterator it = values.begin(); it != values.end(); ++it)
+			{
+				if (HttpRequest::methods.count(*it) == 0)
+					throw std::invalid_argument(*it + " need to be params by 'GET', 'POST' or 'DELETE' !");
+				if (std::find(method.begin(), method.end(), *it) != method.end())
+					continue;
+				else
+					location.addtoMethod(*it);
+			}
+			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
+			{
+				std::cout << "\tSet in LocationMethod: " << *it << "\n";
 			}
 			break;
 
 		case UPLOAD:
-			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
-				location.setUploadPath(p);
-				p = strtok(NULL," ,|;");
-			}
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationUpload: " << location.getUploadPath() << std::endl;
 			break;
 
 		case REWRITE:
-			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
-				location.setRewritePath(p);
-				p = strtok(NULL," ,|;");
-			}
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setRewritePath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationRewrite: " << location.getRewritePath() << std::endl;
 			break;
 
 		case ROOT:
-			p = strtok(NULL," ,|;");
-			while (p!=0)
-			{
-				location.setRootPath(p);
-				p = strtok(NULL," ,|;");
-			}
+			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
+			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			location.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
+			std::cout << "\tSet in LocationRoot: " << location.getRootPath() << std::endl;
 			break;
-
+		
 		default:
-			std::cout << "0 - Error Value" << std::endl;
-			return (1);
+			throw std::invalid_argument("Default Error, the word " + lineArguments[0] + " doesn't exist.");
 			break;
 	}
-	// std::cout << "\tIndex: " << location.getIndexPath() << std::endl;
-	// std::cout << "\tAutoIndex: " << location.hasAutoindex() << std::endl;
-	// std::cout << "\tRewrite: " << location.getRewritePath() << std::endl;
-	// std::cout << "\tRoot: " << location.getRootPath() << std::endl;
-	// std::cout << "\tUpload: " << location.getUploadPath() << std::endl;
-	// std::vector<std::string> test = location.getMethod();
-	// std::cout << "\tMethod: " << " \t";
-	// for (std::vector<std::string>::const_iterator i = test.begin(); i != test.end(); ++i)
-    // 	std::cout << *i << ' ';
-	// std::cout << std::endl;
-	delete[] cstr;
 	return 0;
 }
 
-void ws::check_location_path(std::string const &path) {
-	// std::cout << "\t\tpath: " << path << std::endl;
-	// std::ifstream test(path);
-	// if (!test)
-    // 	std::cout << "The file doesn't exist" << std::endl;
-	// Simple Check à implémenter plus tard
-}
-
-int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
+int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
     config_parsing_t cpt;
     Server *server = NULL;
     Location *location = NULL;
@@ -429,6 +394,8 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
 
 	if (ws::checkFileExtension(name))
 		return 1;
+
+	parserInit(cpt.configKeys);
 	cpt.file.open(name.c_str());
     cpt.lineNumber = 0;
     cpt.blockLevel = 0;
@@ -438,7 +405,7 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
         ws::skip_chars(cpt.line, ws::WHITE_SPACES); // deletes first whitespaces of the line.
         if (cpt.line.empty())
             continue ;
-        if (ws::check_closing_bracket(cpt)) {
+        if (ws::checkClosingBracket(cpt)) {
             if (cpt.blockLevel == 2)
                 server = NULL;
             else if (cpt.blockLevel == 3)
@@ -449,12 +416,12 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
             continue ;
         }
 
-        lineType = get_block_type(cpt, cpt.line);
+        lineType = getBlockType(cpt, cpt.line);
         switch (cpt.blockLevel) {
-			case 0: // check if we are inside the HTML, else it's dead
-				if (lineType != HTML)
-                    throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only html blocks can be found at this level.");
-				std::cout << "html line: " << cpt.line <<std::endl;
+			case 0: // check if we are inside the http, else it's dead
+				if (lineType != HTTP)
+                    throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only http blocks can be found at this level.");
+				std::cout << "http line: " << cpt.line <<std::endl;
 				cpt.blockLevel++;
 				break;
 
@@ -470,10 +437,10 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
             case 2: //we are inside server block
                 if (lineType == LOCATION && location == NULL) {
                     std::cout << "\t\tnew location line: " << cpt.line << std::endl;
-
                     ws::skip_chars(cpt.line.erase(0, 8), ws::WHITE_SPACES); //we erase "location", then we skip the spaces after location
                     cpt.line.erase(cpt.line.find_first_of(ws::WHITE_SPACES)); //we erase any trailing characters after the path
-                    ws::check_location_path(cpt.line);
+					std::cout << cpt.line << std::endl;
+                    ws::checkPath(cpt.line);
 
                     if (server->getServerInfo().getLocations().count(cpt.line) != 0)
                         throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", location block \"" + cpt.line + "\" already declared.");
@@ -482,17 +449,18 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
                     server->getServerInfo().addLocation(cpt.line, location);
                     cpt.blockLevel++;
                 } else if (lineType == INFO) {
-					if (parse_server_line(cpt, *server) == 1)
+					if (parseServerLine(cpt, *server) == 1)
 						return 1;
 				}     
                 break ;
 
             case 3: //we are inside location block
-                if (lineType != INFO)
+                if (lineType != INFO) {
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ": \"" + cpt.line +
                                                 "\" is invalid. There can't be a location block inside another location block.");
-                    if(parse_location_line(cpt, *location) == 1)
-						return 1;
+				}
+                if (parseLocationLine(cpt, *location) == 1)
+					return 1;
                 break ;
 
             default:
@@ -505,4 +473,61 @@ int ws::parse_config(std::string const &name, std::vector<Server*> &servers) {
         throw std::invalid_argument("Missing closing bracket!");
     std::cout << "whole file is parsed" << std::endl;
    return 0;
+}
+
+void ws::checkConfiguration(Server *servers) {
+		ServerInfo &serverInfo = servers->getServerInfo();
+		std::map<std::string, std::string> cgi;
+		std::vector<std::string> method;
+		std::map<int, std::string> errorPage;
+		std::map<std::string, Location*> location;
+
+		method = serverInfo.getMethod();
+		errorPage = serverInfo.getError();
+		cgi = serverInfo.getCgis();
+		location = serverInfo.getLocations();
+
+		std::cout << "\n----------------------------------SETUP SERVER----------------------------------" << std::endl;
+		std::cout << "IP: \t\t\t" << serverInfo.getIp() << std::endl;
+		std::cout << "PORT: \t\t\t" << serverInfo.getPort() << std::endl;
+		std::cout << "NAME: \t\t\t" << serverInfo.getServerName() << std::endl;
+		std::cout << "ROOT: \t\t\t" << serverInfo.getRootPath() << std::endl;
+		std::cout << "CLIENT_MAX_SIZE_BODY:\t" << serverInfo.getMaxBodySize() << std::endl;
+		std::cout << "INDEX: \t\t\t" << serverInfo.getIndexPath() << std::endl;
+		if (serverInfo.getUploadPath().empty())
+			std::cout << "\t[Upload is Empty]" << std::endl;
+		std::cout << "UPLOAD: \t\t" << serverInfo.getUploadPath() << std::endl;
+		std::cout << "AUTOINDEX: \t\t" << serverInfo.hasAutoindex() << std::endl;
+		std::cout << "METHOD: \t\t" << std::endl;
+		for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
+			std::cout << "\t\t\t- " << *it << "\n";
+		}
+		std::cout << "CGIS: " << std::endl;
+		for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it) {
+			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
+		}
+		std::cout << "ERROR_PAGES: " << std::endl;
+		for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
+			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
+		}
+		std::cout << "LOCATION: " << std::endl;
+		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
+			Location loc = *it->second;
+			std::cout << "\n\t" << it->first << std::endl;
+			if (loc.getIndexPath().empty())
+				std::cout << "\t\tINDEX: \t\t" << serverInfo.getIndexPath() << std::endl;
+			if (!loc.getIndexPath().empty())
+				std::cout << "\t\tINDEX: \t\t" << loc.getIndexPath() << std::endl;
+			std::cout << "\t\tAUTOINDEX: \t" << serverInfo.hasAutoindex() << std::endl;
+			std::cout << "\t\tMETHOD: " << std::endl;
+			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
+				std::cout << "\t\t\t\t- " << *it << "\n"; }
+			std::cout << "\t\tUPLOAD: \t" << serverInfo.getUploadPath() << std::endl;
+			std::cout << "\t\tREWRITE: \t" << loc.getRewritePath() << std::endl;
+			if (loc.getRootPath().empty())
+				std::cout << "\t\tROOT: \t\t" <<  serverInfo.getRootPath() << std::endl;
+			if (!loc.getRootPath().empty())
+				std::cout << "\t\tROOT: \t\t" <<  loc.getRootPath() << "\n" << std::endl;
+		}
+		std::cout << "----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }

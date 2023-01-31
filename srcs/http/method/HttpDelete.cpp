@@ -11,6 +11,8 @@ HttpDelete::~HttpDelete() {}
 // ############## PUBLIC ##############
 
 HttpResponse HttpDelete::execute(ServerInfo const &info, HttpRequest &request) {
+	(void)info;
+	(void)request;
 	return HttpResponse();
 }
 

@@ -13,14 +13,14 @@ class IPoll {
 	public:
 		virtual ~IPoll() {};
 		
-		virtual const bool init() = 0;
-		virtual const bool pollFd(int fd, int event) = 0;
-		virtual const bool deleteFd(int fd) = 0;
-        virtual const bool modFd(int fd, int event) = 0;
-		virtual const int polling(Server &server) = 0;
+		virtual bool init() = 0;
+		virtual bool pollFd(int fd, int event) = 0;
+		virtual bool deleteFd(int fd) = 0;
+        virtual bool modFd(int fd, int event) = 0;
+		virtual int polling(Server &server) = 0;
 
-        virtual const int pollOutEvent() const = 0;
-        virtual const int pollInEvent() const = 0;
+        virtual int pollOutEvent() const = 0;
+        virtual int pollInEvent() const = 0;
 };
 
 #endif

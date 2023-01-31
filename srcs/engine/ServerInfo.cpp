@@ -4,9 +4,13 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 ServerInfo::ServerInfo() {
-	_autoindex = false;
 	_maxBodySize = 1000000;
-	_serverName = "localhost";
+	_autoindex = false;
+	_serverName = "";
+	_rootPath = "html";
+	_indexPath = "index.html";
+	_ip = "0.0.0.0";
+	_port = 8000;
 }
 ServerInfo::ServerInfo(ServerInfo const &serverInfo) {
 	*this = serverInfo;
@@ -52,6 +56,14 @@ const std::string &ServerInfo::getUploadPath() const {
 	return _uploadPath;
 }
 
+const std::string &ServerInfo::getIp() const {
+	return _ip;
+}
+
+const int &ServerInfo::getPort() const {
+	return _port;
+}
+
 const std::vector<std::string> &ServerInfo::getMethod() const {
 	return _method;
 }
@@ -70,6 +82,14 @@ const std::map<int, std::string> &ServerInfo::getError() const {
 
 void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
 	this->_maxBodySize = MaxBodySize;
+}
+
+void  ServerInfo::setIp(std::string ip) {
+	this->_ip = ip;
+}
+
+void  ServerInfo::setPort(int port) {
+	this->_port = port;
 }
 
 void  ServerInfo::setAutoIndex(bool AutoIndex) {
@@ -116,12 +136,10 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_uploadPath = rhs._uploadPath;
 		_method = rhs._method;
 		_cgis = rhs._cgis;
-		_locations = rhs._locations;
 		_errorPage = rhs._errorPage;
 
-		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++) {
-			
-		}
+		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++)
+			_locations.insert(std::make_pair(it->first, new Location(*it->second)));
 		
 	}
 

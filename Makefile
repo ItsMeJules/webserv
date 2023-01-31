@@ -2,8 +2,8 @@
 NAME		=	webserv
 
 #	Compilation
-CC			=	c++
-CFLAGS		=	-fsanitize=address -g -std=c++98
+CXX			=	c++
+CXXFLAG		=	-std=c++98 -Wall -Werror -Wextra -fsanitize=address -g
 RM			=	rm -rf
 SRC_DIR 	= 	srcs/
 
@@ -39,11 +39,11 @@ init			:
 #		Compile:
 $(NAME)			:	$(OBJ) $(INC)
 					@ echo "$(_INFO) Initialize $(NAME)"
-				 	@ $(CC) $(CFLAGS) $(IFLAGS) -o $(NAME) $(OBJ)
+				 	@ $(CXX) $(CXXFLAG) $(IFLAGS) -o $(NAME) $(OBJ)
 
 $(OBJ_DIR)/%.o	:	%.cpp
 					@ echo "\t$(_YELLOW)Compiling$(_RESET) $*.cpp"
-					@ $(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
+					@ $(CXX) $(CXXFLAG) $(IFLAGS) -c $< -o $@
 					@ echo "$(_CLEAR)"
 
 #		Clean:

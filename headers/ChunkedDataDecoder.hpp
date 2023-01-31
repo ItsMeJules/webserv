@@ -12,11 +12,11 @@ class ChunkedDataDecoder : public ADataDecoder {
 
 		t_chunk _previousChunk;
 		t_chunk _actualChunk;
-		int _sizeRead;
+		size_t _sizeRead;
 
 		void clearActualChunk();
 		int readChunkSize(size_t const &endChunkPos);
-		bool checkChunkSize(const char *buffer, int const &bufSize, int const &read);
+		bool checkChunkSize(int const &bufSize, int const &read);
 	public:
 		ChunkedDataDecoder();
 		ChunkedDataDecoder(ChunkedDataDecoder const &chunkedDataDecoder);
