@@ -12,12 +12,14 @@ HttpMethod::~HttpMethod() {}
 
 ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request, std::string const &requestType) {
 	ws::request_data_t data;
+	std::string root = serverInfo.getRootPath();
 	size_t queryStartPos = request.getPath().find('?');
 
 	if (queryStartPos != std::string::npos) {
 		data.query.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
 		data.requestedPath = request.getPath().substr(0, queryStartPos);
-	}
+	} else
+		data.requestedPath = request.getPath();
 
 	data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/"), queryStartPos);
 	data.fileExtension = data.fileName.substr(data.fileName.rfind("."), queryStartPos);
@@ -25,11 +27,12 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
 		if (request.getPath() != it->first)
 			continue ;
-		data.requestedPath = it->second->getRootPath();
-		return data;
+
+		root = it->second->getRootPath();
+		data.requestedPath.erase(0, it->first.size());
 	}
-	
-	data.requestedPath = serverInfo.getRootPath() + data.requestedPath;
+
+	data.requestedPath = root + data.requestedPath;
 	return data;
 }
 
