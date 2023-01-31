@@ -12,26 +12,24 @@ HttpMethod::~HttpMethod() {}
 
 ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request, std::string const &requestType) {
 	ws::request_data_t data;
+	size_t queryStartPos = request.getPath().find('?');
 
-	if (request.getPath() != serverInfo.getRootPath()) {
-		data.requestedPath = serverInfo.getRootPath();
-
-		if (requestType == "GET") {
-			size_t queryStartPos = request.getPath().find('?');
-
-			if (queryStartPos != std::string::npos) {
-				data.query.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
-				data.requestedPath += request.getPath().substr(0, queryStartPos);
-			} else
-				data.requestedPath += request.getPath();
-
-			if (data.requestedPath == serverInfo.getRootPath() + "/") // si request == root_path ; req -> index_path
-				data.requestedPath += serverInfo.getIndexPath();
-
-			data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/"), queryStartPos);
-			data.fileExtension = data.fileName.substr(data.fileName.rfind("."), queryStartPos);
-		}
+	if (queryStartPos != std::string::npos) {
+		data.query.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
+		data.requestedPath = request.getPath().substr(0, queryStartPos);
 	}
+
+	data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/"), queryStartPos);
+	data.fileExtension = data.fileName.substr(data.fileName.rfind("."), queryStartPos);
+
+	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
+		if (request.getPath() != it->first)
+			continue ;
+		data.requestedPath = it->second->getRootPath();
+		return data;
+	}
+	
+	data.requestedPath = serverInfo.getRootPath() + data.requestedPath;
 	return data;
 }
 
