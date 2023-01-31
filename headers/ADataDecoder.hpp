@@ -13,14 +13,16 @@ class ADataDecoder {
 	protected:
 		std::vector<char> _tmp;
 
-		void fillTmp(char *buffer, size_t const &size);
-		std::string bufferWithTmp(char *buffer, size_t const &size);
+		std::string stringFromTmp(size_t const &size);
 	public:
 		ADataDecoder();
 		ADataDecoder(ADataDecoder const &aDataDecoder);
 		virtual ~ADataDecoder();
 
-		virtual int decodeInto(char *buffer, int size, std::vector<char> &vec) = 0;
+		virtual int decodeInto(std::vector<char> &vec) = 0;
+		void addBuffer(const char *buffer, size_t const &size);
+
+		bool hasData();
 
 		ADataDecoder &operator=(ADataDecoder const &rhs);
 };

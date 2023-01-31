@@ -6,7 +6,7 @@ from requests_toolbelt import MultipartEncoder
 
 # ip = input("Entrez une adresse: ").split(':')
 host = "127.0.0.1"
-port = 9999
+port = 8080
 url = "http://" + host + ":" + str(port)
 
 def gen():
@@ -26,12 +26,13 @@ headers = {'Accept': '*/*',
 r = ""
 
 files = {'upload_file': open('srcs/main.cpp','rb')}
-#filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
+filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
   fields = {
     "main.cpp": ("mainlcpp", open("srcs/main.cpp", "rb")),
+    'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'
   }
 )
 

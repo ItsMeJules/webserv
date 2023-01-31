@@ -15,7 +15,7 @@ class DefaultBody : public AMessageBody {
         int parse(char *body, int &size);
 		void append(std::string str, int size);
 
-		std::vector<char> &getBody();
+		int getBodySize();
 		std::string getBodyStr();
 
 		DefaultBody &operator=(DefaultBody const &rhs);

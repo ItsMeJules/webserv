@@ -14,7 +14,14 @@ DefaultBody::~DefaultBody() {}
 // ############## PUBLIC ##############
 
 int DefaultBody::parse(char *body, int &size) {
-	return _decoder->decodeInto(body, size, _body);
+	int ret = 0;
+
+	_decoder->addBuffer(body, size);
+	do {
+		ret = _decoder->decodeInto(_body);
+	} while (ret == ws::DECODER_CALL_AGAIN || ret == ws::DECODER_PARSE_READY);
+	
+	return ret == ws::DECODER_STOP;
 }
 
 void DefaultBody::append(std::string str, int size) {
@@ -25,8 +32,8 @@ void DefaultBody::append(std::string str, int size) {
 
 // ############## GETTERS / SETTERS ##############
 
-std::vector<char> &DefaultBody::getBody() {
-	return _body;
+int DefaultBody::getBodySize() {
+	return _body.size() - 1;
 }
 
 std::string DefaultBody::getBodyStr() {

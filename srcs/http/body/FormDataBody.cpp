@@ -30,78 +30,96 @@ int FormDataBody::nextCRLFpos(int pos, int nCRLF) const {
 	return pos - 1;
 }
 
+void FormDataBody::removeLastBoundary() {
+	FormDataPart *part = *(_parts.end() - 1);
+	std::vector<char> &vec = part->_directives[part->_fileKey];
+	vec.erase(vec.end() - (_boundary.size() + 8), vec.end());
+}
+
+FormDataBody::FormDataPart &FormDataBody::getNextNeedParsing() {
+	FormDataPart *part;
+
+	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++) {
+		if ((*it)->_headersParsed && !(*it)->_bodyParsed) {
+ 			part = (*it);
+			ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "form data " + (*it)->_directiveName + " is about to parse some body part.");
+			return *part;
+		} else if (!(*it)->_headersParsed)
+			return **it;
+	}
+	ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new form data was created.");
+	part = new FormDataPart();
+	return *part;
+}
+
 // 		############## NESTED CLASS FormDataPart ##############
 
 //		############## PRIVATE FormDataPart ##############
 
-int FormDataBody::FormDataPart::strPos(std::string str) const {
-	int i;
-	int j;
-
-	for (i = 0; i < _contents.size(); i++) {
-		j = 0;
-		if (_contents[i] == str[j]) {
-			while (j < str.size() && i + j < _contents.size() && _contents[i + j] == str[j])
-				j++;
-			if (j == str.size())
-				return i;
-		}
-	}
-	return -1;
-}
-
 //		############## PUBLIC FormDataPart ##############
 
-FormDataBody::FormDataPart::FormDataPart() : _parsed(false) {}
+FormDataBody::FormDataPart::FormDataPart() : _headersParsed(false), _bodyParsed(false) {}
 FormDataBody::FormDataPart::FormDataPart(FormDataPart const &formDataPart) { *this = formDataPart; }
 
 FormDataBody::FormDataPart::~FormDataPart() {}
 
-bool FormDataBody::FormDataPart::parse(FormDataBody const &parent, size_t const &partEndPos) {
-	std::string headerKey = std::string(_contents.data(), strPos(":"));
-	
-	size_t headerEndPos = strPos("\r\n");
+bool FormDataBody::FormDataPart::parseHeaders(size_t const &headerEndPos) {
+	ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a form data is about to parse it's headers.");
+	std::string headerKey = std::string(_contents.data(), ws::pos_in_vec(":", _contents));
 	std::string headerValue = std::string(_contents.data() + headerKey.size() + 2, headerEndPos - headerKey.size() - 2);
 
 	if (headerKey == "Content-Disposition") {
 		size_t namePos = headerValue.find("name=") + 6; // skips name="
-		std::string nameValue = headerValue.substr(namePos,  headerValue.find("\"", namePos) - namePos);
 		size_t fileNamePos = headerValue.find("filename=");
-		std::vector<char> &directiveContent = _directives[nameValue];
-
-		headerEndPos += 4;
+		_directiveName = headerValue.substr(namePos,  headerValue.find("\"", namePos) - namePos);
+		
 		if (fileNamePos != std::string::npos) {
 			fileNamePos += 10; // skips filename="
-			_fileKey = nameValue.substr(0, nameValue.find("\""));
+			_fileKey = _directiveName;
 			_fileName = headerValue.substr(fileNamePos, headerValue.size() - (fileNamePos + 1));
-
-			for (int i = headerEndPos; i < partEndPos; i++)
-				directiveContent.push_back(_contents[i]);
-			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "file " + _fileName + " with directive " + _fileKey + " was parsed with value:\n" + std::string(directiveContent.data(), directiveContent.size()));
-			_parsed = true;
-			return true;
+			
+			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "file " + _fileName + " with directive " + _directiveName + " was parsed.");
 		} else {
-			for (int i = headerEndPos; i < partEndPos; i++)
-				directiveContent.push_back(_contents[i]);
-			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "directive " + nameValue + " was parsed with value:\n" + std::string(directiveContent.data(), directiveContent.size()));
+			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "directive " + _directiveName + " was parsed.");
 		}
 	} else {
 		_headers.insert(std::make_pair(headerKey, headerValue));
 		ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "header " + headerKey + " was parsed with value: " + headerValue);
 	}
-	ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "data part was fully parsed.");
-	_parsed = true;
-	return false;
+	_headersParsed = true;
+	return true;	
+}
+
+bool FormDataBody::FormDataPart::parseBody(FormDataBody &parent, int const &decoderRet) {
+	std::vector<char> &body = _directives[_directiveName];
+	for (int i = 0; i < parent._tmp.size(); i++)
+		body.push_back(parent._tmp[i]);
+	ws::log(ws::LOG_LVL_DEBUG, "[FormDataBody] -", "form data \"" + _directiveName + "\" has parsed some body contents.");
+	parent._tmp.clear();
+
+	int endChunkPos = ws::pos_in_vec("\r\n--" + parent._boundary , body);
+	if (endChunkPos != -1) {
+		_bodyParsed = true;
+		for (int i = endChunkPos + 2; i < body.size(); i++)
+			parent._tmp.push_back(body[i]);
+		body.resize(endChunkPos);
+		ws::log(ws::LOG_LVL_DEBUG, "[FormDataBody] -", "form data has parsed it's whole body, contents:\n" + std::string(parent._tmp.data(), parent._tmp.size()));
+	} else {
+		
+	}
+	return true;
 }
 
 FormDataBody::FormDataPart &FormDataBody::FormDataPart::operator=(FormDataPart const &rhs) {
 	if (this != &rhs) {
 		_headers = rhs._headers;
 		_directives = rhs._directives;
+		_directiveName = rhs._directiveName;
 		_fileKey = rhs._fileKey;
 		_fileName = rhs._fileName;
 		_contents = rhs._contents;
-		_parsed = rhs._parsed;
+		_headersParsed = rhs._headersParsed;
+		_bodyParsed = rhs._bodyParsed;
 	}
 	return *this;
 }
@@ -111,57 +129,60 @@ FormDataBody::FormDataPart &FormDataBody::FormDataPart::operator=(FormDataPart c
 // ############## PUBLIC ##############
 
 int FormDataBody::parse(char *body, int &size) {
-	FormDataPart *part;
-	size_t headerStartPos;
-	int partEndPos;
-	bool parseRet = false;
-	
-	int decoded = _decoder->decodeInto(body, size, _tmp);
-	if (decoded < 1)
-		return 0;
+	int ret;
+
+	_decoder->addBuffer(body, size);
 	do {
-		if (_tmp.size() < _boundary.size() + 4) // boundary not received
-			return 0;
-		headerStartPos = _boundary.size() + 4;
-		partEndPos = nextCRLFpos(headerStartPos, 3);
+		ret = _decoder->decodeInto(_tmp);
+		while (!_tmp.empty()) {
+			FormDataPart &part = getNextNeedParsing();
 
-		if (partEndPos == -1)
-			return 0;
+			if (!part._headersParsed) { // we at least have to receive all headers before parsing them and the body.
+				if (_tmp.size() < _boundary.size() + 4) {// boundary not received
+					delete &part;
+					break ;
+				}
 
+				size_t headerStartPos = _boundary.size() + 4;
+				int partEndPos = nextCRLFpos(headerStartPos, 2);
 
-		if (!_parts.empty()) {
-			FormDataPart *lastPart = *(_parts.end() - 1);
-			if (!lastPart->_parsed) {
-				part = lastPart;
-			} else {
-				ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new FormDataPart is about to be parsed.");
-				part = new FormDataPart();
-				_parts.push_back(part);
+				if (partEndPos == -1) {
+					delete &part;
+					break ;
+				}
+				_parts.push_back(&part);
+
+				for (int i = headerStartPos; i < partEndPos - 2; i++)
+					part._contents.push_back(_tmp[i]);
+				// not efficient operation, i could maybe use an offset and just skip the first values
+				_tmp.erase(_tmp.begin(), _tmp.begin() + partEndPos + 2); // skips \r\n
+				part.parseHeaders(partEndPos - headerStartPos - 2);
 			}
-		} else {
-			ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new FormDataPart is about to be parsed.");
-			part = new FormDataPart();			
-			_parts.push_back(part);
+			
+			part.parseBody(*this, ret);
 		}
 
-		for (int i = headerStartPos; i < partEndPos; i++)
-			part->_contents.push_back(_tmp[i]);
-		// not efficient operation, i could maybe use an offset and just skip the first values
-		_tmp.erase(_tmp.begin(), _tmp.begin() + partEndPos + 2);
-		parseRet = part->parse(*this, partEndPos - headerStartPos);
-	} while (!parseRet);
-
-	if (decoded == 1)
-		ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new FormDataPart is about to be parsed.");
+	} while (ret == ws::DECODER_CALL_AGAIN || ret == ws::DECODER_PARSE_READY);
 	
-	return decoded;
+	return ret == ws::DECODER_STOP;
 }
 
 // ############## GETTERS / SETTERS ##############
 
-std::string FormDataBody::getBodyStr() {
-	std::string body;
+FormDataBody::FormDataPart *FormDataBody::getFilePart() {
+	FormDataPart *part;
+	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++) {
+		part = *it;
+		if (!part->_fileKey.empty())
+			return part;
+	}
+	return NULL;
+}
 
+std::string FormDataBody::getBodyStr() {
+	std::cout << "test1" << std::endl;
+	std::string body;
+	std::cout << "test" << std::endl;
 	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++) {
 		FormDataPart part = **it;
 		
@@ -185,7 +206,6 @@ std::string FormDataBody::getBodyStr() {
 	body.append("--" + _boundary + "--\r\n", 0, _boundary.size() + 6);
 	return body;
 }
-
 
 // ############## OPERATORS ##############
 

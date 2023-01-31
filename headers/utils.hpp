@@ -8,6 +8,7 @@
 
 # include <string.h>
 # include <errno.h>
+# include <sys/stat.h>
 
 # include "Constants.hpp"
 
@@ -28,6 +29,8 @@ namespace ws {
     std::string &skip_chars(std::string &str, std::string const &toSkip);
 	bool string_in_range(std::string const &range, std::string const &str, size_t npos = std::string::npos);
 	char *char_array(std::string const &str, int end, int begin = 0);
+	int pos_in_vec(std::string const &str, std::vector<char> const &vec);
+	int pos_in_vec_from_end(std::string const &str, std::vector<char> const &vec);
 
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
@@ -37,6 +40,9 @@ namespace ws {
 	static int	wordlen(char const *s, char c);
 	static int	words_count(char const *s, char c);
 	static int	check_charset(char c, char current);
+	// FILES
+	bool file_exists(std::string const &path);
+	bool file_is_reg(std::string const &path);
 }
 
 #endif

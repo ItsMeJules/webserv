@@ -6,10 +6,8 @@
 # include <map>
 
 class FormDataBody : public AMessageBody {
-	private:
+	public:
 		class FormDataPart {
-			private:
-				int strPos(std::string str) const;
 			public:
 				FormDataPart();
 				FormDataPart(FormDataPart const &formDataPart);
@@ -18,22 +16,27 @@ class FormDataBody : public AMessageBody {
 				std::map<std::string, std::string> _headers;
 				std::map<std::string, std::vector<char> > _directives;
 				
+				std::string _directiveName;
 				std::string _fileKey;
 				std::string _fileName;
 				std::vector<char> _contents;
 
-				bool _parsed;
+				bool _headersParsed;
+				bool _bodyParsed;
 				
-				bool parse(FormDataBody const &parent, size_t const &partEndPos);
+				bool parseHeaders(size_t const &headerEndPos);
+				bool parseBody(FormDataBody &parent, int const &decoderRet);
 
 				FormDataPart &operator=(FormDataPart const &rhs);
 		};
-
+	private:
 		std::vector<FormDataPart*> _parts;
 		std::vector<char> _tmp;
 		std::string _boundary;
 
 		int nextCRLFpos(int pos = 0, int nCRLF = 1) const;
+		void removeLastBoundary();
+		FormDataPart &getNextNeedParsing();
 	public:
 		FormDataBody();
 		FormDataBody(ADataDecoder *decoder, std::string boundaryHeader);
@@ -42,6 +45,8 @@ class FormDataBody : public AMessageBody {
 
         int parse(char *body, int &size);
 
+		std::vector<FormDataPart*> getDataParts();
+		FormDataPart *getFilePart();
 		std::string getBodyStr();
 
 		FormDataBody &operator=(FormDataBody const &rhs);

@@ -42,6 +42,38 @@ char *ws::char_array(std::string const &str, int end, int begin) {
 	return (new std::vector<char>(str.data() + begin, str.data() + end))->data();
 }
 
+int ws::pos_in_vec(std::string const &str, std::vector<char> const &vec) {
+	int i;
+	int j;
+
+	for (i = 0; i < vec.size(); i++) {
+		j = 0;
+		if (vec[i] == str[j]) {
+			while (j < str.size() && i + j < vec.size() && vec[i + j] == str[j])
+				j++;
+			if (j == str.size())
+				return i;
+		}
+	}
+	return -1;
+}
+
+int ws::pos_in_vec_from_end(std::string const &str, std::vector<char> const &vec) {
+	int i;
+	int j;
+
+	for (i = vec.size() - 1; i >= 0; i--) {
+		j = str.size() - 1;
+		if (vec[i] == str[j]) {
+			while (j > 0 && i - j > 0 && vec[i - (str.size() - 1 - j)] == str[j])
+				j--;
+			if (j == 0)
+				return i - (str.size() - 1 - j);
+		}
+	}
+	return -1;
+}
+
 void ws::log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno) {
 	const int lvl = ws::LOG_LVL & level;
 	std::string color;
@@ -162,3 +194,13 @@ char	**ws::ft_split(char const *s, char c)
 	return (str);
 }
 
+bool ws::file_exists(std::string const &path) {
+	struct stat fileInfo;
+	return stat(path.c_str(), &fileInfo) == 0;
+}
+
+bool ws::file_is_reg(std::string const &path) {
+	struct stat fileInfo;
+	stat(path.c_str(), &fileInfo);
+	return !S_ISREG(fileInfo.st_mode);
+}

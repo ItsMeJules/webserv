@@ -1,6 +1,8 @@
 #ifndef HTTPPOST_HPP
 # define HTTPPOST_HPP
 
+# include <fstream>
+
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>

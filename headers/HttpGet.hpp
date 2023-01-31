@@ -1,11 +1,6 @@
 #ifndef HTTPGET_HPP
 # define HTTPGET_HPP
 
-# include <fstream>
-# include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 # include "HttpMethod.hpp"
 # include "DefaultBody.hpp"
 
