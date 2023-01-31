@@ -173,3 +173,92 @@
 // 	o << "INPUT BODY = " << i.getInputBody() << std::endl;
 // 	return o;
 // }
+
+
+// std::string	HttpGet::firstPage(std::string filePath)
+// {
+// 	(void)filePath;
+// 	std::string index;
+// 	std::string path;
+
+// 	if (filePath.find(".php") != std::string::npos)
+// 	{
+// 		index = executeGet();
+// 		index+= "</body>";
+// 		index+= "</html";
+// 		return index;
+// 	}
+
+// 	std::string recup;
+// 	std::ifstream fileindex(filePath.c_str());
+// 	while (getline(fileindex, recup))
+// 		index+= recup;
+// 	index+= "</body>";
+// 	index+= "</html";
+// 	fileindex.close();
+// 	return index;
+// }
+
+
+// std::string ftostr(std::string loc)
+// {
+// 	std::string buffer;
+
+// 	std::ifstream fin(loc.c_str());
+// 	getline(fin, buffer, char(-1));
+// 	fin.close();
+// 	return buffer;
+// }
+
+
+// std::string	HttpGet::executeGet(void)
+// {
+// 	int fd1;
+
+// 	_vectorEnv["REQUEST_METHOD"] = "GET";
+// 	_vectorEnv["STATUS_CODE"] = "200";
+// 	_vectorEnv["PATH_INFO"] = "./www/cgi/script.py";
+// 	_vectorEnv["PATH_TRANSLATED"] = "./www/cgi/script.php";
+// 	_vectorEnv["PATH_NAME"] = "./www/cgi/script.php";
+// 	_vectorEnv["SCRIPT_NAME"] = "./www/cgi/script.php";
+// 	_vectorEnv["SCRIPT_FILENNAME"] = "./www/cgi/script.php";
+
+// 	char **env = new char*[3];
+// 	env[0] = (char *)("/usr/bin/php-cgi");
+// 	env[1] = (char *)("./www/cgi/script.php");
+// 	env[2] = 0;
+
+// 	int i = 0;
+// 	char **recupEnv = ft_split(_newIndex.c_str(), '?');
+// 	while (recupEnv[i])
+// 	{
+// 		if (strncmp(recupEnv[i], "f_name", 6) == 0)
+// 			break;
+// 		i++;
+// 	}
+// 	int tmp = open(".tmp", O_CREAT | O_WRONLY | O_TRUNC, 0666);
+// 	write(tmp, recupEnv[i], strlen(recupEnv[i]));
+// 	lseek(tmp, 0, SEEK_SET);
+// 	fd1 = open("emmaCGI", O_CREAT | O_WRONLY | O_TRUNC, 0666);
+// 	std::string result = recupEnv[i];
+// 	_vectorEnv["QUERY_STRING"] = result;
+// 	_vectorEnv["CONTENT_LENGTH"] = ws::itos(strlen(recupEnv[i]));
+
+// 	int pid = fork();
+// 	if (pid == 0)
+// 	{
+// 		dup2(tmp, 0);
+// 		close(tmp);
+// 		dup2(fd1, 1);
+// 		close(fd1);
+// 		execve(env[0], env, recupEnv);
+// 	}
+// 	else
+// 		wait(NULL);
+// 	std::string str1 = ftostr("emmacCGI");
+// 	close(tmp);
+// 	unlink(".tmp");
+// 	delete [] env;
+// 	return (str1);
+
+// }

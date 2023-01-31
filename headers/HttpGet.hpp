@@ -15,8 +15,6 @@ class Cgi;
 class HttpGet : public HttpMethod {
 	private:
 		bool	_isCgi;
-		std::vector<char *> _vectorEnv;
-		std::vector<char *> _vectorEnvCpy;
 		std::string		_newIndex;
 		char **_env;
 	public:
@@ -29,10 +27,6 @@ class HttpGet : public HttpMethod {
 
 		std::string getName();
 		bool	isCgi();
-		char	**ft_regroup_envVector(std::vector<char *> vec);
-		std::string	executeGet(void);
-		std::string execFile(std::string file);
-		std::string	firstPage(std::string filePath);
 		HttpGet &operator=(HttpGet const &rhs);
 };
 
