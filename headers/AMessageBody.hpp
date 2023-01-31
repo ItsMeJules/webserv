@@ -15,7 +15,7 @@ class AMessageBody {
 	protected:
 		ADataDecoder *_decoder; // think to delete
 		ws::tmp_file_t _tmpFile;
-		
+
 		std::ofstream _tmpOfStream;
 		std::ifstream _tmpIfStream;
 	public:

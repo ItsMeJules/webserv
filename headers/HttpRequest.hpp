@@ -18,7 +18,6 @@ class HttpRequest : public HttpMessage {
 		std::string _path;
 
 		std::vector<std::string> _data;
-		std::string	_query;
 		bool	_isCgi;
 
 	public:
@@ -38,7 +37,7 @@ class HttpRequest : public HttpMessage {
 		HttpMethod *getMethod() const;
 		std::string getPath() const;
 		std::vector<std::string>	getData() const;
-		std::string getQuery() const;
+
 		bool IsCgi();
 
 		HttpRequest &operator=(HttpRequest const &rhs);

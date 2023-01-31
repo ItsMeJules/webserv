@@ -28,6 +28,8 @@ class RequestParser {
 
 		std::string emptyAndClearStream();
         AMessageBody *getAccordingBodyType();
+
+		std::string _query;
 	public:
 		RequestParser();
 		RequestParser(RequestParser const &request);
@@ -35,6 +37,9 @@ class RequestParser {
 
 		bool parseRequest(char *request, int &byteCount);
         void clear();
+
+		std::string	findQuery(void);
+		std::string	getQuery() const;
 
 		HttpRequest &getHttpRequest();
 		const bool &isRequestParsed() const;

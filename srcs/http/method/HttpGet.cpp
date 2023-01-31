@@ -1,4 +1,5 @@
 #include "HttpGet.hpp"
+# include "CGI.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -30,10 +31,13 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 	std::ifstream fileStream;
 	struct stat fileInfo;
+	Cgi *cgi = new Cgi();
 
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
-
-	} else if (data.fileExtension == ".css")
+		std::cout << "entre dans la condition des cgis" << std::endl;
+		cgi->executeGet(request);
+	}
+	else if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
 	else if (data.fileExtension == ".html")
 		response.addHeader("Content-Type", "text/html");

@@ -44,7 +44,7 @@ namespace ws {
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
 
-	// char	**ft_split(char const *s, char c);
+	char	**ft_split(char const *s, char c);
 	// static char	*dupword(char const *s, char c, int n);
 	// static int	wordlen(char const *s, char c);
 	// static int	words_count(char const *s, char c);

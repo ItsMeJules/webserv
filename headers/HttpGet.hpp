@@ -5,13 +5,11 @@
 # include "DefaultBody.hpp"
 
 class Cgi;
-// class Server;
 
 class HttpGet : public HttpMethod {
 	private:
-		// bool	_isCgi;
 		std::string		_newIndex;
-		// char **_env;
+
 	public:
 		HttpGet();
 		HttpGet(HttpGet const &httpGet);

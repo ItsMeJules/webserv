@@ -66,7 +66,7 @@ bool RequestParser::parseRequest(char *request, int &byteCount) {
 		std::string recv = _inReceive.str();
 		std::string wholeRequest = recv + std::string(request, byteCount);
 		size_t endHeaders = wholeRequest.find("\r\n\r\n");
-		
+
 		if (endHeaders != std::string::npos) {
 			_inReceive.str("");
 			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(endHeaders) + " chars from headers.");
@@ -117,6 +117,8 @@ HttpRequest &RequestParser::getHttpRequest() {
 const bool &RequestParser::isRequestParsed() const {
 	return _requestParsed;
 }
+
+
 
 // ############## OPERATORS ##############
 

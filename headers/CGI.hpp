@@ -25,23 +25,27 @@ class Cgi {
 		std::string	_inputBody;
 		std::map<std::string, std::string> _env;
 		HttpRequest	_httpRequest;
-		std::string	_response;
+		std::string	_query;
 
 	public:
 		Cgi();
 		Cgi	&operator=(Cgi const &src);
-		Cgi(HttpRequest &request, Server &server, ServerInfo &ServerInfo);
+		Cgi(HttpRequest &request);
 		~Cgi();
 
-		void	initEnv(HttpRequest &request, Server &server, ServerInfo &serverInfo);
+		// void	initEnv(HttpRequest &request, Server &server, ServerInfo &serverInfo);
 
-		std::string	execute(const std::string &_binary);
+		// char **envToTab(void);
+		// std::string	execute(const std::string &_binary);
 
-		void	setInputBody(std::string inputBody);
-		char **envToTab(void);
-
-		void	setEnv(std::map<std::string, std::string> env);
 		std::map<std::string, std::string>	getEnv() const;
+		void	setInputBody(std::string inputBody);
+
+		std::string	executeGet(HttpRequest &request);
+
+		std::string	findQuery(HttpRequest &request);
+		const std::string &getQuery() const;
+		void	setEnv(std::map<std::string, std::string> env);
 		std::string getInputBody() const;
 };
 
