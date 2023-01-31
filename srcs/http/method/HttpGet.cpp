@@ -31,9 +31,9 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	std::ifstream fileStream;
 	struct stat fileInfo;
 
-	// bool _isCgi = true;
+	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 
-	if (data.fileExtension == ".css")
+	} else if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
 	else if (data.fileExtension == ".html")
 		response.addHeader("Content-Type", "text/html");
@@ -49,7 +49,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Connection", "close");
-		response.generateDate();
+		response.addHeader("Date", response.generateDate());
 
 		fileStream.close();
 		response.setMessageBody(body);
@@ -64,6 +64,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	body->append(fileContent, data.fileSize);
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+	response.addHeader("Date", response.generateDate());
 
 	response.setMessageBody(body);
 
