@@ -45,7 +45,7 @@ bool EPoll::pollFd(int fd, int events) {
 
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &event);
 	if (ret == -1)
-		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to add fd: " + ws::itos(fd) + " to polling list!", true);
+		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to add fd: " + ws::itos(fd) + " to polling list!");
 	else
 		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "sucessfully added fd: " + ws::itos(fd) + " to polling list");
 	ws::log(ws::LOG_LVL_DEBUG, "[EPOLL] -", "with events:\n " + formatEvents(events));
@@ -55,7 +55,7 @@ bool EPoll::pollFd(int fd, int events) {
 bool EPoll::deleteFd(int fd) {
 	int ret = epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 	if (ret == -1)
-		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to delete fd: " + ws::itos(fd) + " from polling list!", true);
+		ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to delete fd: " + ws::itos(fd) + " from polling list!");
 	else
 		ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "sucessfully deleted fd: " + ws::itos(fd) + " from polling list");
 	return ret != -1;
@@ -68,7 +68,7 @@ bool EPoll::modFd(int fd, int events) {
 
     int ret = epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &event);
     if (ret == -1) {
-        ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to modify fd: " + ws::itos(fd) + "!", true);
+        ws::log(ws::LOG_LVL_ERROR, "[EPOLL] -", "failed to modify fd: " + ws::itos(fd) + "!");
 	} else {
     	ws::log(ws::LOG_LVL_SUCCESS, "[EPOLL] -", "successfully modified fd: " + ws::itos(fd));
 	}

@@ -13,7 +13,7 @@ bool ASocket::close() const {
 	if (ret)
 		ws::log(ws::LOG_LVL_SUCCESS, "[ASOCKET] -", "successfully closed socket with fd: " + ws::itos(_fd));
 	else
-		ws::log(ws::LOG_LVL_ERROR, "[ASOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!", true);
+		ws::log(ws::LOG_LVL_ERROR, "[ASOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!");
     return ret;
 }
 
