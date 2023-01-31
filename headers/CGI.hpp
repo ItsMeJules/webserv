@@ -18,7 +18,6 @@
 #include "utils.hpp"
 
 
-# define BUFFER_SIZE 100000
 
 class Cgi {
 	private:
@@ -32,7 +31,7 @@ class Cgi {
 
 		char **generateEnv();
 
-		std::string	executeGet(HttpRequest &request, ws::request_data_t &data);
+		std::string	execute(HttpRequest &request, ws::request_data_t &data);
 
 		std::string	findQuery(HttpRequest &request);
 		const std::string &getQuery() const;

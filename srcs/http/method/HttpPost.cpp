@@ -1,4 +1,5 @@
 #include "HttpPost.hpp"
+# include "CGI.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -30,6 +31,15 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
+	Cgi *cgi = new Cgi(serverInfo.getCgis());
+
+	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
+		std::string responseRet = cgi->execute(request, data);
+		if (responseRet == "error")
+			std::cout << "error" << std::endl;
+		body->append(responseRet, responseRet.size());
+	}
+
 	if (formBody != NULL) {
 		FormDataBody::FormDataPart *part;
 		std::ofstream ofs;
@@ -53,9 +63,12 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-
 		response.setMessageBody(body);
 	}
+
+	response.addHeader("Date", response.generateDate());
+
+	delete cgi;
 	return response;
 }
 

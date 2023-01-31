@@ -47,22 +47,32 @@ char **Cgi::generateEnv()
 	return env;
 }
 
-std::string	Cgi::executeGet(HttpRequest &request, ws::request_data_t &data)
+std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 {
-	std::cout << "arrive dans executeget" << std::endl;
+	std::cout << "arrive dans le wxecute des cgi" << std::endl;
 	int redirFd;
 	ws::tmp_file_t tmpFile;
 	std::ofstream tmpStream;
 
 	_env["REQUEST_METHOD"] = "GET";
+	std::cout << "get is okay" << std::endl;
+	if (request.headersHasKey("Content-Type"))
+	{
+		std::cout << "request.get header is okay" << std::endl;
+		_env["CONTENT_TYPE"] = request.getHeader("Content-Type");
+	}
+	else
+		return "error";
 	_env["STATUS_CODE"] = "200";
-	_env["PATH_INFO"] = "./www/cgi/script.py";
+	_env["PATH_INFO"] = request.getPath();
 	_env["PATH_TRANSLATED"] = "./www/cgi/script.php";
-	_env["PATH_NAME"] = "./www/cgi/script.php";
+	_env["PATH_NAME"] = request.getPath();
 	_env["SCRIPT_NAME"] = "./www/cgi/script.php";
 	_env["SCRIPT_FILENNAME"] = "./www/cgi/script.php";
 	_env["QUERY_STRING"] = data.query;
 	_env["CONTENT_LENGTH"] = ws::itos(request.getPath().length());
+
+	std::cout << "passe la map" << std::endl;
 
 	char **env = new char*[3];
 	char **cgiEnv = generateEnv();

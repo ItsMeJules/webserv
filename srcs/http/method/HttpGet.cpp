@@ -33,9 +33,15 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	struct stat fileInfo;
 	Cgi *cgi = new Cgi(serverInfo.getCgis());
 
+	std::cout << "entre dans les cgi" << std::endl;
+
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
-		std::cout << "entre dans la condition des cgis" << std::endl;
-		cgi->executeGet(request, data);
+		std::string responseReturn = cgi->execute(request, data);
+		if (responseReturn != "error")
+			cgi->execute(request, data);
+		else
+			std::cout << "error" << std::endl;
+		std::cout << "passe le execute" << std::endl;
 	}
 	else if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
@@ -43,6 +49,8 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		response.addHeader("Content-Type", "text/html");
 	else if (data.fileExtension == ".ico")
 		response.addHeader("Content-Type", "text/favicon");
+
+	std::cout << "passe les headers" << std::endl;
 
 	stat(data.requestedPath.c_str(), &fileInfo);
 	fileStream.open(data.requestedPath.c_str(), std::fstream::ate);
@@ -54,6 +62,8 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Connection", "close");
 		response.addHeader("Date", response.generateDate());
+
+		std::cout << "random" << std::endl;
 
 		fileStream.close();
 		response.setMessageBody(body);
