@@ -17,7 +17,7 @@ HttpMethod::request_data_t HttpMethod::initRequestData(ServerInfo const &serverI
 		data.requestedFilePath = serverInfo.getRootPath() + request.getPath();
 
 		if (data.requestedFilePath == serverInfo.getRootPath() + "/") // si request = / ; req -> index_path
-			data.requestedFilePath = serverInfo.getRootPath() + serverInfo.getIndexPath();
+			data.requestedFilePath = data.requestedFilePath + serverInfo.getIndexPath();
 
 		data.fileName = data.requestedFilePath.substr(data.requestedFilePath.rfind("/"));
 		data.fileExtension = data.fileName.substr(data.fileName.rfind("."));

@@ -44,17 +44,17 @@ namespace ws {
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
 
-	char	**ft_split(char const *s, char c);
-	static char	*dupword(char const *s, char c, int n);
-	static int	wordlen(char const *s, char c);
-	static int	words_count(char const *s, char c);
-	static int	check_charset(char c, char current);
+	// char	**ft_split(char const *s, char c);
+	// static char	*dupword(char const *s, char c, int n);
+	// static int	wordlen(char const *s, char c);
+	// static int	words_count(char const *s, char c);
+	// static int	check_charset(char c, char current);
 	// FILES
 	bool file_exists(std::string const &path);
 	bool file_is_reg(std::string const &path);
 	bool make_tmp_file(tmp_file_t &tft);
 	void close_tmp_file(ws::tmp_file_t const &tft);
-	
+
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);
 	std::vector<std::string> splitStr(const std::string &str, const std::string &charset);

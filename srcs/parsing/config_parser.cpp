@@ -167,7 +167,7 @@ void ws::checkPath(std::string const &path) {
 void ws::checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument) {
 	size_t	sizeArgument = argument.size() - 1;
 	std::string expect = to_string(argtExpect);
-	
+
 	if (nbArguments != argtExpect)
 		throw std::invalid_argument(to_string(argtExpect) + " Arguments expected.");
 
@@ -191,7 +191,7 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 	}
 	if (cpt.configKeys.count(lineArguments[0]) == 0)
 		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
-	
+
 	switch (cpt.configKeys[lineArguments[0]]) {
 		case NAME:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
@@ -205,7 +205,7 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 		case LISTEN:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			if (lineArguments[1].find(":") != std::string::npos) {
-				values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), ":"); 
+				values = splitStr(lineArguments[1].substr(0, sizeArgumentOne), ":");
 				if (checkIpKey(values[0]) == 0)
 					serverInfo.setIp(values[0]);
 				if (checkPortKey(values[1]) == 0)
@@ -237,7 +237,7 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 
 		case INDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			checkPath(lineArguments[1].substr(0, sizeArgumentOne));
+			//checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerAutoIndex: " << serverInfo.getIndexPath() << std::endl;
 			break;
@@ -257,7 +257,7 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			break;
 
 		case CGI:
-			checkerArguments(lineArguments.size(), 3, lineArguments[2]);		
+			checkerArguments(lineArguments.size(), 3, lineArguments[2]);
 			checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
 
 			serverInfo.addToCGIS(lineArguments[1], lineArguments[2].substr(0, lineArguments[2].size() - 1));
@@ -267,7 +267,7 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 				std::cout << "\tSet in ServerCGI : First: " << it->first << " Second: " << it->second << "\n";
 			}
 			break;
-		
+
 		case METHOD:
 			method = serverInfo.getMethod();
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
@@ -292,7 +292,7 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			tmp = ws::stoi(lineArguments[1]);
 			if (HttpResponse::codes.count(tmp) == 0)
 				throw std::invalid_argument("Error, Page_Error : The Error Key doen't exist.");
-			
+
 			checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
 
 			serverInfo.addErrorPage(tmp, lineArguments[2].substr(0, lineArguments[2].size() - 1));
@@ -323,7 +323,7 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 
 	if (cpt.configKeys.count(lineArguments[0]) == 0)
 		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
-	
+
 	switch(cpt.configKeys[lineArguments[0]]) {
 		case INDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
@@ -331,7 +331,7 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			location.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in LocationIndex: " << location.getIndexPath() << std::endl;
 			break;
-		
+
 		case AUTOINDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			if (checkLocationAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), location) != 0)
@@ -378,7 +378,7 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			location.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in LocationRoot: " << location.getRootPath() << std::endl;
 			break;
-		
+
 		default:
 			throw std::invalid_argument("Default Error, the word " + lineArguments[0] + " doesn't exist.");
 			break;
@@ -451,7 +451,7 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
                 } else if (lineType == INFO) {
 					if (parseServerLine(cpt, *server) == 1)
 						return 1;
-				}     
+				}
                 break ;
 
             case 3: //we are inside location block

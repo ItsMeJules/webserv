@@ -9,9 +9,9 @@ class Cgi;
 
 class HttpGet : public HttpMethod {
 	private:
-		bool	_isCgi;
+		// bool	_isCgi;
 		std::string		_newIndex;
-		char **_env;
+		// char **_env;
 	public:
 		HttpGet();
 		HttpGet(HttpGet const &httpGet);
@@ -21,7 +21,7 @@ class HttpGet : public HttpMethod {
 		HttpMethod *clone();
 
 		std::string getName();
-		bool	isCgi();
+		// bool	isCgi();
 		HttpGet &operator=(HttpGet const &rhs);
 };
 

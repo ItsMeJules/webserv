@@ -31,7 +31,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	std::ifstream fileStream;
 	struct stat fileInfo;
 
-	bool _isCgi = true;
+	// bool _isCgi = true;
 
 	if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
@@ -56,9 +56,10 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		return response;
 	}
 
-	std::string fileContent = std::string(data.fileSize, ' ');
-
+	data.fileSize = fileStream.tellg();
 	fileStream.seekg(0);
+
+	std::string fileContent = std::string(data.fileSize, ' ');
 	fileStream.read(&fileContent[0], data.fileSize);
 
 	body->append(fileContent, data.fileSize);
