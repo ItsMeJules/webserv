@@ -10,17 +10,21 @@ HttpMethod::~HttpMethod() {}
 
 // ############## PROTECTED ##############
 
-HttpMethod::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request) {
+HttpMethod::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request, std::string const &requestType) {
 	request_data_t data;
 
-	if (request.getPath()[0] == '/' && request.getPath() != serverInfo.getRootPath()) {
-		data.requestedFilePath = serverInfo.getRootPath() + request.getPath();
+	if (request.getPath() != serverInfo.getRootPath()) {
+		data.requestedPath = serverInfo.getRootPath();
 
-		if (data.requestedFilePath == serverInfo.getRootPath() + "/") // si request = / ; req -> index_path
-			data.requestedFilePath = data.requestedFilePath + serverInfo.getIndexPath();
+		if (requestType == "GET") {
+			data.requestedPath += request.getPath();
+			
+			if (data.requestedPath == serverInfo.getRootPath() + "/") // si request == root_path ; req -> index_path
+				data.requestedPath += serverInfo.getIndexPath();
 
-		data.fileName = data.requestedFilePath.substr(data.requestedFilePath.rfind("/"));
-		data.fileExtension = data.fileName.substr(data.fileName.rfind("."));
+			data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/"));
+			data.fileExtension = data.fileName.substr(data.fileName.rfind("."));
+		}
 	}
 	return data;
 }

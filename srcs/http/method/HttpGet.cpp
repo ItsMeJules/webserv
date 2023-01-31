@@ -27,7 +27,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	HttpResponse response;
 
 	DefaultBody *body = new DefaultBody();
-	request_data_t data = HttpMethod::initRequestData(serverInfo, request);
+	request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 	std::ifstream fileStream;
 	struct stat fileInfo;
 
@@ -40,8 +40,8 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	else if (data.fileExtension == ".ico")
 		response.addHeader("Content-Type", "text/favicon");
 
-	stat(data.requestedFilePath.c_str(), &fileInfo);
-	fileStream.open(data.requestedFilePath.c_str(), std::fstream::ate);
+	stat(data.requestedPath.c_str(), &fileInfo);
+	fileStream.open(data.requestedPath.c_str(), std::fstream::ate);
 
 	if (!fileStream.is_open() || !S_ISREG(fileInfo.st_mode)) { // https://stackoverflow.com/a/40163393/10885193
 		response.setStatusCode(404);

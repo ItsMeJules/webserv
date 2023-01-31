@@ -15,14 +15,14 @@ class HttpRequest;
 class HttpMethod {
 	protected:
 		typedef struct request_data_s {
-			std::string requestedFilePath;
+			std::string requestedPath;
 			std::string fileName;
 			std::string fileExtension;
 
 			size_t fileSize;
 		} request_data_t;
 
-		request_data_t initRequestData(ServerInfo const &serverInfo, HttpRequest const &request);
+	request_data_t initRequestData(ServerInfo const &serverInfo, HttpRequest const &request, std::string const &requestType);
 	public:
 		HttpMethod();
 		HttpMethod(HttpMethod const &httpMethod);

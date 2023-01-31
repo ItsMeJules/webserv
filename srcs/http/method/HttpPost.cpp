@@ -8,53 +8,52 @@ HttpPost::~HttpPost() {}
 
 // ############## PRIVATE ############## 
 
+bool HttpPost::writePartToFile(FormDataBody::FormDataPart &part, std::string const &filePath, std::ofstream &ofs) {
+	if (!ofs.is_open())
+		ofs.open(filePath.c_str(), std::ofstream::binary | std::ofstream::out);
+
+	if (ofs.is_open()) {
+		ws::log(ws::LOG_LVL_DEBUG, "[HttpPost] -", "data wrote to " + filePath);
+		ofs << part.extractBody();
+		return true;
+	}
+	return false;
+}
+
 // ############## PUBLIC ##############
 
 HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	ws::log(ws::LOG_LVL_INFO, "[HTTP POST] -", "executing post request.");
-	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
+
 	HttpResponse response;
 	DefaultBody *body = new DefaultBody();
+	request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
+	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
-	if (request.getPath()[0] == '/')
-		request.setPath(serverInfo.getRootPath());
-
-	if (request.getPath() == serverInfo.getRootPath() + "/")
-		request.setPath(serverInfo.getIndexPath());
-	
 	if (formBody != NULL) {
-		request.setPath(request.getPath() + serverInfo.getUploadPath() + "/");
 		FormDataBody::FormDataPart *part;
 		std::ofstream ofs;
-		std::string filePath;
-		bool opened = false;
-			
+
+		bool success = true;
+		data.requestedPath += serverInfo.getUploadPath();
+		
 		while ((part = formBody->readForm()) != NULL) {
-			if (part->_headersParsed) {
-				if (part->_directiveName != part->_fileKey)
-					continue ;
+			if (!part->_headersParsed || part->_directiveName != part->_fileKey)
+				continue ;
 
-				filePath = std::string(request.getPath() + part->_fileName.c_str());
-				if (!ofs.is_open())
-					ofs.open(filePath.c_str(), std::ofstream::binary | std::ofstream::out);
-
-				if (ofs.is_open()) {
-					ws::log(ws::LOG_LVL_DEBUG, "[HttpPost] -", "data wrote to " + filePath);
-					ofs << part->extractBody();
-					opened = true;
-				}
+			if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
+				success = false;
+				break ;
 			}
 		}
-		if (opened)
-			response.setStatusCode(201);
-		else
-			response.setStatusCode(500);
+		response.setStatusCode(success ? 201 : 500);
 		ofs.close();
-		// if (ws::file_exists(formBody->getFilePart()->_fileName)) {}
 
 		body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
+		
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+
 		response.setMessageBody(body);
 	}
 	return response;

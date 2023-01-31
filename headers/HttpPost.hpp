@@ -14,6 +14,7 @@
 
 class HttpPost : public HttpMethod {
 	private:
+		bool writePartToFile(FormDataBody::FormDataPart &part, std::string const &filePath, std::ofstream &ofs);
 	public:
 		HttpPost();
 		HttpPost(HttpPost const &httpPost);
