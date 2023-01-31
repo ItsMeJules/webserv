@@ -110,28 +110,23 @@ int EPoll::polling(Server &server) {
             if (events[i].events & EPOLLIN) {
                 if (!server.receiveData(client))
 				    server.disconnect(client);
-				else if (client.hasRequestFailed()) {
+				else if (client.hasRequestFailed())
                     modFd(events[i].data.fd, EPOLLOUT);
-				} else if (client.getRequestParser().isRequestParsed())
-				{
+				else if (client.getRequestParser().isRequestParsed())
                     modFd(events[i].data.fd, EPOLLOUT);
-				}
             } else if (events[i].events & EPOLLOUT) {
                 HttpResponse response;
 
 				if (!client.hasRequestFailed())
-				{
 					response = client.getHttpRequest().execute(server.getServerInfo());
-				}
 				else {
 					response.setStatusCode(400);
 					response.addHeader("Connection", "close");
 				}
+
                 server.sendData(client, response);
 				if (response.getStatusCode() >= 400)
-				{
 					server.disconnect(client);
-				}
                 else if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
@@ -139,10 +134,7 @@ int EPoll::polling(Server &server) {
                     modFd(events[i].data.fd, EPOLLIN);
                 }
             } else if (events[i].events & EPOLLRDHUP)
-			{
-				std::cout << "ERREUR ICI ???" << std::endl;
                 server.disconnect(client);
-			}
         }
  	}
 	return 1;
