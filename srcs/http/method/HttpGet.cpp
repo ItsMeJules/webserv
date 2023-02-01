@@ -26,44 +26,35 @@ HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 
 HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	HttpResponse response;
-
-	DefaultBody *body = new DefaultBody();
-	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 	std::ifstream fileStream;
-	struct stat fileInfo;
+	
 	Cgi *cgi = new Cgi(serverInfo.getCgis());
+	DefaultBody *body = new DefaultBody();
 
-	std::cout << "entre dans les cgi" << std::endl;
+	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
 
-	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
+	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		std::string responseReturn = cgi->execute(request, data);
-		if (responseReturn != "error")
-			cgi->execute(request, data);
-		else
-			std::cout << "error" << std::endl;
-		std::cout << "passe le execute" << std::endl;
-	}
-	else if (data.fileExtension == ".css")
+
+		if (responseReturn == "error")
+			response.setStatusCode(500);
+
+	} else if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
 	else if (data.fileExtension == ".html")
 		response.addHeader("Content-Type", "text/html");
 	else if (data.fileExtension == ".ico")
 		response.addHeader("Content-Type", "text/favicon");
 
-	std::cout << "passe les headers" << std::endl;
-
-	stat(data.requestedPath.c_str(), &fileInfo);
 	fileStream.open(data.requestedPath.c_str(), std::fstream::ate);
 
-	if (!fileStream.is_open() || !S_ISREG(fileInfo.st_mode)) { // https://stackoverflow.com/a/40163393/10885193
+	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
 		response.setStatusCode(404);
 		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());
 		response.addHeader("Content-Type", "text/plain");
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Connection", "close");
 		response.addHeader("Date", response.generateDate());
-
-		std::cout << "random" << std::endl;
 
 		fileStream.close();
 		response.setMessageBody(body);

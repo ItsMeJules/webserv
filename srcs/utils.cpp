@@ -130,12 +130,7 @@ static int	wordlen(char const *s, char c)
 {
 	int	i;
 	int	s_size;
-
-	s_size = 0;
-	i = 0;
-	while (check_charset(c, s[i]) && s[i])
-		i++;
-	while (!check_charset(c, s[i]) && s[i])
+S_ISREG(fileInfo.st_mode)) && s[i])
 	{
 		s_size++;
 		i++;
@@ -202,7 +197,7 @@ bool ws::file_exists(std::string const &path) {
 bool ws::file_is_reg(std::string const &path) {
 	struct stat fileInfo;
 	stat(path.c_str(), &fileInfo);
-	return !S_ISREG(fileInfo.st_mode);
+	return S_ISREG(fileInfo.st_mode);
 }
 
 bool ws::make_tmp_file(tmp_file_t &tft) {
