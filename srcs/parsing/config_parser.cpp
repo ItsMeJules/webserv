@@ -469,6 +469,7 @@ void ws::checkConfiguration(Server *servers) {
 		std::map<std::string, std::string> cgi;
 		std::vector<std::string> method;
 		std::map<int, std::string> errorPage;
+		std::map<int, std::string> errorPageClone;
 		std::map<std::string, Location*> location;
 		std::map<std::string, Location*> locationClone;
 		char absolutePath[1000];
@@ -522,15 +523,22 @@ void ws::checkConfiguration(Server *servers) {
 		for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it) {
 			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
 		}
+
 		std::cout << "ERROR_PAGE" << std::endl;
 		for(std::map<int, std::string>::iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
 			if (!isPathExist(it->second))
 				throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
+
 			if (it->second[0] != '/')
-				it->second = std::string(absolutePath) + "/" + it->second;
+				errorPageClone.insert(std::make_pair(it->first, std::string(absolutePath) + "/" + it->second));
+			else
+				errorPageClone.insert(std::make_pair(it->first, it->second));
+
+			it->second = std::string(absolutePath) + "/" + it->second;
 			
 			std::cout << "\t\t\t- " << it->first << " \t" << (it->second) << "\n";
 		}
+		serverInfo.setErrorPage(errorPageClone);
 
 		std::cout << "LOCATION: " << std::endl;
 		for(std::map<std::string, Location *>::iterator it = location.begin(); it != location.end(); ++it) {

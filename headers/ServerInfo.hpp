@@ -59,7 +59,8 @@ class ServerInfo {
 		void  addtoMethod(std::string Method);
 		void  addToCGIS(std::string Extension, std::string Path);
 		void  addErrorPage(int Key, std::string Value);
-		void setLocation(std::map<std::string, Location*> location);
+		void  setLocation(std::map<std::string, Location*> location);
+		void  setErrorPage(std::map<int, std::string> error);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };

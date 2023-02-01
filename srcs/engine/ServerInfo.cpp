@@ -131,6 +131,10 @@ void ServerInfo::setLocation(std::map<std::string, Location*> locations) {
 	_locations = locations;
 }
 
+void ServerInfo::setErrorPage(std::map<int, std::string> error) {
+	_errorPage = error;
+}
+
 // ############## OPERATORS ##############
 
 ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
