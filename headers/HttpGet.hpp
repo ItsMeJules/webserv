@@ -7,6 +7,7 @@
 class HttpGet : public HttpMethod {
 	private:
 		std::string		_newIndex;
+		int				_errorCode;
 
 	public:
 		HttpGet();
@@ -17,7 +18,7 @@ class HttpGet : public HttpMethod {
 		HttpMethod *clone();
 
 		std::string getName();
-		
+
 		HttpGet &operator=(HttpGet const &rhs);
 };
 

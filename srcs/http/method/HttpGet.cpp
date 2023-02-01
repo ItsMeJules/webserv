@@ -34,6 +34,19 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
 	if (!ws::file_exists(data.requestedPath) && ws::file_is_dir(data.rawRequestedPath)) {
+	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
+		size_t foundPos = data.rawRequestedPath.find(it->first);
+		if (foundPos != std::string::npos) {
+			if (std::find(it->second->getMethod().begin(), it->second->getMethod().end(), getName()) == it->second->getMethod().end())
+				_errorCode = 405;
+			break ;
+		}
+	}
+}
+
+	if (ws::file_is_dir(data.requestedPath)) {
+		bool autoIndex = serverInfo.hasAutoindex();
+
 		for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
 			if (data.rawRequestedPath.find(it->first) != std::string::npos) {
 				autoIndex = it->second->hasAutoindex();
