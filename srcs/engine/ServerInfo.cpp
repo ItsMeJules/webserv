@@ -79,6 +79,10 @@ std::map<int, std::string> &ServerInfo::getError() {
 	return _errorPage;
 }
 
+const std::map<int, std::string> &ServerInfo::getErrorPages() const {
+	return _errorPage;
+}
+
 void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
 	this->_maxBodySize = MaxBodySize;
 }

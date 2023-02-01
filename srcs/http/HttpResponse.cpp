@@ -24,6 +24,30 @@ const std::string HttpResponse::build() const {
 	return ss.str();
 }
 
+std::string	HttpResponse::generateDate(void)
+{
+	char			buffer[100];
+	struct timeval	tv;
+	struct tm		*gmt;
+
+	gettimeofday(&tv, NULL);
+	gmt = gmtime(&tv.tv_sec);
+	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
+	return buffer;
+}
+
+void HttpResponse::generateError(int code, std::map<int, std::string> const &errorPage, DefaultBody &body) {
+	std::ifstream fileStream(errorPage.at(code).c_str()); // no need to check if it opened
+    size_t fileSize = ws::get_file_size(fileStream);
+
+    body.append(ws::get_file_contents(fileStream, fileSize), fileSize);
+
+    setStatusCode(code);
+    addHeader("Content-Type", "text/html");
+    if (code != 404)
+        addHeader("Connection", "close"); // maybe the connection doesn't always get closed (example 404 errors)
+}
+
 // ############## GETTERS / SETTERS ##############
 
 void HttpResponse::setStatusCode(int statusCode) {
@@ -80,16 +104,4 @@ std::map<int, ws::http_status_t> HttpResponse::createCodes() {
     codes[501] = createStatus("Not Implemented", "The HTTP method is not yet supported.");
     codes[505] = createStatus("HTTP Version Non supported", "The HTTP version is not yet supported.");
     return codes;
-}
-
-std::string	HttpResponse::generateDate(void)
-{
-	char			buffer[100];
-	struct timeval	tv;
-	struct tm		*gmt;
-
-	gettimeofday(&tv, NULL);
-	gmt = gmtime(&tv.tv_sec);
-	strftime(buffer, 100, "%a, %d %b %Y %H:%M:%S GMT", gmt);
-	return buffer;
 }

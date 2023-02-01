@@ -528,7 +528,7 @@ void ws::checkConfiguration(Server *servers) {
 				throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
 			if (it->second[0] != '/')
 				it->second = std::string(absolutePath) + "/" + it->second;
-				
+			
 			std::cout << "\t\t\t- " << it->first << " \t" << (it->second) << "\n";
 		}
 

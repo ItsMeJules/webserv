@@ -46,6 +46,7 @@ class ServerInfo {
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, Location*> &getLocations() const;
 		std::map<int, std::string> &getError();
+		const std::map<int, std::string> &getErrorPages() const;
 
 		void  setMaxBodySize(uint32_t MaxBodySize);
 		void  setIp(std::string ip);

@@ -116,18 +116,17 @@ int EPoll::polling(Server &server) {
                     modFd(events[i].data.fd, EPOLLOUT);
             } else if (events[i].events & EPOLLOUT) {
                 HttpResponse response;
+				DefaultBody *errorBody = new DefaultBody();
 
 				if (!client.hasRequestFailed())
 					response = client.getHttpRequest().execute(server.getServerInfo());
 				else {
-					response.setStatusCode(400);
-					response.addHeader("Connection", "close");
+					response.generateError(400, server.getServerInfo().getErrorPages(), *errorBody);
 				}
 
                 server.sendData(client, response);
-				if (response.getStatusCode() >= 400)
-					server.disconnect(client);
-                else if (client.getHttpRequest().headersContains("Connection", "close")) {
+				delete errorBody;
+                if (client.getHttpRequest().headersContains("Connection", "close")) {
                     server.disconnect(client);
                 } else { // if there's no connection header we assume that the connection is keep-alive
                     client.getRequestParser().clear();

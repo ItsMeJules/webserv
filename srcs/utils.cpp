@@ -124,6 +124,22 @@ void ws::close_tmp_file(ws::tmp_file_t const &tft) {
 	close(tft.fd);
 	unlink(tft.name.c_str());
 }
+
+size_t ws::get_file_size(std::ifstream &stream) {
+	size_t size;
+
+	stream.seekg(0, std::ifstream::end);
+	size = stream.tellg();
+	stream.seekg(0);
+	return size;
+}
+
+std::string ws::get_file_contents(std::ifstream &stream, int fileSize) {
+	std::string fileContent = std::string(fileSize, ' ');
+	stream.read(&fileContent[0], fileSize);
+	return fileContent;
+}
+
 bool	ws::ft_in_charset(char const c, const std::string &charset)
 {
 	int	i_charset;

@@ -6,8 +6,8 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-
 # include "HttpMessage.hpp"
+# include "DefaultBody.hpp"
 # include "utils.hpp"
 
 class HttpResponse : public HttpMessage {
@@ -27,11 +27,12 @@ class HttpResponse : public HttpMessage {
 		~HttpResponse();
 
 		const std::string build() const;
+		std::string	generateDate();
+		void generateError(int code, std::map<int, std::string> const &errorPage, DefaultBody &body);
 
 		void setStatusCode(int statusCode);
 
 		const int &getStatusCode() const;
-		std::string	generateDate();
 
 		HttpResponse &operator=(HttpResponse const &rhs);
 

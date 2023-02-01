@@ -39,35 +39,26 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		if (responseReturn != "error")
 			body->append(responseReturn, responseReturn.size());
 			
-	} else if (data.fileExtension == ".css")
-		response.addHeader("Content-Type", "text/css");
-	else if (data.fileExtension == ".html")
-		response.addHeader("Content-Type", "text/html");
-	else if (data.fileExtension == ".ico")
-		response.addHeader("Content-Type", "text/favicon");
-
-	fileStream.open(data.requestedPath.c_str(), std::fstream::ate);
-	
-	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
-		response.setStatusCode(404);
-		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());
-		response.addHeader("Content-Type", "text/plain");
-		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-		response.addHeader("Connection", "close");
-		response.addHeader("Date", response.generateDate());
-
-		fileStream.close();
-		response.setMessageBody(body);
-		return response;
 	}
 
-	data.fileSize = fileStream.tellg();
-	fileStream.seekg(0);
+	fileStream.open(data.requestedPath.c_str());
+	
+	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
+		response.generateError(404, serverInfo.getErrorPages(), *body);
+		fileStream.close();
+	} else {
+		data.fileSize = ws::get_file_size(fileStream);
 
-	std::string fileContent = std::string(data.fileSize, ' ');
-	fileStream.read(&fileContent[0], data.fileSize);
+		body->append(ws::get_file_contents(fileStream, data.fileSize), data.fileSize);
 
-	body->append(fileContent, data.fileSize);
+		if (data.fileExtension == ".css")
+			response.addHeader("Content-Type", "text/css");
+		else if (data.fileExtension == ".html")
+			response.addHeader("Content-Type", "text/html");
+		else if (data.fileExtension == ".ico")
+			response.addHeader("Content-Type", "text/favicon");
+	}
+
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
 

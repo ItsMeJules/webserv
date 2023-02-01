@@ -53,9 +53,6 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data, HttpRes
 	ws::tmp_file_t tmpFile;
 	std::ofstream tmpStream;
 
-	std::cout <<data.requestedPath << std::endl;
-	std::cout << ws::file_exists(data.requestedPath) << std::endl;
-
 	if (!ws::file_exists(data.requestedPath)) {
 		response.setStatusCode(404);
 		return "error";

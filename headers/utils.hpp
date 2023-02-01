@@ -49,20 +49,19 @@ namespace ws {
 	char *char_array(std::string const &str, int end, int begin = 0);
 	int pos_in_vec(std::string const &str, std::vector<char> const &vec);
 	int pos_in_vec_from_end(std::string const &str, std::vector<char> const &vec);
+	char	**ft_split(char const *s, char c);
 
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
 
-	char	**ft_split(char const *s, char c);
-	// static char	*dupword(char const *s, char c, int n);
-	// static int	wordlen(char const *s, char c);
-	// static int	words_count(char const *s, char c);
-	// static int	check_charset(char c, char current);
+
 	// FILES
 	bool file_exists(std::string const &path);
 	bool file_is_reg(std::string const &path);
 	bool make_tmp_file(tmp_file_t &tft);
 	void close_tmp_file(ws::tmp_file_t const &tft);
+	size_t get_file_size(std::ifstream &stream);
+	std::string get_file_contents(std::ifstream &stream, int fileSize);
 
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);

@@ -140,7 +140,7 @@ int FormDataBody::parse(char *body, int &size) {
 		AMessageBody::_tmpOfStream.close();
 		return 1;
 	}
-	return 0;
+	return ret;
 }
 
 AMessageBody *FormDataBody::clone() {
