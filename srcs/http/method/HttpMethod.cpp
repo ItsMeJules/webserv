@@ -38,6 +38,7 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 			indexPath = it->second->getIndexPath();
 	}
 
+	data.rawRequestedPath = data.requestedPath;
 	// if (data.requestedPath == root + "/")
 	// 	data.requestedPath = indexPath;
 

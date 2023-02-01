@@ -27,24 +27,24 @@ HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	HttpResponse response;
 	std::ifstream fileStream;
+	bool autoIndex = serverInfo.hasAutoindex();
 
 	DefaultBody *body = new DefaultBody();
 
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
-	if (ws::file_is_dir(data.requestedPath)) {
-		bool autoIndex = serverInfo.hasAutoindex();
-
+	if (!ws::file_exists(data.requestedPath) && ws::file_is_dir(data.rawRequestedPath)) {
 		for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-			size_t foundPos = data.rawRequestedPath.find(it->first);
-			if (foundPos != std::string::npos) {
+			if (data.rawRequestedPath.find(it->first) != std::string::npos) {
 				autoIndex = it->second->hasAutoindex();
 				break ;
 			}
 		}
-
-		std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
-		body->append(autoIndexStr, autoIndexStr.size());
+		if (autoIndex) {
+			std::string autoIndexStr = ws::html_list_dir(data.rawRequestedPath);
+			body->append(autoIndexStr, autoIndexStr.size());
+		} else
+			autoIndex = false;
 	} else if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseReturn = cgi->execute(request, data, response);
@@ -56,7 +56,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		delete cgi;
 	}
 
-	if (response.getStatusCode() < 400) {
+	if (response.getStatusCode() < 400 && !autoIndex) {
 		fileStream.open(data.requestedPath.c_str());
 
 		if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath))
@@ -92,8 +92,3 @@ HttpMethod *HttpGet::clone() {
 std::string HttpGet::getName() {
 	return "GET";
 }
-
-
-
-
-
