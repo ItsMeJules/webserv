@@ -15,7 +15,7 @@ class HttpRequest;
 
 class HttpMethod {
 	protected:
-		ws::request_data_t initRequestData(ServerInfo const &serverInfo, HttpRequest const &request, std::string const &requestType);
+		ws::request_data_t initRequestData(ServerInfo const &serverInfo, HttpRequest const &request);
 	public:
 		HttpMethod();
 		HttpMethod(HttpMethod const &httpMethod);

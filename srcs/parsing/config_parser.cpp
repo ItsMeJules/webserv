@@ -147,18 +147,6 @@ void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 	matchValues["error_page"] = ERROR_PAGE;
 	matchValues["upload"] = UPLOAD;
 	matchValues["root"] = ROOT;
-<<<<<<< HEAD
-	matchValues["rewrite"] = REWRITE;
-}
-
-void ws::checkPath(std::string const &path) {
-	const char *dir = path.c_str();
-	struct stat sb;
-
-	if (stat(dir, &sb) != 0 && (sb.st_mode & S_IFDIR))
-		throw std::invalid_argument("The path " + path + " doesn't exist.");
-=======
->>>>>>> configParser
 }
 
 void ws::checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument) {
@@ -365,16 +353,6 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			std::cout << "\tSet in LocationUpload: " << location.getUploadPath() << std::endl;
 			break;
 
-<<<<<<< HEAD
-		case REWRITE:
-			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			//checkPath(lineArguments[1].substr(0, sizeArgumentOne));
-			location.setRewritePath(lineArguments[1].substr(0, sizeArgumentOne));
-			std::cout << "\tSet in LocationRewrite: " << location.getRewritePath() << std::endl;
-			break;
-
-=======
->>>>>>> configParser
 		case ROOT:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			//checkPath(lineArguments[1].substr(0, sizeArgumentOne));

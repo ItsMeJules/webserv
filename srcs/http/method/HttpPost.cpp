@@ -28,7 +28,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 	HttpResponse response;
 	DefaultBody *body = new DefaultBody();
-	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request, getName());
+	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
 	Cgi *cgi = new Cgi(serverInfo.getCgis());

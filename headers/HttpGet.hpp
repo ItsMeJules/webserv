@@ -4,8 +4,6 @@
 # include "HttpMethod.hpp"
 # include "DefaultBody.hpp"
 
-class Cgi;
-
 class HttpGet : public HttpMethod {
 	private:
 		std::string		_newIndex;
@@ -19,7 +17,7 @@ class HttpGet : public HttpMethod {
 		HttpMethod *clone();
 
 		std::string getName();
-		// bool	isCgi();
+		
 		HttpGet &operator=(HttpGet const &rhs);
 };
 

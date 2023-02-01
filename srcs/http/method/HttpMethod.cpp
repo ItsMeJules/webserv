@@ -10,7 +10,7 @@ HttpMethod::~HttpMethod() {}
 
 // ############## PROTECTED ##############
 
-ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request, std::string const &requestType) {
+ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request) {
 	ws::request_data_t data;
 	std::string root = serverInfo.getRootPath();
 	size_t queryStartPos = request.getPath().find('?');
