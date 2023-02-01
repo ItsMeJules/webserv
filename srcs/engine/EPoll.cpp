@@ -140,7 +140,6 @@ int EPoll::polling(Server &server) {
                 }
             } else if (events[i].events & EPOLLRDHUP)
 			{
-				std::cout << "ERREUR ICI ???" << std::endl;
                 server.disconnect(client);
 			}
         }

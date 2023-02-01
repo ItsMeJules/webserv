@@ -26,12 +26,13 @@ ws::ConfigLineType ws::getBlockType(config_parsing_t &cpt, std::string line) {
         return SERVER;
     } else if (line.rfind("location", 0) != std::string::npos) {
         ws::skip_chars(line.erase(0, 8), ws::WHITE_SPACES); //skips the spaces before the path
-        if (line[0] == '/') {
+        if (line[0] == '/' || line[0] == '.') {
             ws::skip_chars(line, ws::CONFIG_PATH_LETTERS); //skips the path
             ws::skip_chars(line, ws::WHITE_SPACES); //skips the spaces after the path
             ws::checkOpeningBracket(cpt, line);
             return LOCATION;
-        } else
+		}
+    	else
             throw std::invalid_argument("Location path must be absolute! String: \"" + cpt.line + "\" is invalid!");
     } else {
         size_t declarationEndPos = line.find_first_of(ws::WHITE_SPACES);
@@ -146,15 +147,6 @@ void ws::parserInit(std::map<std::string, confValues> &matchValues) {
 	matchValues["error_page"] = ERROR_PAGE;
 	matchValues["upload"] = UPLOAD;
 	matchValues["root"] = ROOT;
-	matchValues["rewrite"] = REWRITE;
-}
-
-void ws::checkPath(std::string const &path) {
-	const char *dir = path.c_str();
-	struct stat sb;
-
-	if (stat(dir, &sb) != 0 && (sb.st_mode & S_IFDIR))
-		throw std::invalid_argument("The path " + path + " doesn't exist.");
 }
 
 void ws::checkerArguments(size_t nbArguments, size_t argtExpect, std::string argument) {
@@ -361,13 +353,6 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 			std::cout << "\tSet in LocationUpload: " << location.getUploadPath() << std::endl;
 			break;
 
-		case REWRITE:
-			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			//checkPath(lineArguments[1].substr(0, sizeArgumentOne));
-			location.setRewritePath(lineArguments[1].substr(0, sizeArgumentOne));
-			std::cout << "\tSet in LocationRewrite: " << location.getRewritePath() << std::endl;
-			break;
-
 		case ROOT:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			//checkPath(lineArguments[1].substr(0, sizeArgumentOne));
@@ -496,21 +481,22 @@ void ws::checkConfiguration(Server *servers) {
 
 		std::cout << "NAME: \t\t\t" << serverInfo.getServerName() << std::endl;
 
-		if (isPathExist(serverInfo.getRootPath()) == false)
+		if (!isPathExist(serverInfo.getRootPath()))
 			throw std::invalid_argument("The path " + serverInfo.getRootPath() + " doesn't exist.");
 		std::cout << "ROOT: \t\t\t" << serverInfo.getRootPath() << std::endl;
 
 		std::cout << "CLIENT_MAX_SIZE_BODY:\t" << serverInfo.getMaxBodySize() << std::endl;
 
-		if (isPathExist(serverInfo.getRootPath() + serverInfo.getIndexPath()) == false)
-			throw std::invalid_argument("The path " + (serverInfo.getRootPath() + serverInfo.getIndexPath()) + " doesn't exist.");
-		std::cout << "INDEX: \t\t\t" << (serverInfo.getRootPath() + serverInfo.getIndexPath()) << std::endl;
+		if (!isPathExist(serverInfo.getIndexPath()))
+			throw std::invalid_argument("The path " + (serverInfo.getIndexPath()) + " doesn't exist.");
+		std::cout << "INDEX: \t\t\t" << (serverInfo.getIndexPath()) << std::endl;
 
 		if (serverInfo.getUploadPath().empty())
 			std::cout << "\t[Upload is Empty]" << std::endl;
-		if (isPathExist(serverInfo.getRootPath() + serverInfo.getUploadPath()) == false)
-			throw std::invalid_argument("The path " + (serverInfo.getRootPath() + serverInfo.getUploadPath()) + " doesn't exist.");
-		std::cout << "UPLOAD: \t\t" << (serverInfo.getRootPath() + serverInfo.getUploadPath()) << std::endl;
+
+		if (!isPathExist(serverInfo.getUploadPath()))
+			throw std::invalid_argument("The path " + (serverInfo.getUploadPath()) + " doesn't exist.");
+		std::cout << "UPLOAD: \t\t" << (serverInfo.getUploadPath()) << std::endl;
 
 		std::cout << "AUTOINDEX: \t\t" << serverInfo.hasAutoindex() << std::endl;
 
@@ -525,9 +511,9 @@ void ws::checkConfiguration(Server *servers) {
 		}
 		std::cout << "ERROR_PAGE" << std::endl;
 		for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
-			if (isPathExist(serverInfo.getRootPath() + "/" + it->second) == false)
-				throw std::invalid_argument("The path " + (serverInfo.getRootPath() + "/" + it->second) + " doesn't exist.");
-			std::cout << "\t\t\t- " << it->first << " \t" << (serverInfo.getRootPath() + "/" + it->second) << "\n";
+			if (!isPathExist(it->second))
+				throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
+			std::cout << "\t\t\t- " << it->first << " \t" << (it->second) << "\n";
 		}
 
 		std::cout << "LOCATION: " << std::endl;
@@ -536,25 +522,33 @@ void ws::checkConfiguration(Server *servers) {
 			std::vector<std::string> method_loc = loc.getMethod();
 
 			std::cout << "\n\t" << it->first << std::endl;
+			if (!isPathExist(it->first)) {
+				throw std::invalid_argument("The path " + (it->first) + " doesn't exist.");
+			}
 
-			if (isPathExist(serverInfo.getRootPath() + it->first) == false)
-				throw std::invalid_argument("The path " + (serverInfo.getRootPath() + it->first) + " doesn't exist.");
+			if (loc.getRootPath().empty())
+				std::cout << "\t\tROOT: \t\t" << serverInfo.getRootPath() << std::endl;
+			else {
+				if (!isPathExist(loc.getRootPath()))
+					throw std::invalid_argument("The path " + loc.getRootPath() + " doesn't exist.");
+				std::cout << "\t\tROOT: \t\t" << loc.getRootPath() << std::endl;
+			}
 
 			if (loc.getIndexPath().empty())
-				std::cout << "\t\tINDEX: \t\t" << (serverInfo.getRootPath() + serverInfo.getIndexPath()) << std::endl;
+				std::cout << "\t\tINDEX: \t\t" << (serverInfo.getIndexPath()) << std::endl;
 			else {
-				if (isPathExist(serverInfo.getRootPath() + loc.getIndexPath()) == false)
-					throw std::invalid_argument("The path " + (serverInfo.getRootPath() + loc.getIndexPath())  + " doesn't exist.");
-				std::cout << "\t\tINDEX: \t\t" << (serverInfo.getRootPath() + loc.getIndexPath()) << std::endl;
+				if (!isPathExist(loc.getIndexPath()))
+					throw std::invalid_argument("The path " + (loc.getIndexPath())  + " doesn't exist.");
+				std::cout << "\t\tINDEX: \t\t" << (loc.getIndexPath()) << std::endl;
 			}
 
 			if (loc.getUploadPath().empty())
-				std::cout << "\t\tUPLOAD: \t" << (serverInfo.getRootPath() + serverInfo.getUploadPath()) << std::endl;
+				std::cout << "\t\tUPLOAD: \t" << (serverInfo.getUploadPath()) << std::endl;
 			else {
-				if (!isPathExist(serverInfo.getRootPath() + loc.getUploadPath()))
-					throw std::invalid_argument("The path " + (serverInfo.getRootPath() + loc.getUploadPath())  + " doesn't exist.");
+				if (!isPathExist(loc.getUploadPath()))
+					throw std::invalid_argument("The path " + (loc.getUploadPath())  + " doesn't exist.");
 
-				std::cout << "\t\tUPLoAD: \t" << (serverInfo.getRootPath() + loc.getUploadPath()) << std::endl;
+				std::cout << "\t\tUPLOAD: \t" << (loc.getUploadPath()) << std::endl;
 			}
 
 			std::cout << "\t\tAUTOINDEX: \t" << loc.hasAutoindex() << std::endl;
@@ -563,11 +557,6 @@ void ws::checkConfiguration(Server *servers) {
 			for(std::vector<std::string>::const_iterator it = method_loc.begin(); it != method_loc.end(); ++it) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; 
 			}
-
-			if (!isPathExist(serverInfo.getRootPath() + loc.getRewritePath()))
-					throw std::invalid_argument("The path " + (serverInfo.getRootPath() + loc.getRewritePath())  + " doesn't exist.");
-			std::cout << "\t\tREWRITE: \t" << (serverInfo.getRootPath() + loc.getRewritePath()) << std::endl;
-
 		}
 		std::cout << "----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }

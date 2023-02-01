@@ -24,7 +24,7 @@ namespace ws {
 	const std::string AL_NUM = LETTERS + "0123456789";
 
     const std::string CONFIG_INFO_LETTERS = LETTERS + '_';
-    const std::string CONFIG_PATH_LETTERS = LETTERS + "/_0123456789";
+    const std::string CONFIG_PATH_LETTERS = LETTERS + "./_0123456789";
 
 	const int POLL_MAX_EVENTS = 10;
 	const int POLL_EVENTS_SIZE = 10;
