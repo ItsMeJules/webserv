@@ -17,7 +17,7 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 
 	if (root[root.length()] == '/' && request.getPath()[0] == '/')
         root.erase(0, 1);
-		
+
 	if (queryStartPos != std::string::npos) {
 		data.query.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
 		data.requestedPath = root + request.getPath().substr(0, queryStartPos);

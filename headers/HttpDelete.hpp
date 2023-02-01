@@ -5,13 +5,13 @@
 
 class HttpDelete : public HttpMethod {
 	private:
-		
+
 	public:
 		HttpDelete();
 		HttpDelete(HttpDelete const &httpDelete);
 		~HttpDelete();
-		
-		HttpResponse execute(ServerInfo const &info, HttpRequest &request);
+
+		HttpResponse execute(ServerInfo const &serverInfo, HttpRequest &request);
 		HttpMethod *clone();
 
 		std::string getName();

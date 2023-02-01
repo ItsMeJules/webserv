@@ -27,11 +27,11 @@ HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	HttpResponse response;
 	std::ifstream fileStream;
-	
+
 	DefaultBody *body = new DefaultBody();
 
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
-	
+
 	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseReturn = cgi->execute(request, data, response);
@@ -42,7 +42,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 			response.generateError(response.getStatusCode(), serverInfo.getErrorPages(), *body);
 		delete cgi;
 	}
-	
+
 	if (response.getStatusCode() < 400) {
 		fileStream.open(data.requestedPath.c_str());
 

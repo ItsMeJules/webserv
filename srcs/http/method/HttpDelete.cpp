@@ -10,10 +10,29 @@ HttpDelete::~HttpDelete() {}
 
 // ############## PUBLIC ##############
 
-HttpResponse HttpDelete::execute(ServerInfo const &info, HttpRequest &request) {
-	(void)info;
+HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &request) {
+	HttpResponse response;
+	DefaultBody *body = new DefaultBody();
+	std::string root = serverInfo.getRootPath();
+	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
+
+	if (remove(data.requestedPath.c_str()) == 0)
+	{
+		response.setStatusCode(204);
+		body->append(HttpResponse::codes[204].explanation, HttpResponse::codes[204].explanation.size());
+	}
+	else
+	{
+		response.setStatusCode(404);
+		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());
+	}
+	response.addHeader("Content-Type", "text/plain");
+	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+	response.addHeader("Date", response.generateDate());
+
+
 	(void)request;
-	return HttpResponse();
+	return response;
 }
 
 HttpMethod *HttpDelete::clone() {
@@ -30,7 +49,7 @@ std::string HttpDelete::getName() {
 
 HttpDelete &HttpDelete::operator=(HttpDelete const &rhs) {
 	if (this != &rhs) {
-		
+
 	}
 	return *this;
 }
