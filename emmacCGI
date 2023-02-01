@@ -1,17 +1,1 @@
-<!DOCTYPE html>
-
-<head>
-    <title>POST</title>
-</head>
-
-
-<h1>Hello this is post request !</h1>
-<body style="text-align: center;">
-    <h3>title:</h3> <p></p>
-    <h3>content:</h3> <p></p>
-
-    <!-- <p> </p> -->
-
-</body>
-
-</html>
+Could not open input file: /mnt/nfs/homes/jpeyron/Documents/webserv/html/www/gege/cgi/script.php

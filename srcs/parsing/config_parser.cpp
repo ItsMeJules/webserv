@@ -238,6 +238,8 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			//checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
+			if (serverInfo.getRootPath()[0] != '/')
+				throw std::invalid_argument("Error on line: " + cpt.line + ", root path must be absolute!");
 			std::cout << "\tSet in ServerRootPath: " << serverInfo.getRootPath() << std::endl;
 			break;
 
@@ -468,6 +470,9 @@ void ws::checkConfiguration(Server *servers) {
 		std::vector<std::string> method;
 		std::map<int, std::string> errorPage;
 		std::map<std::string, Location*> location;
+		std::map<std::string, Location*> locationClone;
+		char absolutePath[1000];
+		getcwd(absolutePath, 1000);
 
 		method = serverInfo.getMethod();
 		errorPage = serverInfo.getError();
@@ -489,6 +494,10 @@ void ws::checkConfiguration(Server *servers) {
 
 		if (!isPathExist(serverInfo.getIndexPath()))
 			throw std::invalid_argument("The path " + (serverInfo.getIndexPath()) + " doesn't exist.");
+			
+		if (serverInfo.getIndexPath()[0] != '/')
+			serverInfo.setIndexPath(std::string(absolutePath) + "/" + serverInfo.getIndexPath());
+
 		std::cout << "INDEX: \t\t\t" << (serverInfo.getIndexPath()) << std::endl;
 
 		if (serverInfo.getUploadPath().empty())
@@ -496,6 +505,10 @@ void ws::checkConfiguration(Server *servers) {
 
 		if (!isPathExist(serverInfo.getUploadPath()))
 			throw std::invalid_argument("The path " + (serverInfo.getUploadPath()) + " doesn't exist.");
+
+		if (serverInfo.getUploadPath()[0] != '/')
+			serverInfo.setUploadPath(std::string(absolutePath) + "/" + serverInfo.getUploadPath());
+
 		std::cout << "UPLOAD: \t\t" << (serverInfo.getUploadPath()) << std::endl;
 
 		std::cout << "AUTOINDEX: \t\t" << serverInfo.hasAutoindex() << std::endl;
@@ -510,14 +523,17 @@ void ws::checkConfiguration(Server *servers) {
 			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
 		}
 		std::cout << "ERROR_PAGE" << std::endl;
-		for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
+		for(std::map<int, std::string>::iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
 			if (!isPathExist(it->second))
 				throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
+			if (it->second[0] != '/')
+				it->second = std::string(absolutePath) + "/" + it->second;
+				
 			std::cout << "\t\t\t- " << it->first << " \t" << (it->second) << "\n";
 		}
 
 		std::cout << "LOCATION: " << std::endl;
-		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
+		for(std::map<std::string, Location *>::iterator it = location.begin(); it != location.end(); ++it) {
 			Location loc = *it->second;
 			std::vector<std::string> method_loc = loc.getMethod();
 
@@ -525,6 +541,11 @@ void ws::checkConfiguration(Server *servers) {
 			if (!isPathExist(it->first)) {
 				throw std::invalid_argument("The path " + (it->first) + " doesn't exist.");
 			}
+
+			if (it->first[0] != '/')
+				locationClone.insert(std::make_pair(std::string(absolutePath) + "/" + it->first, it->second));
+			else
+				locationClone.insert(std::make_pair(it->first, it->second));
 
 			if (loc.getRootPath().empty())
 				std::cout << "\t\tROOT: \t\t" << serverInfo.getRootPath() << std::endl;
@@ -558,5 +579,6 @@ void ws::checkConfiguration(Server *servers) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; 
 			}
 		}
+		serverInfo.setLocation(locationClone);
 		std::cout << "----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }

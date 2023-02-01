@@ -103,7 +103,7 @@ bool ws::file_exists(std::string const &path) {
 bool ws::file_is_reg(std::string const &path) {
 	struct stat fileInfo;
 	stat(path.c_str(), &fileInfo);
-	return !S_ISREG(fileInfo.st_mode);
+	return S_ISREG(fileInfo.st_mode);
 }
 
 bool ws::make_tmp_file(tmp_file_t &tft) {

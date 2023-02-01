@@ -34,10 +34,10 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	Cgi *cgi = new Cgi(serverInfo.getCgis());
 
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
-		std::string responseRet = cgi->execute(request, data);
-		if (responseRet == "error")
-			std::cout << "error" << std::endl;
-		body->append(responseRet, responseRet.size());
+		std::string responseRet = cgi->execute(request, data, response);
+		
+		if (responseRet != "error")
+			body->append(responseRet, responseRet.size());
 	}
 
 	if (formBody != NULL) {
@@ -56,17 +56,20 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 				break ;
 			}
 		}
-		response.setStatusCode(success ? 201 : 500);
-		ofs.close();
-
-		body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
-
-		response.addHeader("Content-Type", "text/plain");
-		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-		response.setMessageBody(body);
 	}
 
+	if (!ws::file_exists(data.requestedPath)) {
+		response.setStatusCode(404);
+		response.addHeader("Connection", "close");
+	}
+
+	body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
+
+	response.addHeader("Content-Type", "text/plain");
+	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
+
+	response.setMessageBody(body);
 
 	delete cgi;
 	return response;

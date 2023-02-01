@@ -34,11 +34,11 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
 	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
-		std::string responseReturn = cgi->execute(request, data);
+		std::string responseReturn = cgi->execute(request, data, response);
 
-		if (responseReturn == "error")
-			response.setStatusCode(500);
-
+		if (responseReturn != "error")
+			body->append(responseReturn, responseReturn.size());
+			
 	} else if (data.fileExtension == ".css")
 		response.addHeader("Content-Type", "text/css");
 	else if (data.fileExtension == ".html")
@@ -47,7 +47,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		response.addHeader("Content-Type", "text/favicon");
 
 	fileStream.open(data.requestedPath.c_str(), std::fstream::ate);
-
+	
 	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
 		response.setStatusCode(404);
 		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());

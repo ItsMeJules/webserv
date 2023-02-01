@@ -1,5 +1,4 @@
 #include "ServerInfo.hpp"
-#include <iostream>
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -76,7 +75,7 @@ const std::map<std::string, Location *> &ServerInfo::getLocations() const {
     return _locations;
 }
 
-const std::map<int, std::string> &ServerInfo::getError() const {
+std::map<int, std::string> &ServerInfo::getError() {
 	return _errorPage;
 }
 
@@ -122,6 +121,10 @@ void  ServerInfo::addToCGIS(std::string Extension, std::string Path) {
 
 void  ServerInfo::addErrorPage(int Key, std::string Value) {
 	this->_errorPage[Key] = Value;
+}
+
+void ServerInfo::setLocation(std::map<std::string, Location*> locations) {
+	_locations = locations;
 }
 
 // ############## OPERATORS ##############

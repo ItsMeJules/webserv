@@ -45,7 +45,7 @@ class ServerInfo {
 		const std::vector<std::string> &getMethod() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, Location*> &getLocations() const;
-		const std::map<int, std::string> &getError() const;
+		std::map<int, std::string> &getError();
 
 		void  setMaxBodySize(uint32_t MaxBodySize);
 		void  setIp(std::string ip);
@@ -58,6 +58,7 @@ class ServerInfo {
 		void  addtoMethod(std::string Method);
 		void  addToCGIS(std::string Extension, std::string Path);
 		void  addErrorPage(int Key, std::string Value);
+		void setLocation(std::map<std::string, Location*> location);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };
