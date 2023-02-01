@@ -95,105 +95,6 @@ void ws::log(int const &level, std::string const &prefix, std::string const &mes
 		std::cout << "\n error: " << strerror(errno) << std::endl;
 }
 
-// static int	ws::check_charset(char c, char current)
-// {
-// 	if (current == c)
-// 	{
-// 		return (1);
-// 	}
-// 	return (0);
-// }
-
-// static int	ws::words_count(char const *s, char c)
-// {
-// 	int	i;
-// 	int	count;
-
-// 	i = 0;
-// 	count = 0;
-// 	while (check_charset(c, s[i]))
-// 		i++;
-// 	while (s[i])
-// 	{
-// 		if (check_charset(c, s[i]))
-// 			count++;
-// 		while (check_charset(c, s[i]))
-// 			i++;
-// 		i++;
-// 	}
-// 	if (!check_charset(c, s[i]))
-// 		count++;
-// 	return (count);
-// }
-
-// static int	ws::wordlen(char const *s, char c)
-// {
-// 	int	i;
-// 	int	s_size;
-
-// 	s_size = 0;
-// 	i = 0;
-// 	while (check_charset(c, s[i]) && s[i])
-// 		i++;
-// 	while (!check_charset(c, s[i]) && s[i])
-// 	{
-// 		s_size++;
-// 		i++;
-// 	}
-// 	return (s_size);
-// }
-
-// static char	*ws::dupword(char const *s, char c, int n)
-// {
-// 	char	*dup;
-// 	int		i;
-// 	int		j;
-
-// 	i = 0;
-// 	j = 0;
-// 	dup = (char *)malloc(sizeof(char) * (n + 1));
-// 	if (!dup)
-// 		return (NULL);
-// 	while (check_charset(c, s[i]))
-// 		i++;
-// 	while (!check_charset(c, s[i]) && s[i])
-// 	{
-// 		dup[j] = s[i];
-// 		j++;
-// 		i++;
-// 	}
-// 	dup[j] = 0;
-// 	return (dup);
-// }
-
-// char	**ws::ft_split(char const *s, char c)
-// {
-// 	char	**str;
-// 	int		i;
-// 	int		j;
-
-// 	i = 0;
-// 	j = 0;
-// 	if (!s)
-// 		return (0);
-// 	str = (char **)malloc(sizeof(char *) * (ws::words_count(s, c) + 1));
-// 	if (!str)
-// 		return (NULL);
-// 	while (s[i])
-// 	{
-// 		if (check_charset(c, s[i]))
-// 			i++;
-// 		else
-// 		{
-// 			str[j] = dupword(s + i, c, wordlen(s + i, c));
-// 			j++;
-// 			i += wordlen(s + i, c);
-// 		}
-// 	}
-// 	str[j] = NULL;
-// 	return (str);
-// }
-
 bool ws::file_exists(std::string const &path) {
 	struct stat fileInfo;
 	return stat(path.c_str(), &fileInfo) == 0;
@@ -223,6 +124,7 @@ void ws::close_tmp_file(ws::tmp_file_t const &tft) {
 	close(tft.fd);
 	unlink(tft.name.c_str());
 }
+
 bool	ws::ft_in_charset(char const c, const std::string &charset)
 {
 	int	i_charset;
@@ -258,3 +160,49 @@ std::vector<std::string> ws::splitStr(const std::string &str, const std::string 
 	return res;
 }
 
+void ws::listElemts(std::string path, std::string loc) {
+	DIR 			*dir;
+	struct dirent	*entry;
+
+	if (dir = opendir(path.c_str())) {
+		while (entry = readdir(dir))
+		{
+			if (entry->d_name[0] == '.')
+				continue;
+			if (entry->d_type == DT_DIR) {
+				_dir.push_back(loc + "/" + entry->d_name);
+				listElemts(path + "/" + entry->d_name, loc);
+			}
+			if (entry->d_type == DT_REG)
+			{
+				std::string p = path + "/" + entry->d_name;
+				_dir.push_back(p.substr(p.find(loc)));
+			}
+		}
+		closedir(dir);
+	}
+}
+
+std::string ws::generatorHTML(void) {
+	std::string html = "<!DOCTYPE html><html><head><title>WebServ Autoindex</title></head><body><ul>";
+	for (std::vector<std::string>::iterator it = _dir.begin(); it != _dir.end(); ++it)
+	{
+		std::string add = "";
+		add += "<li><a href=\"";
+		add += (*it);
+		add += "\">";
+		add += (*it);
+		add += "</a></li>";
+		html += add;
+	}
+	html += "</ul></body></html>";
+	return html;
+	
+}
+
+std::string ws::makingAutoIndex(std::string path, std::string loc) {
+	listElemts(path, loc);
+	std::string autoIndex = generatorHTML();
+	_dir.clear();
+	return (autoIndex);
+}

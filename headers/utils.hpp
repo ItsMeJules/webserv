@@ -13,10 +13,13 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <dirent.h>
 
 # include "Constants.hpp"
 
 namespace ws {
+
+	std::vector<std::string>	_dir;
 
 	// HTTP
 	typedef struct http_status_s {
@@ -58,6 +61,12 @@ namespace ws {
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);
 	std::vector<std::string> splitStr(const std::string &str, const std::string &charset);
+
+	// AUTOINDEX
+	void 			listElemts(std::string path, std::string loc);
+	std::string		makingAutoIndex(std::string path, std::string loc);
+	std::string		generatorHTML(void);
+
 }
 
 #endif
