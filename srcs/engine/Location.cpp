@@ -20,10 +20,6 @@ const std::string &Location::getUploadPath() const {
 	return _uploadPath;
 }
 
-const std::string &Location::getRewritePath() const {
-	return _rewritePath;
-}
-
 const bool &Location::hasAutoindex() const {
 	return _autoIndex;
 }
@@ -44,10 +40,6 @@ void  Location::setUploadPath(std::string Path) {
 	this->_uploadPath = Path;
 }
 
-void  Location::setRewritePath(std::string Path) {
-	this->_rewritePath = Path;
-}
-
 void  Location::setAutoIndex(bool AutoIndex) {
 	this->_autoIndex = AutoIndex;
 }
@@ -63,7 +55,6 @@ Location &Location::operator=(Location const &rhs) {
 		_indexPath = rhs._indexPath;
 		_rootPath = rhs._rootPath;
 		_uploadPath = rhs._uploadPath;
-		_rewritePath = rhs._rewritePath;
 		_autoIndex = rhs._autoIndex;
 		_method = rhs._method;
 	}
