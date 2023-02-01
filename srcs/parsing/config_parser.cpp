@@ -555,16 +555,20 @@ void ws::checkConfiguration(Server *servers) {
 			else
 				locationClone.insert(std::make_pair(it->first, it->second));
 
-			if (loc.getRootPath().empty())
-				std::cout << "\t\tROOT: \t\t" << serverInfo.getRootPath() << std::endl;
+			if (loc.getRootPath().empty()) {
+				it->second->setRootPath(serverInfo.getRootPath());
+				std::cout << "\t\tROOT: \t\t" << it->second->getRootPath() << std::endl;
+			}
 			else {
 				if (!isPathExist(loc.getRootPath()))
 					throw std::invalid_argument("The path " + loc.getRootPath() + " doesn't exist.");
 				std::cout << "\t\tROOT: \t\t" << loc.getRootPath() << std::endl;
 			}
 
-			if (loc.getIndexPath().empty())
-				std::cout << "\t\tINDEX: \t\t" << (serverInfo.getIndexPath()) << std::endl;
+			if (loc.getIndexPath().empty()) {
+				it->second->setIndexPath(serverInfo.getIndexPath());
+				std::cout << "\t\tINDEX: \t\t" << (it->second->getIndexPath()) << std::endl;
+			}
 			else {
 				if (!isPathExist(loc.getIndexPath()))
 					throw std::invalid_argument("The path " + (loc.getIndexPath())  + " doesn't exist.");
