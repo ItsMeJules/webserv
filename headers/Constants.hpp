@@ -49,6 +49,10 @@ namespace ws {
 	const int DECODER_CALL_AGAIN = 2;
 	const int DECODER_PARSE_READY = 3;
 
+
+	//DefaultDataDecoder
+	const int DECODER_DEFAULT_BODY_TOO_BIG = -3;
+
 	//ChunkedDataDecoder
 	const int DECODER_CHUNKED_NOT_HEX = -1;
 	const int DECODER_CHUNKED_CHUNK_TOO_BIG = -2;

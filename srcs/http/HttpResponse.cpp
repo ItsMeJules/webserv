@@ -37,12 +37,16 @@ std::string	HttpResponse::generateDate(void)
 }
 
 void HttpResponse::generateError(int code, std::map<int, std::string> const &errorPage, DefaultBody &body) {
-	std::ifstream fileStream(errorPage.at(code).c_str()); // no need to check if it opened
-    size_t fileSize = ws::get_file_size(fileStream);
-
-    body.append(ws::get_file_contents(fileStream, fileSize), fileSize);
+	std::ifstream fileStream(errorPage.at(code).c_str());
 
     setStatusCode(code);
+    if (fileStream.is_open()) {
+        size_t fileSize = ws::get_file_size(fileStream);
+
+        body.append(ws::get_file_contents(fileStream, fileSize), fileSize);
+    } else
+        body.append(_statusPhrase.explanation, _statusPhrase.explanation.size());
+
     addHeader("Content-Type", "text/html");
     if (code != 404)
         addHeader("Connection", "close"); // maybe the connection doesn't always get closed (example 404 errors)

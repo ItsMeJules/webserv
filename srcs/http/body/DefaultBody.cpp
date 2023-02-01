@@ -40,6 +40,8 @@ int DefaultBody::getBodySize() {
 }
 
 std::string DefaultBody::getBodyStr() {
+	if (_body.size() == 0)
+		return "";
 	return std::string(_body.data(), _body.size() - 1);
 }
 

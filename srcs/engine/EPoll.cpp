@@ -121,7 +121,7 @@ int EPoll::polling(Server &server) {
 				if (!client.hasRequestFailed())
 					response = client.getHttpRequest().execute(server.getServerInfo());
 				else {
-					response.generateError(400, server.getServerInfo().getErrorPages(), *errorBody);
+					response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo().getErrorPages(), *errorBody);
 				}
 
                 server.sendData(client, response);
@@ -138,7 +138,6 @@ int EPoll::polling(Server &server) {
  	}
 	return 1;
 }
-
 
 int EPoll::pollOutEvent() const {
 	return EPOLLOUT;

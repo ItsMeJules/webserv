@@ -61,7 +61,7 @@ AMessageBody *RequestParser::getAccordingBodyType() {
 
 // ############## PUBLIC ##############
 
-bool RequestParser::parseRequest(char *request, int &byteCount) {
+bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBodySize) {
 	if (!_headersReceived) {
 		std::string recv = _inReceive.str();
 		std::string wholeRequest = recv + std::string(request, byteCount);
@@ -79,18 +79,26 @@ bool RequestParser::parseRequest(char *request, int &byteCount) {
 				ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(bodySize) + " chars from body received with headers.");
 
 				std::vector<char> vector(wholeRequest.data() + (wholeRequest.size() - bodySize), wholeRequest.data() + wholeRequest.size());
-				parseRequest(vector.data(), bodySize); // removes to byteCount header size.
+				parseRequest(vector.data(), bodySize, maxBodySize); // removes to byteCount header size.
 			}
 		} else {
 			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "data stored in stringstream");
 			_inReceive << request;
 		}
 	} else {
+		if (_httpRequest.headersHasKey("Content-Length") && ws::stoi(_httpRequest.getHeader("Content-Length")) > maxBodySize) {
+				_errorCode = 413;
+				return false;
+		}
+
         if (_httpRequest.getMessageBody() == NULL)
             _httpRequest.setMessageBody(getAccordingBodyType());
+
 		int ret = _httpRequest.getMessageBody()->parse(request, byteCount);
-		if (ret < 0)
+		if (ret < 0) {
+			_errorCode = 400;
 			return false;
+		}
         _requestParsed = ret == 1;
     }
 	if (_requestParsed) {
@@ -118,7 +126,9 @@ const bool &RequestParser::isRequestParsed() const {
 	return _requestParsed;
 }
 
-
+const int &RequestParser::getErrorCode() const {
+	return _errorCode;
+}
 
 // ############## OPERATORS ##############
 

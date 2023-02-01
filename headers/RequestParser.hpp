@@ -21,6 +21,8 @@ class RequestParser {
 		bool _headersReceived;
 		bool _requestParsed;
 
+		int _errorCode;
+
 		HttpRequest _httpRequest;
 
 		void parseFirstLine(std::string firstLine);
@@ -35,14 +37,12 @@ class RequestParser {
 		RequestParser(RequestParser const &request);
 		~RequestParser();
 
-		bool parseRequest(char *request, int &byteCount);
+		bool parseRequest(char *request, int &byteCount, int const &maxBodySize);
         void clear();
-
-		std::string	findQuery(void);
-		std::string	getQuery() const;
 
 		HttpRequest &getHttpRequest();
 		const bool &isRequestParsed() const;
+		const int &getErrorCode() const;
 
 		RequestParser &operator=(RequestParser const &rhs);
 };

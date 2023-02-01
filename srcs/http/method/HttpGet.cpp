@@ -31,7 +31,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	DefaultBody *body = new DefaultBody();
 
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
-
+	
 	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseReturn = cgi->execute(request, data, response);

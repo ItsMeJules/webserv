@@ -31,7 +31,6 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
-
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseRet = cgi->execute(request, data, response);

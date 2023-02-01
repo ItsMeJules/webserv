@@ -28,7 +28,8 @@ int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 			ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "all data received.");
 			return ws::DECODER_STOP;
 		}
-	}
+	} else if (_sizeRead > _contentLength)
+		return ws::DECODER_DEFAULT_BODY_TOO_BIG;
 
 	ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "data stored in vector. Left to read " + ws::itos(_contentLength - _sizeRead));
 	_tmp.clear();
