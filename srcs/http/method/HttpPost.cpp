@@ -31,47 +31,51 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
-	Cgi *cgi = new Cgi(serverInfo.getCgis());
 
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
+		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseRet = cgi->execute(request, data, response);
 		
 		if (responseRet != "error")
 			body->append(responseRet, responseRet.size());
+		else
+			response.generateError(response.getStatusCode(), serverInfo.getErrorPages(), *body);
+		delete cgi;
 	}
 
-	if (formBody != NULL) {
-		FormDataBody::FormDataPart *part;
-		std::ofstream ofs;
+	if (response.getStatusCode() < 400) {
+		if (formBody != NULL) {
+			FormDataBody::FormDataPart *part;
+			std::ofstream ofs;
 
-		bool success = true;
-		data.requestedPath += serverInfo.getUploadPath();
+			bool success = true;
+			data.requestedPath += serverInfo.getUploadPath();
 
-		while ((part = formBody->readForm()) != NULL) {
-			if (!part->_headersParsed || part->_directiveName != part->_fileKey)
-				continue ;
+			while ((part = formBody->readForm()) != NULL) {
+				if (!part->_headersParsed || part->_directiveName != part->_fileKey)
+					continue ;
 
-			if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
-				success = false;
-				break ;
+				if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
+					success = false;
+					break ;
+				}
 			}
+		}
+
+		if (!ws::file_exists(data.requestedPath))
+			response.generateError(404, serverInfo.getErrorPages(), *body);
+		else {
+			body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
+			
+			response.addHeader("Content-Type", "text/plain");
 		}
 	}
 
-	if (!ws::file_exists(data.requestedPath)) {
-		response.setStatusCode(404);
-		response.addHeader("Connection", "close");
-	}
-
-	body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
-
-	response.addHeader("Content-Type", "text/plain");
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
 
 	response.setMessageBody(body);
 
-	delete cgi;
 	return response;
 }
 

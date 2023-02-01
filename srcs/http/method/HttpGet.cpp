@@ -28,35 +28,39 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	HttpResponse response;
 	std::ifstream fileStream;
 	
-	Cgi *cgi = new Cgi(serverInfo.getCgis());
 	DefaultBody *body = new DefaultBody();
 
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
 	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
+		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseReturn = cgi->execute(request, data, response);
 
 		if (responseReturn != "error")
 			body->append(responseReturn, responseReturn.size());
-			
+		else
+			response.generateError(response.getStatusCode(), serverInfo.getErrorPages(), *body);
+		delete cgi;
 	}
-
-	fileStream.open(data.requestedPath.c_str());
 	
-	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
-		response.generateError(404, serverInfo.getErrorPages(), *body);
+	if (response.getStatusCode() < 400) {
+		fileStream.open(data.requestedPath.c_str());
+
+		if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath))
+			response.generateError(404, serverInfo.getErrorPages(), *body);
+		else {
+			data.fileSize = ws::get_file_size(fileStream);
+
+			body->append(ws::get_file_contents(fileStream, data.fileSize), data.fileSize);
+
+			if (data.fileExtension == ".css")
+				response.addHeader("Content-Type", "text/css");
+			else if (data.fileExtension == ".html")
+				response.addHeader("Content-Type", "text/html");
+			else if (data.fileExtension == ".ico")
+				response.addHeader("Content-Type", "text/favicon");
+		}
 		fileStream.close();
-	} else {
-		data.fileSize = ws::get_file_size(fileStream);
-
-		body->append(ws::get_file_contents(fileStream, data.fileSize), data.fileSize);
-
-		if (data.fileExtension == ".css")
-			response.addHeader("Content-Type", "text/css");
-		else if (data.fileExtension == ".html")
-			response.addHeader("Content-Type", "text/html");
-		else if (data.fileExtension == ".ico")
-			response.addHeader("Content-Type", "text/favicon");
 	}
 
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
@@ -64,8 +68,6 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	response.setMessageBody(body);
 
-	delete cgi;
-	fileStream.close();
 	return response;
 }
 
