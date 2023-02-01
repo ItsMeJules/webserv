@@ -106,6 +106,12 @@ bool ws::file_is_reg(std::string const &path) {
 	return S_ISREG(fileInfo.st_mode);
 }
 
+bool ws::file_is_dir(std::string const &path) {
+	struct stat fileInfo;
+	stat(path.c_str(), &fileInfo);
+	return S_ISDIR(fileInfo.st_mode);
+}
+
 bool ws::make_tmp_file(tmp_file_t &tft) {
 	tft.name += ".XXXXXX";
 
@@ -139,6 +145,26 @@ std::string ws::get_file_contents(std::ifstream &stream, int fileSize) {
 	stream.read(&fileContent[0], fileSize);
 	return fileContent;
 }
+
+std::string ws::html_list_dir(std::string const &path) {
+	DIR *dir;
+	struct dirent *ent;
+	std::string html = "<!DOCTYPE html><html><head><title>WebServ Autoindex</title></head><body><ul>";
+	
+	if ((dir = opendir(path.c_str())) != NULL) {
+		while ((ent = readdir(dir)) != NULL) {
+			html += "<li><a href=\"";
+			html += ent->d_name;
+			html += "\">";
+			html += ent->d_name;
+			html += "</a></li>";
+		}
+		closedir(dir);
+	}
+	html += "</ul></body></html>";
+	return html;
+}
+
 
 bool	ws::ft_in_charset(char const c, const std::string &charset)
 {

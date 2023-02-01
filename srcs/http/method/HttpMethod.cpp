@@ -21,12 +21,13 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 
 	if (queryStartPos != std::string::npos) {
 		data.query.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
-		data.requestedPath = root + request.getPath().substr(0, queryStartPos);
+		data.rawRequestedPath = root + request.getPath().substr(0, queryStartPos);
 	} else
-		data.requestedPath = root + request.getPath();
+		data.rawRequestedPath = root + request.getPath();
 
+	data.requestedPath = data.rawRequestedPath;
 	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-		size_t foundPos = data.requestedPath.find(it->first);
+		size_t foundPos = data.rawRequestedPath.find(it->first);
 		if (foundPos == std::string::npos)
 			continue ;
 
@@ -37,9 +38,8 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 			indexPath = it->second->getIndexPath();
 	}
 
-
-	if (data.requestedPath == root + "/")
-		data.requestedPath = indexPath;
+	// if (data.requestedPath == root + "/")
+	// 	data.requestedPath = indexPath;
 
 	data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/"), queryStartPos);
 	if (data.fileName != "/" && data.fileName.find(".") != std::string::npos)

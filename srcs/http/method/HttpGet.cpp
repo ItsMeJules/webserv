@@ -32,7 +32,20 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
-	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
+	if (ws::file_is_dir(data.requestedPath)) {
+		bool autoIndex = serverInfo.hasAutoindex();
+
+		for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
+			size_t foundPos = data.rawRequestedPath.find(it->first);
+			if (foundPos != std::string::npos) {
+				autoIndex = it->second->hasAutoindex();
+				break ;
+			}
+		}
+
+		std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
+		body->append(autoIndexStr, autoIndexStr.size());
+	} else if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseReturn = cgi->execute(request, data, response);
 

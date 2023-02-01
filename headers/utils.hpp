@@ -13,6 +13,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <dirent.h>
 
 # include "Constants.hpp"
 
@@ -25,6 +26,7 @@ namespace ws {
 	} http_status_t;
 
 	typedef struct request_data_s {
+		std::string rawRequestedPath;
 		std::string requestedPath;
 		std::string fileName;
 		std::string fileExtension;
@@ -54,14 +56,15 @@ namespace ws {
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
 
-
 	// FILES
 	bool file_exists(std::string const &path);
 	bool file_is_reg(std::string const &path);
+	bool file_is_dir(std::string const &path);
 	bool make_tmp_file(tmp_file_t &tft);
 	void close_tmp_file(ws::tmp_file_t const &tft);
 	size_t get_file_size(std::ifstream &stream);
 	std::string get_file_contents(std::ifstream &stream, int fileSize);
+	std::string html_list_dir(std::string const &path);
 
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);
