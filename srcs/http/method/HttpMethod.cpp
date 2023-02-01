@@ -27,7 +27,7 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
 		if (data.requestedPath != it->first)
 			continue ;
-
+		std::cout << "req_before: " << data.requestedPath << std::endl;
 		data.requestedPath.erase(0, it->first.size());
 		data.requestedPath = it->second->getRootPath() + data.requestedPath;
 	}
