@@ -237,28 +237,24 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 
 		case INDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			// checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerAutoIndex: " << serverInfo.getIndexPath() << std::endl;
 			break;
 
 		case UPLOAD:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			// checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerUploadPath: " << serverInfo.getUploadPath() << std::endl;
 			break;
 
 		case ROOT:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			// checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			serverInfo.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in ServerRootPath: " << serverInfo.getRootPath() << std::endl;
 			break;
 
 		case CGI:
 			checkerArguments(lineArguments.size(), 3, lineArguments[2]);		
-			// checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
 
 			serverInfo.addToCGIS(lineArguments[1], lineArguments[2].substr(0, lineArguments[2].size() - 1));
 			cgi = serverInfo.getCgis();
@@ -292,8 +288,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			tmp = ws::stoi(lineArguments[1]);
 			if (HttpResponse::codes.count(tmp) == 0)
 				throw std::invalid_argument("Error, Page_Error : The Error Key doen't exist.");
-			
-			// checkPath(lineArguments[2].substr(0, lineArguments[2].size() - 1));
 
 			serverInfo.addErrorPage(tmp, lineArguments[2].substr(0, lineArguments[2].size() - 1));
 			errorPage = serverInfo.getError();
@@ -327,14 +321,12 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 	switch(cpt.configKeys[lineArguments[0]]) {
 		case INDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			// checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			location.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in LocationIndex: " << location.getIndexPath() << std::endl;
 			break;
 		
 		case ROOT:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			// checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			location.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in LocationRoot: " << location.getRootPath() << std::endl;
 			break;
@@ -367,7 +359,6 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 
 		case UPLOAD:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
-			// checkPath(lineArguments[1].substr(0, sizeArgumentOne));
 			location.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
 			std::cout << "\tSet in LocationUpload: " << location.getUploadPath() << std::endl;
 			break;
