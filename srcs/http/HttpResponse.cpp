@@ -8,7 +8,7 @@ HttpResponse::HttpResponse(int statusCode)
 	: HttpMessage("HTTP/1.1"), _statusCode(statusCode), _statusPhrase(codes[statusCode]) {}
 
 HttpResponse::HttpResponse() : HttpMessage("HTTP/1.1"), _statusCode(200), _statusPhrase(codes[200]) {}
-HttpResponse::HttpResponse(HttpResponse const &httpResponse) { *this = httpResponse; }
+HttpResponse::HttpResponse(HttpResponse const &httpResponse) : HttpMessage(*this) { *this = httpResponse; }
 HttpResponse::~HttpResponse() {}
 
 // ############## PRIVATE ##############

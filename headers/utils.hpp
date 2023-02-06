@@ -26,13 +26,12 @@ namespace ws {
 	} http_status_t;
 
 	typedef struct request_data_s {
-		std::string rawRequestedPath;
+		std::string clientPath; // ex: google.com/drive/lol -> /drive/lol
 		std::string requestedPath;
+
 		std::string fileName;
 		std::string fileExtension;
-		std::string query;
-
-		size_t fileSize;
+		std::string cgiQuery;
 	} request_data_t;
 
 	typedef struct tmp_file_s {

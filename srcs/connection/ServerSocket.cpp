@@ -7,7 +7,7 @@ ServerSocket::ServerSocket(int port) : _domain(AF_INET), _type(SOCK_STREAM), _po
 
 ServerSocket::ServerSocket() : _domain(AF_INET), _type(SOCK_STREAM), _protocol(0), _port(-1) {}
 
-ServerSocket::ServerSocket(ServerSocket const &socket) { *this = socket; }
+ServerSocket::ServerSocket(ServerSocket const &socket) : ASocket(*this) { *this = socket; }
 ServerSocket::~ServerSocket() {}
 
 // ############## PUBLIC ##############

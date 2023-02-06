@@ -8,7 +8,7 @@ FormDataBody::FormDataBody(ADataDecoder *decoder, std::string boundaryHeader) :
 {}
 
 FormDataBody::FormDataBody() {}
-FormDataBody::FormDataBody(FormDataBody const &formDataBody) { *this = formDataBody; }
+FormDataBody::FormDataBody(FormDataBody const &formDataBody) : AMessageBody(*this) { *this = formDataBody; }
 
 FormDataBody::~FormDataBody() {
 	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++)

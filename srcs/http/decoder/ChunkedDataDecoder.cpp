@@ -6,7 +6,7 @@ ChunkedDataDecoder::ChunkedDataDecoder() {
 	clearActualChunk();
 }
 
-ChunkedDataDecoder::ChunkedDataDecoder(ChunkedDataDecoder const &chunkedDataDecoder) { *this = chunkedDataDecoder; }
+ChunkedDataDecoder::ChunkedDataDecoder(ChunkedDataDecoder const &chunkedDataDecoder) : ADataDecoder(*this) { *this = chunkedDataDecoder; }
 ChunkedDataDecoder::~ChunkedDataDecoder() {}
 
 // ############## PRIVATE ##############

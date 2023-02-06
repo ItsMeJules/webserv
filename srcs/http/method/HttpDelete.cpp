@@ -3,7 +3,7 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 HttpDelete::HttpDelete() {}
-HttpDelete::HttpDelete(HttpDelete const &httpDelete) { *this = httpDelete; }
+HttpDelete::HttpDelete(HttpDelete const &httpDelete) : HttpMethod(*this) { *this = httpDelete; }
 HttpDelete::~HttpDelete() {}
 
 // ############## PRIVATE ##############

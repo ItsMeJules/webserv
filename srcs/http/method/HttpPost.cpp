@@ -4,7 +4,7 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 HttpPost::HttpPost() {}
-HttpPost::HttpPost(HttpPost const &httpPost) { *this = httpPost; }
+HttpPost::HttpPost(HttpPost const &httpPost) : HttpMethod(*this) { *this = httpPost; }
 HttpPost::~HttpPost() {}
 
 // ############## PRIVATE ##############
@@ -47,7 +47,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 			FormDataBody::FormDataPart *part;
 			std::ofstream ofs;
 
-			bool success = true;
+			// bool success = true;
 			data.requestedPath += serverInfo.getUploadPath();
 
 			while ((part = formBody->readForm()) != NULL) {
@@ -55,7 +55,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 					continue ;
 
 				if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
-					success = false;
+					// success = false;
 					break ;
 				}
 			}

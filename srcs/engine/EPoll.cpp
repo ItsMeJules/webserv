@@ -122,7 +122,6 @@ int EPoll::polling(Server &server) {
 					response = client.getHttpRequest().execute(server.getServerInfo());
 				else {
 					response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo().getErrorPages(), *errorBody);
-					response.generateError()
 				}
 
                 server.sendData(client, response);

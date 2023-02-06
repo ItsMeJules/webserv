@@ -5,7 +5,7 @@ std::map<std::string, HttpMethod*> HttpRequest::methods = HttpRequest::initMetho
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 HttpRequest::HttpRequest() : _method(NULL) {}
-HttpRequest::HttpRequest(HttpRequest const &httpRequest) { *this = httpRequest; }
+HttpRequest::HttpRequest(HttpRequest const &httpRequest) : HttpMessage(*this) { *this = httpRequest; }
 HttpRequest::~HttpRequest() {
 	delete _method;
 }

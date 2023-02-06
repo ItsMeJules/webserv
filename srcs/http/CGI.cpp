@@ -73,7 +73,7 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data, HttpRes
 	_env["PATH_NAME"] = data.requestedPath;
 	_env["SCRIPT_NAME"] = data.requestedPath;
 	_env["SCRIPT_FILENNAME"] = data.requestedPath;
-	_env["QUERY_STRING"] = data.query;
+	_env["QUERY_STRING"] = data.cgiQuery;
 	_env["CONTENT_LENGTH"] = ws::itos(request.getPath().length());
 
 	char **env = new char*[3];

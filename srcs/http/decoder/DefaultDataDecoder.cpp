@@ -5,7 +5,7 @@
 DefaultDataDecoder::DefaultDataDecoder(int contentLength) : _contentLength(contentLength), _sizeRead(0) {}
 
 DefaultDataDecoder::DefaultDataDecoder() : _contentLength(-1), _sizeRead(0) {}
-DefaultDataDecoder::DefaultDataDecoder(DefaultDataDecoder const &defaultDataDecoder) { *this = defaultDataDecoder; }
+DefaultDataDecoder::DefaultDataDecoder(DefaultDataDecoder const &defaultDataDecoder) : ADataDecoder(*this) { *this = defaultDataDecoder; }
 
 DefaultDataDecoder::~DefaultDataDecoder() {}
 

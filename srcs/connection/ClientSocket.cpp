@@ -4,7 +4,7 @@
 
 ClientSocket::ClientSocket() : _serverListeningFd(-1) {}
 ClientSocket::ClientSocket(int serverListeningFd) : _serverListeningFd(serverListeningFd) {}
-ClientSocket::ClientSocket(ClientSocket const &clientSocket) { *this = clientSocket; }
+ClientSocket::ClientSocket(ClientSocket const &clientSocket) : ASocket(*this) { *this = clientSocket; }
 ClientSocket::~ClientSocket() {}
 
 // ############## PRIVATE ##############

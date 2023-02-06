@@ -4,7 +4,7 @@
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
 HttpGet::HttpGet() {}
-HttpGet::HttpGet(HttpGet const &httpGet) { *this = httpGet; }
+HttpGet::HttpGet(HttpGet const &httpGet) : HttpMethod(*this) { *this = httpGet; }
 HttpGet::~HttpGet() {}
 
 // ############## PRIVATE ##############
@@ -32,10 +32,11 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	DefaultBody *body = new DefaultBody();
 
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
+	size_t fileSize;
 
-	if (!ws::file_exists(data.requestedPath) && ws::file_is_dir(data.rawRequestedPath)) {
+	if (!ws::file_exists(data.requestedPath) && ws::file_is_dir(data.requestedPath)) {
 	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-		size_t foundPos = data.rawRequestedPath.find(it->first);
+		size_t foundPos = data.requestedPath.find(it->first);
 		if (foundPos != std::string::npos) {
 			if (std::find(it->second->getMethod().begin(), it->second->getMethod().end(), getName()) == it->second->getMethod().end())
 				_errorCode = 405;
@@ -48,13 +49,13 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		bool autoIndex = serverInfo.hasAutoindex();
 
 		for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-			if (data.rawRequestedPath.find(it->first) != std::string::npos) {
+			if (data.requestedPath.find(it->first) != std::string::npos) {
 				autoIndex = it->second->hasAutoindex();
 				break ;
 			}
 		}
 		if (autoIndex) {
-			std::string autoIndexStr = ws::html_list_dir(data.rawRequestedPath);
+			std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
 			body->append(autoIndexStr, autoIndexStr.size());
 		} else
 			autoIndex = false;
@@ -75,9 +76,9 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath))
 			response.generateError(404, serverInfo.getErrorPages(), *body);
 		else {
-			data.fileSize = ws::get_file_size(fileStream);
+			fileSize = ws::get_file_size(fileStream);
 
-			body->append(ws::get_file_contents(fileStream, data.fileSize), data.fileSize);
+			body->append(ws::get_file_contents(fileStream, fileSize), fileSize);
 
 			if (data.fileExtension == ".css")
 				response.addHeader("Content-Type", "text/css");
