@@ -9,9 +9,8 @@ class Location {
 		std::string _indexPath;
 		std::string _rootPath;
 		std::string _uploadPath;
-		std::string _rewritePath;
 
-		bool _autoIndex;
+		int _autoIndex;
 
 		std::vector<std::string> _method;
 	public:
@@ -24,15 +23,13 @@ class Location {
 		const std::string &getIndexPath() const;
 		const std::string &getRootPath() const;
 		const std::string &getUploadPath() const;
-		const std::string &getRewritePath() const;
-		bool hasAutoindex() const;
+		const int &getAutoindex() const;
 		const std::vector<std::string> &getMethod() const;
 
 		void  setIndexPath(std::string Path);
 		void  setRootPath(std::string Path);
 		void  setUploadPath(std::string Path);
-		void  setRewritePath(std::string Path);
-		void  setAutoIndex(bool AutoIndex);
+		void  setAutoIndex(int AutoIndex);
 		void  addtoMethod(std::string Method);
 };
 
