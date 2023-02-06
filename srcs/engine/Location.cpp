@@ -60,3 +60,21 @@ Location &Location::operator=(Location const &rhs) {
 	}
 	return *this;
 }
+
+const Location *Location::getBestMatch(std::string const &str, std::map<std::string, Location*> const &map) {
+	Location *location;
+
+	for (std::map<std::string, Location*>::const_iterator it = map.begin(); it != map.end(); it++) {
+		std::string path = it->first;
+
+		if (path.size() == str.size()) {
+			
+		} else if (path.size() > str.size()) {
+			
+		}
+
+		location = it->second;
+		break ;
+	}
+	return location;
+}

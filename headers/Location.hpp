@@ -3,6 +3,7 @@
 
 # include <string>
 # include <vector>
+# include <map>
 
 class Location {
 	private:
@@ -31,6 +32,8 @@ class Location {
 		void  setUploadPath(std::string Path);
 		void  setAutoIndex(bool AutoIndex);
 		void  addtoMethod(std::string Method);
+
+		static const Location *getBestMatch(std::string const &path, std::map<std::string, Location*> const &map);
 };
 
 #endif

@@ -14,9 +14,10 @@ HttpMethod::~HttpMethod() {}
 ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request) {
 	ws::request_data_t data;
 	
-	std::string rootPath = serverInfo.getRootPath() + '/';
+	std::string rootPath = serverInfo.getRootPath();
 	std::string indexPath = serverInfo.getIndexPath();
 	size_t queryStartPos = request.getPath().find('?');
+	const Location *location;
 
 	if (queryStartPos != std::string::npos) {
 		data.cgiQuery.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
@@ -24,17 +25,17 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 	} else
 		data.clientPath = request.getPath();
 
-	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-		if (data.clientPath == it->first)
-			continue ;
-
-		rootPath = it->second->getRootPath() + it->first + '/';
-		indexPath = it->second->getIndexPath();
+	if ((location = Location::getBestMatch(data.clientPath, serverInfo.getLocations())) != NULL) {
+		rootPath = location->getRootPath();
+		indexPath = location->getIndexPath();
 	}
 
-	if (rootPath + data.clientPath == rootPath + indexPath)
-		data.requestedPath = rootPath + data.clientPath;
-	else
+	std::cout << "root=" << rootPath << std::endl;
+	std::cout << "index=" << indexPath << std::endl;
+	std::cout << "clientPath=" << data.clientPath << std::endl;
+	std::cout << "-----------------" << std::endl;
+
+	if (data.clientPath[data.clientPath.size() - 1] == '/')
 		data.requestedPath = rootPath + data.clientPath + indexPath;
 
 	std::cout << "requested=" << data.requestedPath << std::endl;
@@ -46,44 +47,6 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 	// 	data.fileExtension = data.fileName.substr(data.fileName.rfind("."), queryStartPos);
 	return data;
 }
-
-// ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request) {
-// 	ws::request_data_t data;
-// 	std::string root = serverInfo.getRootPath();
-// 	std::string indexPath = serverInfo.getIndexPath();
-// 	size_t queryStartPos = request.getPath().find('?');
-
-// 	if (root[root.length()] == '/' && request.getPath()[0] == '/')
-//         root.erase(0, 1);
-
-// 	if (queryStartPos != std::string::npos) {
-// 		data.query.assign(request.getPath(), queryStartPos + 1, request.getPath().size());
-// 		data.rawRequestedPath = root + request.getPath().substr(0, queryStartPos);
-// 	} else
-// 		data.rawRequestedPath = root + request.getPath();
-
-// 	data.requestedPath = data.rawRequestedPath;
-// 	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-// 		size_t foundPos = data.rawRequestedPath.find(it->first);
-// 		if (foundPos == std::string::npos)
-// 			continue ;
-
-// 		root = it->second->getRootPath();
-// 		data.requestedPath.erase(foundPos, it->first.size());
-// 		data.requestedPath = it->second->getRootPath() + data.requestedPath;
-// 		if (data.requestedPath == root + "/")
-// 			indexPath = it->second->getIndexPath();
-// 	}
-
-// 	data.rawRequestedPath = data.requestedPath;
-// 	// if (data.requestedPath == root + "/")
-// 	// 	data.requestedPath = indexPath;
-
-// 	data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/"), queryStartPos);
-// 	if (data.fileName != "/" && data.fileName.find(".") != std::string::npos)
-// 		data.fileExtension = data.fileName.substr(data.fileName.rfind("."), queryStartPos);
-// 	return data;
-// }
 
 // ############## PUBLIC ##############
 

@@ -486,28 +486,28 @@ void ws::checkConfiguration(Server *servers) {
 
 		std::cout << "NAME: \t\t\t" << serverInfo.getServerName() << std::endl;
 
-		if (!isPathExist(serverInfo.getRootPath()))
-			throw std::invalid_argument("The path " + serverInfo.getRootPath() + " doesn't exist.");
+		// if (!isPathExist(serverInfo.getRootPath()))
+			// throw std::invalid_argument("The path " + serverInfo.getRootPath() + " doesn't exist.");
 		std::cout << "ROOT: \t\t\t" << serverInfo.getRootPath() << std::endl;
 
 		std::cout << "CLIENT_MAX_SIZE_BODY:\t" << serverInfo.getMaxBodySize() << std::endl;
 
-		if (!isPathExist(serverInfo.getIndexPath()))
-			throw std::invalid_argument("The path " + (serverInfo.getIndexPath()) + " doesn't exist.");
+		// if (!isPathExist(serverInfo.getIndexPath()))
+			// throw std::invalid_argument("The path " + (serverInfo.getIndexPath()) + " doesn't exist.");
 			
-		if (serverInfo.getIndexPath()[0] != '/')
-			serverInfo.setIndexPath(std::string(absolutePath) + "/" + serverInfo.getIndexPath());
+		// if (serverInfo.getIndexPath()[0] != '/')
+		// 	serverInfo.setIndexPath(std::string(absolutePath) + "/" + serverInfo.getIndexPath());
 
 		std::cout << "INDEX: \t\t\t" << (serverInfo.getIndexPath()) << std::endl;
 
 		if (serverInfo.getUploadPath().empty())
 			std::cout << "\t[Upload is Empty]" << std::endl;
 
-		if (!isPathExist(serverInfo.getUploadPath()))
-			throw std::invalid_argument("The path " + (serverInfo.getUploadPath()) + " doesn't exist.");
-
-		if (serverInfo.getUploadPath()[0] != '/')
-			serverInfo.setUploadPath(std::string(absolutePath) + "/" + serverInfo.getUploadPath());
+		// if (!isPathExist(serverInfo.getUploadPath()))
+			// throw std::invalid_argument("The path " + (serverInfo.getUploadPath()) + " doesn't exist.");
+// 
+		// if (serverInfo.getUploadPath()[0] != '/')
+			// serverInfo.setUploadPath(std::string(absolutePath) + "/" + serverInfo.getUploadPath());
 
 		std::cout << "UPLOAD: \t\t" << (serverInfo.getUploadPath()) << std::endl;
 
@@ -525,19 +525,19 @@ void ws::checkConfiguration(Server *servers) {
 
 		std::cout << "ERROR_PAGE" << std::endl;
 		for(std::map<int, std::string>::iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
-			if (!isPathExist(it->second))
-				throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
+			// if (!isPathExist(it->second))
+				// throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
 
-			if (it->second[0] != '/')
-				errorPageClone.insert(std::make_pair(it->first, std::string(absolutePath) + "/" + it->second));
-			else
-				errorPageClone.insert(std::make_pair(it->first, it->second));
+			// if (it->second[0] != '/')
+			// 	errorPageClone.insert(std::make_pair(it->first, std::string(absolutePath) + "/" + it->second));
+			// else
+			// 	errorPageClone.insert(std::make_pair(it->first, it->second));
 
-			it->second = std::string(absolutePath) + "/" + it->second;
+			// it->second = std::string(absolutePath) + "/" + it->second;
 			
 			std::cout << "\t\t\t- " << it->first << " \t" << (it->second) << "\n";
 		}
-		serverInfo.setErrorPage(errorPageClone);
+		// serverInfo.setErrorPage(errorPageClone);
 
 		std::cout << "LOCATION: " << std::endl;
 		for(std::map<std::string, Location *>::iterator it = location.begin(); it != location.end(); ++it) {
@@ -563,7 +563,6 @@ void ws::checkConfiguration(Server *servers) {
 			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; }
 			std::cout << "\t\tUPLOAD: \t" << serverInfo.getUploadPath() << std::endl;
-			std::cout << "\t\tREWRITE: \t" << loc.getRewritePath() << std::endl;
 			if (loc.getRootPath().empty()) {
 				loc.setRootPath(serverInfo.getRootPath());
 				std::cout << "\t\tROOT: \t\t" <<  serverInfo.getRootPath() << std::endl;
@@ -571,7 +570,7 @@ void ws::checkConfiguration(Server *servers) {
 			if (!loc.getRootPath().empty())
 				std::cout << "\t\tROOT: \t\t" <<  loc.getRootPath() << "\n" << std::endl;
 		}
-		serverInfo.setLocation(locationClone);
+		// serverInfo.setLocation(locationClone);
 		std::cout << "----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }
 
