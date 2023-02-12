@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-Location::Location() : _autoIndex(false) {}
+Location::Location() : _autoIndex(-1) {}
 Location::Location(Location const &location) { *this = location; }
 Location::~Location() {}
 
@@ -20,7 +20,7 @@ const std::string &Location::getUploadPath() const {
 	return _uploadPath;
 }
 
-const bool &Location::hasAutoindex() const {
+const int &Location::getAutoindex() const {
 	return _autoIndex;
 }
 
@@ -40,7 +40,7 @@ void  Location::setUploadPath(std::string Path) {
 	this->_uploadPath = Path;
 }
 
-void  Location::setAutoIndex(bool AutoIndex) {
+void  Location::setAutoIndex(int AutoIndex) {
 	this->_autoIndex = AutoIndex;
 }
 

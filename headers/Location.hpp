@@ -11,7 +11,7 @@ class Location {
 		std::string _rootPath;
 		std::string _uploadPath;
 
-		bool _autoIndex;
+		int _autoIndex;
 
 		std::vector<std::string> _method;
 	public:
@@ -24,13 +24,13 @@ class Location {
 		const std::string &getIndexPath() const;
 		const std::string &getRootPath() const;
 		const std::string &getUploadPath() const;
-		const bool &hasAutoindex() const;
+		const int &getAutoindex() const;
 		const std::vector<std::string> &getMethod() const;
 
 		void  setIndexPath(std::string Path);
 		void  setRootPath(std::string Path);
 		void  setUploadPath(std::string Path);
-		void  setAutoIndex(bool AutoIndex);
+		void  setAutoIndex(int AutoIndex);
 		void  addtoMethod(std::string Method);
 
 		static const Location *getBestMatch(std::string const &path, std::map<std::string, Location*> const &map);
