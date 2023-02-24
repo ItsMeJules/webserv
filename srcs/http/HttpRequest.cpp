@@ -53,9 +53,6 @@ std::vector<std::string> HttpRequest::getData() const {
 	return _data;
 }
 
-
-
-
 bool	HttpRequest::IsCgi()
 {
 	return (_isCgi);

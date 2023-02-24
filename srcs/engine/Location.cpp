@@ -61,20 +61,28 @@ Location &Location::operator=(Location const &rhs) {
 	return *this;
 }
 
-const Location *Location::getBestMatch(std::string const &str, std::map<std::string, Location*> const &map) {
+ # include <iostream>
+
+const Location *Location::getBestMatch(std::string const &url, std::map<std::string, Location*> const &map) {
 	Location *location;
+	size_t maxSize = 0;
 
 	for (std::map<std::string, Location*>::const_iterator it = map.begin(); it != map.end(); it++) {
 		std::string path = it->first;
 
-		if (path.size() == str.size()) {
-			
-		} else if (path.size() > str.size()) {
-			
+		std::cout << url << " | " << path << " || " << std::endl;
+		std::cout << url.substr(0, path.size()) << " | " << path << std::endl << std::endl;
+		if (url.substr(0, path.size()) == path) {
+			std::cout << "found!" << std::endl;
+			if ((url.size() > path.size() && url[path.size()] == '/') || url.size() == path.size()) {
+				std::cout << "found with extra uri" << std::endl;
+				if (path.size() > maxSize) {
+					std::cout << "better match found!" << std::endl << std::endl;
+					maxSize = path.size();
+					location = it->second;
+				}
+			}
 		}
-
-		location = it->second;
-		break ;
 	}
 	return location;
 }

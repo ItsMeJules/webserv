@@ -50,7 +50,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 		for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
 			if (data.requestedPath.find(it->first) != std::string::npos) {
-				autoIndex = it->second->hasAutoindex();
+				autoIndex = it->second->getAutoindex();
 				break ;
 			}
 		}

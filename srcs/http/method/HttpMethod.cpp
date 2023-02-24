@@ -26,6 +26,7 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 		data.clientPath = request.getPath();
 
 	if ((location = Location::getBestMatch(data.clientPath, serverInfo.getLocations())) != NULL) {
+		std::cout << "root: " << location->getRootPath() << std::endl;
 		rootPath = location->getRootPath();
 		indexPath = location->getIndexPath();
 	}

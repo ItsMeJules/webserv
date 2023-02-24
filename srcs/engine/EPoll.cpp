@@ -117,7 +117,6 @@ int EPoll::polling(Server &server) {
             } else if (events[i].events & EPOLLOUT) {
                 HttpResponse response;
 				DefaultBody *errorBody = new DefaultBody();
-
 				if (!client.hasRequestFailed())
 					response = client.getHttpRequest().execute(server.getServerInfo());
 				else {
