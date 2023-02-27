@@ -6,3 +6,4 @@ obj/
 subject/en.subject.pdf
 .editorconfig
 .idea/
+conf/test.conf
