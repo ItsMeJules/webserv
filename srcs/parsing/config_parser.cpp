@@ -523,6 +523,22 @@ void ws::checkConfiguration(Server *servers) {
 			for(std::vector<std::string>::const_iterator it = locMethod.begin(); it != locMethod.end(); ++it) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; 
 			}
+
+			std::cout << "\n\t" << it->first << std::endl;
+			std::cout << "\t\tINDEX: \t\t" << &loc.getIndexPath() << std::endl;
+			std::cout << "\t\tAUTOINDEX: \t" << &loc.getAutoindex() << std::endl;
+			std::cout << "\t\tROOT: \t\t" <<  &loc.getRootPath()<< std::endl;
+			std::cout << "\t\tUPLOAD: \t" << &serverInfo.getUploadPath() << std::endl;
+
+		}
+
+		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
+			Location loc = *it->second;
+			std::cout << "\n\t" << it->first << std::endl;
+			std::cout << "\t\tINDEX: \t\t" << &loc.getIndexPath() << std::endl;
+			std::cout << "\t\tAUTOINDEX: \t" << &loc.getAutoindex() << std::endl;
+			std::cout << "\t\tROOT: \t\t" <<  &loc.getRootPath()<< std::endl;
+			std::cout << "\t\tUPLOAD: \t" << &serverInfo.getUploadPath() << std::endl;
 		}
 		std::cout << "\n----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }
