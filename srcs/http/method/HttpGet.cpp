@@ -24,7 +24,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
+	if (!fileStream.is_open()) {
 		response.generateError(404, serverInfo.getErrorPages(), *body);
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Date", response.generateDate());
