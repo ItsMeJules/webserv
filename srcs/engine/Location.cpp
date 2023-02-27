@@ -70,6 +70,9 @@ const Location *Location::getBestMatch(std::string const &url, std::map<std::str
 	for (std::map<std::string, Location*>::const_iterator it = map.begin(); it != map.end(); it++) {
 		std::string path = it->first;
 
+		std::cout << it->second->getIndexPath() << std::endl;
+		std::cout << it->second->getRootPath() << std::endl;
+
 		std::cout << url << " | " << path << " || " << std::endl;
 		std::cout << url.substr(0, path.size()) << " | " << path << std::endl << std::endl;
 		if (url.substr(0, path.size()) == path) {
@@ -84,5 +87,6 @@ const Location *Location::getBestMatch(std::string const &url, std::map<std::str
 			}
 		}
 	}
+	// std::cout << location->getRootPath() << std::endl;
 	return location;
 }

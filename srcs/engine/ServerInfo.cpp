@@ -151,7 +151,6 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 
 		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++)
 			_locations.insert(std::make_pair(it->first, new Location(*it->second)));
-		
 	}
 
 	return *this;

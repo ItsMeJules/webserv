@@ -468,15 +468,13 @@ void ws::checkConfiguration(Server *servers) {
 		std::vector<std::string> locMethod;
 		std::map<int, std::string> errorPage;
 		std::map<int, std::string> errorPageClone;
-		std::map<std::string, Location*> location;
-		std::map<std::string, Location*> locationClone;
+		std::map<std::string, Location*> location = serverInfo.getLocations();
 		char absolutePath[1000];
 		getcwd(absolutePath, 1000);
 
 		method = serverInfo.getMethod();
 		errorPage = serverInfo.getError();
 		cgi = serverInfo.getCgis();
-		location = serverInfo.getLocations();
 
 
 		std::cout << "\n----------------------------------SETUP SERVER----------------------------------" << std::endl;
@@ -568,6 +566,7 @@ void ws::checkConfiguration(Server *servers) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; 
 			}
 		}
+		std::cout << serverInfo.getLocations().at("/www/html/test")->getRootPath() << std::endl;
 		std::cout << "\n----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }
 
