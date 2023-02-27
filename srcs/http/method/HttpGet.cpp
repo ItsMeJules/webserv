@@ -44,8 +44,16 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		return response;
 	}
 
-	if (ws::file_is_dir(data.requestedPath) && data.location.getAutoindex() == 1) {
-		std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
+	if (ws::file_is_dir(data.requestedPath)) {
+		if (data.location.getAutoindex() == 0) {
+			response.generateError(404, serverInfo.getErrorPages(), *body);
+			response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+			response.addHeader("Date", response.generateDate());
+
+			response.setMessageBody(body);
+			return response;
+		}
+		std::string autoIndexStr = ws::html_list_dir(data.requestedPath, data.clientPath);
 
 		body->append(autoIndexStr, autoIndexStr.size());
 

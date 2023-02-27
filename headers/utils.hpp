@@ -65,11 +65,11 @@ namespace ws {
 	void close_tmp_file(ws::tmp_file_t const &tft);
 	size_t get_file_size(std::ifstream &stream);
 	std::string get_file_contents(std::ifstream &stream, int fileSize);
-	std::string html_list_dir(std::string const &path);
+	std::string html_list_dir(std::string const &path, std::string const &relativePath);
 
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);
-	std::vector<std::string> splitStr(const std::string &str, const std::string &charset);
+	std::vector<std::string> splitStr(const std::string &str, std::string const &relativePath);
 
 	//MIME TYPES
 	std::string mimeTypeFromExtension(std::string extension);
