@@ -464,13 +464,12 @@ bool ws::isPathExist(const std::string &s)
 void ws::checkConfiguration(Server *servers) {
 		ServerInfo &serverInfo = servers->getServerInfo();
 		std::map<std::string, std::string> cgi;
-		std::vector<std::string> method;
-		std::vector<std::string> locMethod;
+		std::vector<std::string> serverMethods;
 		std::map<int, std::string> errorPage;
 		std::map<std::string, Location*> locations = serverInfo.getLocations();
 		Location defaultLocation;
 
-		method = serverInfo.getMethod();
+		serverMethods = serverInfo.getMethod();
 		errorPage = serverInfo.getError();
 		cgi = serverInfo.getCgis();
 
@@ -502,7 +501,7 @@ void ws::checkConfiguration(Server *servers) {
 		defaultLocation.setAutoIndex(serverInfo.hasAutoindex());
 
 		std::cout << "METHOD: \t\t" << std::endl;
-		for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
+		for(std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
 			std::cout << "\t\t\t- " << *it << "\n";
 			defaultLocation.addtoMethod(*it);
 		}
@@ -521,7 +520,7 @@ void ws::checkConfiguration(Server *servers) {
 		std::cout << "LOCATION: " << std::endl;
 		for(std::map<std::string, Location *>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
 			Location *loc = it->second;
-			locMethod = loc->getMethod();
+			std::vector<std::string> locMethod = loc->getMethod();
 			std::cout << "\n\t" << it->first << std::endl;
 
 			if (loc->getIndexPath().empty())
@@ -540,8 +539,10 @@ void ws::checkConfiguration(Server *servers) {
 				loc->setUploadPath(serverInfo.getUploadPath());
 			std::cout << "\t\tUPLOAD: \t" << serverInfo.getUploadPath() << std::endl;
 
-			if (locMethod.empty())
-				locMethod = serverInfo.getMethod();
+			for (std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
+				if (std::find(locMethod.begin(), locMethod.end(), *it) == locMethod.end())
+					locMethod.push_back(*it);
+			}
 			std::cout << "\t\tMETHOD: " << std::endl;
 			for(std::vector<std::string>::const_iterator it = locMethod.begin(); it != locMethod.end(); ++it) {
 				std::cout << "\t\t\t\t- " << *it << "\n";
