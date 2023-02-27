@@ -27,7 +27,8 @@ namespace ws {
 
 	typedef struct request_data_s {
 		std::string clientPath; // ex: google.com/drive/lol -> /drive/lol
-		std::string requestedPath;
+		std::string requestedPath; // path on the server of the file to send
+		const Location *location;
 
 		std::string fileName;
 		std::string fileExtension;
@@ -68,6 +69,9 @@ namespace ws {
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);
 	std::vector<std::string> splitStr(const std::string &str, const std::string &charset);
+
+	//MIME TYPES
+	std::string mimeTypeFromExtension(std::string extension);
 }
 
 #endif

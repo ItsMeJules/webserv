@@ -27,39 +27,46 @@ HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	HttpResponse response;
 	std::ifstream fileStream;
-	bool autoIndex = serverInfo.hasAutoindex();
-
-	DefaultBody *body = new DefaultBody();
-
-	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 	size_t fileSize;
 
-	if (!ws::file_exists(data.requestedPath) && ws::file_is_dir(data.requestedPath)) {
-	for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-		size_t foundPos = data.requestedPath.find(it->first);
-		if (foundPos != std::string::npos) {
-			if (std::find(it->second->getMethod().begin(), it->second->getMethod().end(), getName()) == it->second->getMethod().end())
-				_errorCode = 405;
-			break ;
-		}
+	DefaultBody *body = new DefaultBody();
+	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
+
+	fileStream.open(data.requestedPath.c_str());
+
+	if (data.location == NULL || !fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
+		response.generateError(404, serverInfo.getErrorPages(), *body);
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.addHeader("Date", response.generateDate());
+
+		response.setMessageBody(body);
+		return response;
 	}
-}
 
-	if (ws::file_is_dir(data.requestedPath)) {
-		bool autoIndex = serverInfo.hasAutoindex();
+	const std::vector<std::string> allowedMethods = data.location->getMethod(); 
 
-		for (std::map<std::string, Location*>::const_iterator it = serverInfo.getLocations().begin(); it != serverInfo.getLocations().end(); it++) {
-			if (data.requestedPath.find(it->first) != std::string::npos) {
-				autoIndex = it->second->getAutoindex();
-				break ;
-			}
-		}
-		if (autoIndex) {
-			std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
-			body->append(autoIndexStr, autoIndexStr.size());
-		} else
-			autoIndex = false;
-	} else if (serverInfo.getCgis().count(data.fileExtension) != 0) {
+	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end()) {
+		response.generateError(405, serverInfo.getErrorPages(), *body);
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.addHeader("Date", response.generateDate());
+
+		response.setMessageBody(body);
+		return response;
+	}
+
+	if (ws::file_is_dir(data.requestedPath) && data.location->getAutoindex() == 1) {
+		std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
+
+		body->append(autoIndexStr, autoIndexStr.size());
+		
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.addHeader("Date", response.generateDate());
+
+		response.setMessageBody(body);
+		return response;
+	}
+	
+	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseReturn = cgi->execute(request, data, response);
 
@@ -70,25 +77,12 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		delete cgi;
 	}
 
-	if (response.getStatusCode() < 400 && !autoIndex) {
-		fileStream.open(data.requestedPath.c_str());
+	fileSize = ws::get_file_size(fileStream);
 
-		if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath))
-			response.generateError(404, serverInfo.getErrorPages(), *body);
-		else {
-			fileSize = ws::get_file_size(fileStream);
+	body->append(ws::get_file_contents(fileStream, fileSize), fileSize);
+	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 
-			body->append(ws::get_file_contents(fileStream, fileSize), fileSize);
-
-			if (data.fileExtension == ".css")
-				response.addHeader("Content-Type", "text/css");
-			else if (data.fileExtension == ".html")
-				response.addHeader("Content-Type", "text/html");
-			else if (data.fileExtension == ".ico")
-				response.addHeader("Content-Type", "text/favicon");
-		}
-		fileStream.close();
-	}
+	fileStream.close();
 
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());

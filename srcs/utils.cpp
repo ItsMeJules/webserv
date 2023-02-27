@@ -201,3 +201,15 @@ std::vector<std::string> ws::splitStr(const std::string &str, const std::string 
 	return res;
 }
 
+std::string mimeTypeFromExtension(std::string extension) {
+	std::string mime = "";
+	
+	for (int i = 0; i < ws::NB_MIME; i++) {
+		if (extension == ws::MIME_EXTENSIONS[i])
+			mime = ws::MIME_TYPES[i];
+	}
+	
+	if (mime.size() == 0)
+		return ("text/plain");
+	return mime;
+}

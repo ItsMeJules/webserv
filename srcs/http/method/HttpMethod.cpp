@@ -27,6 +27,7 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 
 	if ((location = Location::getBestMatch(data.clientPath, serverInfo.getLocations())) != NULL) {
 		std::cout << "root: " << location->getRootPath() << std::endl;
+		data.location = location;
 		rootPath = location->getRootPath();
 		indexPath = location->getIndexPath();
 	}
@@ -45,7 +46,7 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 
 	// data.fileName = data.clientPath.substr(data.clientPath.rfind("/"), queryStartPos);
 	// if (data.fileName != "/" && data.fileName.find(".") != std::string::npos)
-	// 	data.fileExtension = data.fileName.substr(data.fileName.rfind("."), queryStartPos);
+	// 	data.fileExtension = data.fileName.substr(data.fileName.rfind(".") + 1, queryStartPos);
 	return data;
 }
 
