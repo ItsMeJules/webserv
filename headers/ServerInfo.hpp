@@ -11,7 +11,7 @@
 class ServerInfo {
 	private:
 		uint32_t _maxBodySize;
-		
+
 		bool _autoindex;
 
 		std::string _serverName;
@@ -21,7 +21,7 @@ class ServerInfo {
 		std::string _ip;
 		int			_port;
 
-		
+
 		std::vector<std::string> _method;
 		std::map<std::string, std::string> _cgis;
 		std::map<std::string, Location*> _locations;

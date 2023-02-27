@@ -64,7 +64,7 @@ Location &Location::operator=(Location const &rhs) {
  # include <iostream>
 
 const Location *Location::getBestMatch(std::string const &url, std::map<std::string, Location*> const &map) {
-	Location *location = NULL;
+	Location *location = _defaultLocation;
 	size_t maxSize = 0;
 
 	for (std::map<std::string, Location*>::const_iterator it = map.begin(); it != map.end(); it++) {
@@ -79,6 +79,5 @@ const Location *Location::getBestMatch(std::string const &url, std::map<std::str
 			}
 		}
 	}
-	// std::cout << location->getRootPath() << std::endl;
 	return location;
 }

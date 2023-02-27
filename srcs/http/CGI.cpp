@@ -53,20 +53,6 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data, HttpRes
 	ws::tmp_file_t tmpFile;
 	std::ofstream tmpStream;
 
-	if (!ws::file_exists(data.requestedPath)) {
-		response.setStatusCode(404);
-		return "error";
-	}
-
-	_env["REQUEST_METHOD"] = request.getMethod()->getName();
-	if (request.getMethod()->getName() != "GET") {
-		if (request.headersHasKey("Content-Type"))
-			_env["CONTENT_TYPE"] = request.getHeader("Content-Type");
-		else {
-			response.setStatusCode(500);
-			return "error";
-		}
-	}
 	_env["STATUS_CODE"] = "200";
 	_env["PATH_INFO"] = data.requestedPath;
 	_env["PATH_TRANSLATED"] = data.requestedPath;
@@ -106,4 +92,8 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data, HttpRes
 	delete[] env;
 	delete[] cgiEnv;
 	return (ftostr("emmacCGI"));
+}
+
+void setContentType(std::string contentType) {
+	_env["CONTENT_TYPE"] = contentType;
 }

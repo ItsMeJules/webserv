@@ -17,8 +17,6 @@
 #include "Server.hpp"
 #include "utils.hpp"
 
-
-
 class Cgi {
 	private:
 		std::map<std::string, std::string> _env;
@@ -35,6 +33,7 @@ class Cgi {
 
 		std::string	findQuery(HttpRequest &request);
 		const std::string &getQuery() const;
+		void setContentType(std::string contentType);
 };
 
 std::ostream &			operator<<( std::ostream & o, Cgi const & i );

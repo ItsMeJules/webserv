@@ -34,7 +34,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if (data.location == NULL || !fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
+	if (fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
 		response.generateError(404, serverInfo.getErrorPages(), *body);
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Date", response.generateDate());
@@ -43,7 +43,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		return response;
 	}
 
-	const std::vector<std::string> allowedMethods = data.location->getMethod(); 
+	const std::vector<std::string> allowedMethods = data.location->getMethod();
 
 	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end()) {
 		response.generateError(405, serverInfo.getErrorPages(), *body);
@@ -58,23 +58,40 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
 
 		body->append(autoIndexStr, autoIndexStr.size());
-		
+
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Date", response.generateDate());
 
 		response.setMessageBody(body);
 		return response;
 	}
-	
+
 	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
-		std::string responseReturn = cgi->execute(request, data, response);
 
-		if (responseReturn != "error")
-			body->append(responseReturn, responseReturn.size());
-		else
-			response.generateError(response.getStatusCode(), serverInfo.getErrorPages(), *body);
+		if (request.getMethod()->getName() != "GET") {
+			if (request.headersHasKey("Content-Type"))
+				cgi->setContentType(request.getHeader("Content-Type"));
+			else {
+				response.generateError(500, serverInfo.getErrorPages(), *body);
+				response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+				response.addHeader("Date", response.generateDate());
+
+				response.setMessageBody(body);
+				return response;
+			}
+		}
+
+		std::string responseReturn = cgi->execute(request, data, response);
+		body->append(responseReturn, responseReturn.size());
+
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.addHeader("Date", response.generateDate());
+
+		response.setMessageBody(body);
+
 		delete cgi;
+		return response;
 	}
 
 	fileSize = ws::get_file_size(fileStream);

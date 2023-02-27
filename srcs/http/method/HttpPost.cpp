@@ -34,7 +34,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 		std::string responseRet = cgi->execute(request, data, response);
-		
+
 		if (responseRet != "error")
 			body->append(responseRet, responseRet.size());
 		else
@@ -47,15 +47,12 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 			FormDataBody::FormDataPart *part;
 			std::ofstream ofs;
 
-			// bool success = true;
 			data.requestedPath += serverInfo.getUploadPath();
 
 			while ((part = formBody->readForm()) != NULL) {
 				if (!part->_headersParsed || part->_directiveName != part->_fileKey)
 					continue ;
-
 				if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
-					// success = false;
 					break ;
 				}
 			}
@@ -65,17 +62,21 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 			response.generateError(404, serverInfo.getErrorPages(), *body);
 		else {
 			body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
-			
 			response.addHeader("Content-Type", "text/plain");
 		}
 	}
 
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
-
 	response.setMessageBody(body);
 
 	return response;
+}
+
+HttpPost &HttpPost::operator=(HttpPost const &rhs) {
+	if (this != &rhs) {
+	}
+	return *this;
 }
 
 HttpMethod *HttpPost::clone() {
@@ -84,14 +85,4 @@ HttpMethod *HttpPost::clone() {
 
 std::string HttpPost::getName() {
 	return "POST";
-}
-
-// ############## GETTERS / SETTERS ##############
-
-// ############## OPERATORS ##############
-
-HttpPost &HttpPost::operator=(HttpPost const &rhs) {
-	if (this != &rhs) {
-	}
-	return *this;
 }
