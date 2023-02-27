@@ -7,19 +7,9 @@ HttpGet::HttpGet() {}
 HttpGet::HttpGet(HttpGet const &httpGet) : HttpMethod(*this) { *this = httpGet; }
 HttpGet::~HttpGet() {}
 
-// ############## PRIVATE ##############
-
-// ############## PUBLIC ##############
-
-
-
-// ############## GETTERS / SETTERS ##############
-
-// ############## OPERATORS ##############
 
 HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 	if (this != &rhs) {
-
 	}
 	return *this;
 }

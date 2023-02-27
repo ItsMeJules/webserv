@@ -33,12 +33,27 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
-		std::string responseRet = cgi->execute(request, data);
 
-		if (responseRet != "error")
-			body->append(responseRet, responseRet.size());
-		else
-			response.generateError(response.getStatusCode(), serverInfo.getErrorPages(), *body);
+		if (request.getMethod()->getName() != "POST") {
+			if (request.headersHasKey("Content-Type"))
+				cgi->setContentType(request.getHeader("Content-Type"));
+			else {
+				response.generateError(500, serverInfo.getErrorPages(), *body);
+				response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+				response.addHeader("Date", response.generateDate());
+
+				response.setMessageBody(body);
+				return response;
+			}
+		}
+		std::string responseRet = cgi->execute(request, data);
+		body->append(responseRet, responseRet.size());
+
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.addHeader("Date", response.generateDate());
+
+		response.setMessageBody(body);
+
 		delete cgi;
 	}
 
