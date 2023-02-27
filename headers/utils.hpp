@@ -16,6 +16,7 @@
 # include <dirent.h>
 
 # include "Constants.hpp"
+# include "Location.hpp"
 
 namespace ws {
 
@@ -28,7 +29,7 @@ namespace ws {
 	typedef struct request_data_s {
 		std::string clientPath; // ex: google.com/drive/lol -> /drive/lol
 		std::string requestedPath; // path on the server of the file to send
-		const Location *location;
+		Location location;
 
 		std::string fileName;
 		std::string fileExtension;

@@ -224,7 +224,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			if (checkAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
 				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
-
 			std::cout << "\tSet in ServerAutoIndex: " << serverInfo.hasAutoindex() << std::endl;
 			break;
 
@@ -269,8 +268,9 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 					throw std::invalid_argument(*it + " need to be params by 'GET', 'POST' or 'DELETE' !");
 				if (std::find(method.begin(), method.end(), *it) != method.end())
 					continue;
-				else
+				else {
 					serverInfo.addtoMethod(*it);
+				}
 			}
 			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
 			{
@@ -468,10 +468,12 @@ void ws::checkConfiguration(Server *servers) {
 		std::vector<std::string> locMethod;
 		std::map<int, std::string> errorPage;
 		std::map<std::string, Location*> locations = serverInfo.getLocations();
+		Location defaultLocation;
 
 		method = serverInfo.getMethod();
 		errorPage = serverInfo.getError();
 		cgi = serverInfo.getCgis();
+
 
 
 		std::cout << "\n----------------------------------SETUP SERVER----------------------------------" << std::endl;
@@ -481,37 +483,30 @@ void ws::checkConfiguration(Server *servers) {
 
 		std::cout << "NAME: \t\t\t" << serverInfo.getServerName() << std::endl;
 
-		// if (!isPathExist(serverInfo.getRootPath()))
-			// throw std::invalid_argument("The path " + serverInfo.getRootPath() + " doesn't exist.");
 		std::cout << "ROOT: \t\t\t" << serverInfo.getRootPath() << std::endl;
 
 		std::cout << "CLIENT_MAX_SIZE_BODY:\t" << serverInfo.getMaxBodySize() << std::endl;
-
-		// if (!isPathExist(serverInfo.getIndexPath()))
-			// throw std::invalid_argument("The path " + (serverInfo.getIndexPath()) + " doesn't exist.");
-
-		// if (serverInfo.getIndexPath()[0] != '/')
-		// 	serverInfo.setIndexPath(std::string(absolutePath) + "/" + serverInfo.getIndexPath());
 
 		std::cout << "INDEX: \t\t\t" << (serverInfo.getIndexPath()) << std::endl;
 
 		if (serverInfo.getUploadPath().empty())
 			std::cout << "\t[Upload is Empty]" << std::endl;
 
-		// if (!isPathExist(serverInfo.getUploadPath()))
-			// throw std::invalid_argument("The path " + (serverInfo.getUploadPath()) + " doesn't exist.");
-//
-		// if (serverInfo.getUploadPath()[0] != '/')
-			// serverInfo.setUploadPath(std::string(absolutePath) + "/" + serverInfo.getUploadPath());
 
 		std::cout << "UPLOAD: \t\t" << (serverInfo.getUploadPath()) << std::endl;
 
 		std::cout << "AUTOINDEX: \t\t" << serverInfo.hasAutoindex() << std::endl;
+		defaultLocation.setRootPath(serverInfo.getRootPath());
+		defaultLocation.setIndexPath(serverInfo.getIndexPath());
+		defaultLocation.setUploadPath(serverInfo.getUploadPath());
+		defaultLocation.setAutoIndex(serverInfo.hasAutoindex());
 
 		std::cout << "METHOD: \t\t" << std::endl;
 		for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it) {
 			std::cout << "\t\t\t- " << *it << "\n";
+			defaultLocation.addtoMethod(*it);
 		}
+		serverInfo.setDefaultLocation(defaultLocation);
 
 		std::cout << "CGIS: " << std::endl;
 		for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it) {
@@ -520,19 +515,8 @@ void ws::checkConfiguration(Server *servers) {
 
 		std::cout << "ERROR_PAGE" << std::endl;
 		for(std::map<int, std::string>::iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
-			// if (!isPathExist(it->second))
-				// throw std::invalid_argument("The path " + (it->second) + " doesn't exist.");
-
-			// if (it->second[0] != '/')
-			// 	errorPageClone.insert(std::make_pair(it->first, std::string(absolutePath) + "/" + it->second));
-			// else
-			// 	errorPageClone.insert(std::make_pair(it->first, it->second));
-
-			// it->second = std::string(absolutePath) + "/" + it->second;
-
 			std::cout << "\t\t\t- " << it->first << " \t" << (it->second) << "\n";
 		}
-		// serverInfo.setErrorPage(errorPageClone);
 
 		std::cout << "LOCATION: " << std::endl;
 		for(std::map<std::string, Location *>::const_iterator it = locations.begin(); it != locations.end(); ++it) {

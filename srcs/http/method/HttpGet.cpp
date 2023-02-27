@@ -34,7 +34,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if (fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
+	if (!fileStream.is_open() || !ws::file_is_reg(data.requestedPath)) {
 		response.generateError(404, serverInfo.getErrorPages(), *body);
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Date", response.generateDate());
@@ -43,7 +43,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		return response;
 	}
 
-	const std::vector<std::string> allowedMethods = data.location->getMethod();
+	const std::vector<std::string> allowedMethods = data.location.getMethod();
 
 	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end()) {
 		response.generateError(405, serverInfo.getErrorPages(), *body);
@@ -54,7 +54,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		return response;
 	}
 
-	if (ws::file_is_dir(data.requestedPath) && data.location->getAutoindex() == 1) {
+	if (ws::file_is_dir(data.requestedPath) && data.location.getAutoindex() == 1) {
 		std::string autoIndexStr = ws::html_list_dir(data.requestedPath);
 
 		body->append(autoIndexStr, autoIndexStr.size());
@@ -82,7 +82,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 			}
 		}
 
-		std::string responseReturn = cgi->execute(request, data, response);
+		std::string responseReturn = cgi->execute(request, data);
 		body->append(responseReturn, responseReturn.size());
 
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));

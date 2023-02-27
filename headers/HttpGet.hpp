@@ -7,7 +7,6 @@
 class HttpGet : public HttpMethod {
 	private:
 		std::string		_newIndex;
-		int				_errorCode;
 
 	public:
 		HttpGet();

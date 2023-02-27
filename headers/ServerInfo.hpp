@@ -1,12 +1,13 @@
 #ifndef SERVERINFO_HPP
 # define SERVERINFO_HPP
 
-# include "Location.hpp"
+# include <stdint.h>
 
 # include <string>
 # include <map>
-# include <stdint.h>
 # include <vector>
+
+# include "Location.hpp"
 
 class ServerInfo {
 	private:
@@ -21,6 +22,7 @@ class ServerInfo {
 		std::string _ip;
 		int			_port;
 
+		Location	_defaultLocation;
 
 		std::vector<std::string> _method;
 		std::map<std::string, std::string> _cgis;
@@ -41,7 +43,11 @@ class ServerInfo {
 		const std::string &getIndexPath() const;
 		const std::string &getUploadPath() const;
 		const std::string &getIp() const;
+
 		const int &getPort() const;
+
+		const Location &getDefaultLocation() const;
+
 		const std::vector<std::string> &getMethod() const;
 		const std::map<std::string, std::string> &getCgis() const;
 		const std::map<std::string, Location*> &getLocations() const;
@@ -61,6 +67,7 @@ class ServerInfo {
 		void  addErrorPage(int Key, std::string Value);
 		void  setLocation(std::map<std::string, Location*> location);
 		void  setErrorPage(std::map<int, std::string> error);
+		void setDefaultLocation(Location defaultLocation);
 
         ServerInfo &operator=(ServerInfo const &rhs);
 };

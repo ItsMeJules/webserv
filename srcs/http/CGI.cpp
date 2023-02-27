@@ -47,7 +47,7 @@ char **Cgi::generateEnv()
 	return env;
 }
 
-std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data, HttpResponse &response)
+std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 {
 	int redirFd;
 	ws::tmp_file_t tmpFile;
@@ -94,6 +94,6 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data, HttpRes
 	return (ftostr("emmacCGI"));
 }
 
-void setContentType(std::string contentType) {
+void Cgi::setContentType(std::string contentType) {
 	_env["CONTENT_TYPE"] = contentType;
 }

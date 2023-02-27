@@ -60,11 +60,11 @@ namespace ws {
 	// tmp files
 	const std::string TMP_PATH = "/mnt/nfs/homes/jpeyron/Documents/webserv/tmp";
 	const int SIZE_READ = 8192;
-	
+
 	//mime-types
 	const int NB_MIME = 348;
 
-	const std::string MIME_EXTENSIONS[nbMime] = {"3gp", "jpm", "mp3", "rtf", "wav", "xml",
+	const std::string MIME_EXTENSIONS[NB_MIME] = {"3gp", "jpm", "mp3", "rtf", "wav", "xml",
 		"3g2", "3gp", "3gpp", "ac", "adp", "ai", "apng", "appcache", "asc", "atom", "atomcat",
 		"atomsvc", "au", "aw", "bdoc", "bin", "bmp", "bpk", "buffer", "ccxml", "cdmia", "cdmic",
 		"cdmid", "cdmio", "cdmiq", "cer", "cgm", "class", "coffee", "conf", "cpt", "crl", "css",
@@ -98,7 +98,7 @@ namespace ws {
 		"ico"
 	};
 
-	const std::string MIME_TYPES[nbMime] = { "audio/3gpp", "video/jpm", "audio/mp3",
+	const std::string MIME_TYPES[NB_MIME] = { "audio/3gpp", "video/jpm", "audio/mp3",
 		"text/rtf", "audio/wave", "text/xml", "video/3gpp2", "video/3gpp", "video/3gpp",
 		"application/pkix-attr-cert", "audio/adpcm", "application/postscript", "image/apng",
 		"text/cache-manifest", "application/pgp-signature", "application/atom+xml",

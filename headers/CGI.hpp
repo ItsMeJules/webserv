@@ -29,7 +29,7 @@ class Cgi {
 
 		char **generateEnv();
 
-		std::string	execute(HttpRequest &request, ws::request_data_t &data, HttpResponse &response);
+		std::string	execute(HttpRequest &request, ws::request_data_t &data);
 
 		std::string	findQuery(HttpRequest &request);
 		const std::string &getQuery() const;

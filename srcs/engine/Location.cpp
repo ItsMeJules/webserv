@@ -24,7 +24,7 @@ const int &Location::getAutoindex() const {
 	return _autoIndex;
 }
 
-const std::vector<std::string> &Location::getMethods() const {
+const std::vector<std::string> &Location::getMethod() const {
 	return _method;
 }
 
@@ -63,12 +63,13 @@ Location &Location::operator=(Location const &rhs) {
 
  # include <iostream>
 
-const Location *Location::getBestMatch(std::string const &url, std::map<std::string, Location*> const &map) {
-	Location *location = _defaultLocation;
+const Location &Location::getBestMatch(std::string const &url, const ServerInfo &serverInfo) {
+	Location *location = NULL;
+	std::map<std::string, Location*> map = serverInfo.getLocations();
 	size_t maxSize = 0;
 
 	for (std::map<std::string, Location*>::const_iterator it = map.begin(); it != map.end(); it++) {
-		std::string path = it->first;
+		const std::string path = it->first;
 
 		if (url.substr(0, path.size()) == path) {
 			if ((url.size() > path.size() && url[path.size()] == '/') || url.size() == path.size()) {
@@ -79,5 +80,5 @@ const Location *Location::getBestMatch(std::string const &url, std::map<std::str
 			}
 		}
 	}
-	return location;
+	return location == NULL ? serverInfo.getDefaultLocation() : *location;
 }

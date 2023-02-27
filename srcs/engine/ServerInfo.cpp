@@ -83,6 +83,10 @@ const std::map<int, std::string> &ServerInfo::getErrorPages() const {
 	return _errorPage;
 }
 
+const Location &ServerInfo::getDefaultLocation() const {
+	return _defaultLocation;
+}
+
 void  ServerInfo::setMaxBodySize(uint32_t MaxBodySize) {
 	this->_maxBodySize = MaxBodySize;
 }
@@ -135,6 +139,11 @@ void ServerInfo::setErrorPage(std::map<int, std::string> error) {
 	_errorPage = error;
 }
 
+void ServerInfo::setDefaultLocation(Location defaultLocation) {
+	_defaultLocation = defaultLocation;
+}
+
+
 // ############## OPERATORS ##############
 
 ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
@@ -148,6 +157,7 @@ ServerInfo &ServerInfo::operator=(ServerInfo const &rhs) {
 		_method = rhs._method;
 		_cgis = rhs._cgis;
 		_errorPage = rhs._errorPage;
+		_defaultLocation = rhs._defaultLocation;
 
 		for (std::map<std::string, Location *>::const_iterator it = rhs._locations.begin(); it != rhs._locations.end(); it++)
 			_locations.insert(std::make_pair(it->first, new Location(*it->second)));

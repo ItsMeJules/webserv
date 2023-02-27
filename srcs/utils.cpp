@@ -150,7 +150,7 @@ std::string ws::html_list_dir(std::string const &path) {
 	DIR *dir;
 	struct dirent *ent;
 	std::string html = "<!DOCTYPE html><html><head><title>WebServ Autoindex</title></head><body><ul>";
-	
+
 	if ((dir = opendir(path.c_str())) != NULL) {
 		while ((ent = readdir(dir)) != NULL) {
 			html += "<li><a href=\"";
@@ -201,14 +201,14 @@ std::vector<std::string> ws::splitStr(const std::string &str, const std::string 
 	return res;
 }
 
-std::string mimeTypeFromExtension(std::string extension) {
+std::string ws::mimeTypeFromExtension(std::string extension) {
 	std::string mime = "";
-	
+
 	for (int i = 0; i < ws::NB_MIME; i++) {
 		if (extension == ws::MIME_EXTENSIONS[i])
 			mime = ws::MIME_TYPES[i];
 	}
-	
+
 	if (mime.size() == 0)
 		return ("text/plain");
 	return mime;

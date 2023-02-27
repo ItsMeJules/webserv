@@ -5,6 +5,8 @@
 # include <vector>
 # include <map>
 
+class ServerInfo;
+
 class Location {
 	private:
 		std::string _indexPath;
@@ -33,7 +35,9 @@ class Location {
 		void  setAutoIndex(int AutoIndex);
 		void  addtoMethod(std::string Method);
 
-		static const Location *getBestMatch(std::string const &url, std::map<std::string, Location*> const &map);
+		static const Location &getBestMatch(std::string const &url, const ServerInfo &serverInfo);
 };
+
+# include "ServerInfo.hpp"
 
 #endif

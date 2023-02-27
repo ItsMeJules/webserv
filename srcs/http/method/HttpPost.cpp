@@ -33,7 +33,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
-		std::string responseRet = cgi->execute(request, data, response);
+		std::string responseRet = cgi->execute(request, data);
 
 		if (responseRet != "error")
 			body->append(responseRet, responseRet.size());
