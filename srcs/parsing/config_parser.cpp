@@ -464,12 +464,11 @@ void ws::checkConfiguration(Server *servers) {
 		std::vector<std::string> method;
 		std::vector<std::string> locMethod;
 		std::map<int, std::string> errorPage;
-		std::map<std::string, Location*> location;
+		std::map<std::string, Location*> locations = serverInfo.getLocations();
 
 		method = serverInfo.getMethod();
 		errorPage = serverInfo.getError();
 		cgi = serverInfo.getCgis();
-		location = serverInfo.getLocations();
 
 
 		std::cout << "\n----------------------------------SETUP SERVER----------------------------------" << std::endl;
@@ -496,25 +495,25 @@ void ws::checkConfiguration(Server *servers) {
 			std::cout << "\t\t\t- " << it->first << " \t" << it->second << "\n";
 		}
 		std::cout << "LOCATION: " << std::endl;
-		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
-			Location loc = *it->second;
-			locMethod = loc.getMethod();
+		for(std::map<std::string, Location *>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+			Location *loc = it->second;
+			locMethod = loc->getMethod();
 			std::cout << "\n\t" << it->first << std::endl;
 
-			if (loc.getIndexPath().empty())
-				loc.setIndexPath(serverInfo.getIndexPath());
-			std::cout << "\t\tINDEX: \t\t" << loc.getIndexPath() << std::endl;
+			if (loc->getIndexPath().empty())
+				loc->setIndexPath(serverInfo.getIndexPath());
+			std::cout << "\t\tINDEX: \t\t" << loc->getIndexPath() << std::endl;
 
-			if (loc.getAutoindex() == -1)
-				loc.setAutoIndex(serverInfo.hasAutoindex());
-			std::cout << "\t\tAUTOINDEX: \t" << loc.getAutoindex() << std::endl;
+			if (loc->getAutoindex() == -1)
+				loc->setAutoIndex(serverInfo.hasAutoindex());
+			std::cout << "\t\tAUTOINDEX: \t" << loc->getAutoindex() << std::endl;
 			
-			if (loc.getRootPath().empty())
-				loc.setRootPath(serverInfo.getRootPath());
-			std::cout << "\t\tROOT: \t\t" <<  loc.getRootPath()<< std::endl;
+			if (loc->getRootPath().empty())
+				loc->setRootPath(serverInfo.getRootPath());
+			std::cout << "\t\tROOT: \t\t" <<  loc->getRootPath()<< std::endl;
 
-			if (loc.getUploadPath().empty())
-				loc.setUploadPath(serverInfo.getUploadPath());
+			if (loc->getUploadPath().empty())
+				loc->setUploadPath(serverInfo.getUploadPath());
 			std::cout << "\t\tUPLOAD: \t" << serverInfo.getUploadPath() << std::endl;
 
 			if (locMethod.empty())
@@ -523,24 +522,6 @@ void ws::checkConfiguration(Server *servers) {
 			for(std::vector<std::string>::const_iterator it = locMethod.begin(); it != locMethod.end(); ++it) {
 				std::cout << "\t\t\t\t- " << *it << "\n"; 
 			}
-
-			std::cout << "\n\t" << it->first << std::endl;
-			std::cout << "\t\tINDEX: \t\t" << &loc.getIndexPath() << std::endl;
-			std::cout << "\t\tAUTOINDEX: \t" << &loc.getAutoindex() << std::endl;
-			std::cout << "\t\tROOT: \t\t" <<  &loc.getRootPath()<< std::endl;
-			std::cout << "\t\tUPLOAD: \t" << &serverInfo.getUploadPath() << std::endl;
-
-		}
-
-		for(std::map<std::string, Location *>::const_iterator it = location.begin(); it != location.end(); ++it) {
-			Location loc = *it->second;
-			std::cout << "\n\t" << it->first << std::endl;
-			std::cout << "\t\tINDEX: \t\t" << &loc.getIndexPath() << std::endl;
-			std::cout << "\t\tAUTOINDEX: \t" << &loc.getAutoindex() << std::endl;
-			std::cout << "\t\tROOT: \t\t" <<  &loc.getRootPath()<< std::endl;
-			std::cout << "\t\tUPLOAD: \t" << &serverInfo.getUploadPath() << std::endl;
 		}
 		std::cout << "\n----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }
-
-// Add checker to the last character is not a /

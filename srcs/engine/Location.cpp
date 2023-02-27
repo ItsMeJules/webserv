@@ -24,7 +24,7 @@ const int &Location::getAutoindex() const {
 	return _autoIndex;
 }
 
-const std::vector<std::string> &Location::getMethod() const {
+const std::vector<std::string> &Location::getMethods() const {
 	return _method;
 }
 
