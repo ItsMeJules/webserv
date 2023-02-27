@@ -548,6 +548,5 @@ void ws::checkConfiguration(Server *servers) {
 				std::cout << "\t\t\t\t- " << *it << "\n";
 			}
 		}
-		std::cout << serverInfo.getLocations().at("/www/html/test")->getRootPath() << std::endl;
 		std::cout << "\n----------------------------------END OF SETUP----------------------------------\n" << std::endl;
 }

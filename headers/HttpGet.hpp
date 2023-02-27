@@ -6,8 +6,6 @@
 
 class HttpGet : public HttpMethod {
 	private:
-		std::string		_newIndex;
-
 	public:
 		HttpGet();
 		HttpGet(HttpGet const &httpGet);
