@@ -49,7 +49,7 @@ int main(int ac, char **av) {
     }
 
     ws::parseConfig(std::string(av[1]), Server::servers);
-    if (!ws::setup_servers()) {
+    if (!ws::setup_servers()) { // Leaks a regler
         ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
         return 1;
     }

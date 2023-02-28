@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  webserv:
+    build: container
+    tty: true
+    container_name: webserv
+    # restart: unless-stopped
+    volumes:
+      # attach a directory relative to the directory containing this compose file
+      - ./container/volume:/webserv
+    network_mode: host

@@ -29,6 +29,20 @@ _CLEAR		=	\033[2K\c
 all				:	init $(NAME)
 					@ echo "$(_SUCCESS) Compilation done"
 
+container_init	:
+					mkdir -p container/volume
+					mkdir -p container/html
+					mkdir -p container/conf
+
+					cp -r srcs container/volume
+					cp -r obj container/volume
+					cp -r headers container/volume
+
+					cp -r html container
+					cp -r conf container
+
+					cp Makefile container/volume
+
 #		Bonus:
 bonus			:	all
 
@@ -51,6 +65,12 @@ clean			:
 					@ echo "$(_INFO) Deleted object files and directories"
 					@ $(RM) $(OBJ_DIR)
 					@ echo "$(_SUCCESS) Working directory clean"
+
+clean_container	:
+					@ echo "$(_INFO) Deleting container files"
+					@ sudo $(RM) container/volume
+					@ sudo $(RM) container/conf
+					@ sudo $(RM) container/html
 
 #		FClean:
 fclean			:	clean
