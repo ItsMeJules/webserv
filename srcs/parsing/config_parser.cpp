@@ -518,11 +518,9 @@ void ws::checkConfiguration(Server *servers) {
 			std::vector<std::string> locMethod = loc->getMethod();
 			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t" + it->first + " :");
 
-
 			if (loc->getIndexPath().empty())
 				loc->setIndexPath(serverInfo.getIndexPath());
 			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tINDEX: \t\t" + loc->getIndexPath());
-
 
 			if (loc->getAutoindex() == -1)
 				loc->setAutoIndex(serverInfo.hasAutoindex());
@@ -538,7 +536,6 @@ void ws::checkConfiguration(Server *servers) {
 				loc->setUploadPath(serverInfo.getUploadPath());
 			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tUPLOAD: \t" + loc->getUploadPath());
 
-
 			for (std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
 				if (std::find(locMethod.begin(), locMethod.end(), *it) == locMethod.end())
 					locMethod.push_back(*it);
@@ -548,6 +545,7 @@ void ws::checkConfiguration(Server *servers) {
 				ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\t\t\t- " + *it);
 			}
 		}
+
 		std::cout << serverInfo.getLocations().at("/www/html/test")->getRootPath() << std::endl;
 		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "------------------------------------END SERVER----------------------------------");
 }
