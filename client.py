@@ -25,13 +25,10 @@ headers = {'Accept': '*/*',
             'User-Agent': 'python-requests/2.25.1'}
 r = ""
 
-files = {'upload_file': open('/mnt/nfs/homes/jpeyron/Downloads/IMG-Worlds-of-Adventure-guide-in-dubai.jpeg','rb')}
-#filesPic = {'upload_file': open('/home/jules/Pictures/Downloaded/moi/jpeyron.jpg','rb')}
 values = {'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
 
 m = MultipartEncoder(
   fields = {
-    "main.cpp": ("IMG-Worlds-of-Adventure-guide-in-dubai.jpeg", open("/mnt/nfs/homes/jpeyron/Downloads/IMG-Worlds-of-Adventure-guide-in-dubai.jpeg", "rb")),
     'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'
   }
 )

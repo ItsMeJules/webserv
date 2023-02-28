@@ -23,7 +23,7 @@
 						<h2>TRY <span>GET</span> METHOD</h2>
 					</div>
 					<div class="txt">
-						<a href="hello-world.html"></a> Hello world</br></a>
+						<a href="/php/index.php">Hello world</br></a>
 					</div>
 					<div class="btn">
 						<button href="hello-world.html" class="button" type="button" role="button" onclick="window.location.href = '/server/hello-world.html'">GET</button>
@@ -34,23 +34,12 @@
 					<div class="title">
 						<h2>TRY <span>POST</span> METHOD</h2>
 					</div>
-					<div class="form">
-						<form action="/test-post" method="post">
-							<div class="name">
-								<label for="name">Nom</label>
-								<input type="text" name="name" id="name" placeholder="Peyron"required>
-							</div>
-							<div class="mail">
-								<label for="name">Mail</label>
-								<input type="email" name="email" id="email" placeholder="jpeyron@gmail.com"required>
-							</div>
-							<div class="phone">
-								<label for="name">Phone</label>
-								<input type="number" name="phone" id="phone" placeholder="0123456789" required>
-							</div>
-							<div class="btn">
-								<button class="button" type="button" role="button" onclick="">POST</button>
-							</div>
+					<div class="formclass">
+						<h3>Leave a comment :</h3>
+						<form action="server/post.php" method="POST">
+							<input type="text" name="title" placeholder="title" /></br>
+							<textarea name="content" placeholder="description"></textarea></br>
+							<input type="submit" value="POST" />
 						</form>
 					</div>
 				</div>
@@ -62,7 +51,7 @@
 						Click here to try Delete
 					</div>
 					<div class="btn">
-						<button href="delete.html" class="button" type="button" role="button" onclick="window.location.href = 'delete.html'">DELETE</button>
+						<button href="/server/delete.html" class="button" type="button" role="button" onclick="window.location.href = '/server/delete.html'">DELETE</button>
 					</div>
 				</div>
 			</div>
