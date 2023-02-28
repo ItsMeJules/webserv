@@ -89,6 +89,8 @@ void ws::log(int const &level, std::string const &prefix, std::string const &mes
 		color = ws::C_LIME;
 	else if (lvl == ws::LOG_LVL_DEBUG)
 		color = C_SILVER;
+	else if (lvl == ws::LOG_LVL_PARSING)
+		color = C_SILVER;
 
 	std::cout << "(LOGLVL: " << level << ") " << ws::C_AQUA << prefix << (prefix.empty() ? "" : " ") << color << message << ws::C_RESET << std::endl;
 	if (_errno)
