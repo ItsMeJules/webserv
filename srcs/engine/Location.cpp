@@ -75,7 +75,6 @@ const Location &Location::getBestMatch(std::string const &url, const ServerInfo 
 			if ((url.size() > path.size() && url[path.size()] == '/') || url.size() == path.size()) {
 				if (path.size() > maxSize) {
 					maxSize = path.size();
-					std::cout << "loc=" << path << std::endl;
 					location = it->second;
 				}
 			}
