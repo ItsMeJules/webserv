@@ -35,14 +35,14 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	const std::vector<std::string> allowedMethods = data.location.getMethod();
 
-	// if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end()) {
-	// 	response.generateError(405, serverInfo.getErrorPages(), *body);
-	// 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-	// 	response.addHeader("Date", response.generateDate());
+	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end()) {
+		response.generateError(405, serverInfo.getErrorPages(), *body);
+		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
+		response.addHeader("Date", response.generateDate());
 
-	// 	response.setMessageBody(body);
-	// 	return response;
-	// }
+		response.setMessageBody(body);
+		return response;
+	}
 
 	if (ws::file_is_dir(data.requestedPath)) {
 		std::cout << "dir" << data.location.getAutoindex() << std::endl;

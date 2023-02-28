@@ -17,6 +17,9 @@ class IPoll {
 		virtual bool pollFd(int fd, int event) = 0;
 		virtual bool deleteFd(int fd) = 0;
         virtual bool modFd(int fd, int event) = 0;
+		virtual int clientConnect(Server &server) = 0;
+		virtual int clientWrite(Client &client, Server &server) = 0;
+		virtual int clientRead(Client &client, Server &server) = 0;
 		virtual int polling(Server &server) = 0;
 
         virtual int pollOutEvent() const = 0;

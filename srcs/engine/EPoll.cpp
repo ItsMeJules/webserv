@@ -77,6 +77,46 @@ bool EPoll::modFd(int fd, int events) {
     return ret != -1;
 }
 
+int EPoll::clientConnect(Server &server) {
+	ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
+
+	ClientSocket socket(server.getServerSocket().getFd());
+	if (!socket.setup())
+		return -3;
+
+	Client client(socket);
+	server.connect(client);
+}
+
+int EPoll::clientWrite(Client &client, Server &server) {
+	HttpResponse response;
+	DefaultBody *errorBody = new DefaultBody();
+
+	if (!client.hasRequestFailed())
+		response = client.getHttpRequest().execute(server.getServerInfo());
+	else
+		response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo().getErrorPages(), *errorBody);
+
+	server.sendData(client, response);
+	delete errorBody;
+	if (client.getHttpRequest().headersContains("Connection", "close"))
+		server.disconnect(client);
+	// if there's no connection header we assume that the connection is keep-alive
+	else {
+		client.getRequestParser().clear();
+		modFd(client.getSocket().getFd(), EPOLLIN);
+	}
+}
+
+int EPoll::clientRead(Client &client, Server &server) {
+	if (!server.receiveData(client))
+		server.disconnect(client);
+	else if (client.hasRequestFailed())
+		modFd(client.getSocket().getFd(), EPOLLOUT);
+	else if (client.getRequestParser().isRequestParsed())
+		modFd(client.getSocket().getFd(), EPOLLOUT);
+}
+
 int EPoll::polling(Server &server) {
 	struct epoll_event events[ws::POLL_EVENTS_SIZE];
 
@@ -97,40 +137,14 @@ int EPoll::polling(Server &server) {
 				deleteFd(events[i].data.fd);
 			continue ;
 		} else if (server.getServerSocket().getFd() == events[i].data.fd) { // Essai de connexion
-			ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
-
-            ClientSocket socket(server.getServerSocket().getFd());
-            if (!socket.setup())
-                return -3;
-
-            Client client(socket);
-            server.connect(client);
+			clientConnect(server);
         } else {
             Client &client = server.getClient(events[i].data.fd);
-            if (events[i].events & EPOLLIN) {
-                if (!server.receiveData(client))
-				    server.disconnect(client);
-				else if (client.hasRequestFailed())
-                    modFd(events[i].data.fd, EPOLLOUT);
-				else if (client.getRequestParser().isRequestParsed())
-                    modFd(events[i].data.fd, EPOLLOUT);
-            } else if (events[i].events & EPOLLOUT) {
-                HttpResponse response;
-				DefaultBody *errorBody = new DefaultBody();
-				if (!client.hasRequestFailed())
-					response = client.getHttpRequest().execute(server.getServerInfo());
-				else {
-					response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo().getErrorPages(), *errorBody);
-				}
 
-                server.sendData(client, response);
-				delete errorBody;
-                if (client.getHttpRequest().headersContains("Connection", "close")) {
-                    server.disconnect(client);
-                } else { // if there's no connection header we assume that the connection is keep-alive
-                    client.getRequestParser().clear();
-                    modFd(events[i].data.fd, EPOLLIN);
-                }
+            if (events[i].events & EPOLLIN) {
+				clientRead(client, server);
+            } else if (events[i].events & EPOLLOUT) {
+				clientWrite(client, server);
             } else if (events[i].events & EPOLLRDHUP)
                 server.disconnect(client);
         }

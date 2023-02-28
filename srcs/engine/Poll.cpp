@@ -63,6 +63,46 @@ bool Poll::modFd(int fd, int events) {
 	return false;
 }
 
+int Poll::clientConnect(Server &server) {
+	ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
+
+	ClientSocket socket(server.getServerSocket().getFd());
+	if (!socket.setup())
+		return -3;
+
+	Client client(socket);
+	server.connect(client);
+}
+
+int Poll::clientWrite(Client &client, Server &server) {
+	HttpResponse response;
+	DefaultBody *errorBody = new DefaultBody();
+
+	if (!client.hasRequestFailed())
+		response = client.getHttpRequest().execute(server.getServerInfo());
+	else
+		response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo().getErrorPages(), *errorBody);
+
+	server.sendData(client, response);
+	delete errorBody;
+	if (client.getHttpRequest().headersContains("Connection", "close"))
+		server.disconnect(client);
+	// if there's no connection header we assume that the connection is keep-alive
+	else {
+		client.getRequestParser().clear();
+		modFd(client.getSocket().getFd(), POLLIN);
+	}
+}
+
+int Poll::clientRead(Client &client, Server &server) {
+	if (!server.receiveData(client))
+		server.disconnect(client);
+	else if (client.hasRequestFailed())
+		modFd(client.getSocket().getFd(), POLLOUT);
+	else if (client.getRequestParser().isRequestParsed())
+		modFd(client.getSocket().getFd(), POLLOUT);
+}
+
 int Poll::polling(Server &server) {
 	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), ws::POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
@@ -91,27 +131,12 @@ int Poll::polling(Server &server) {
 			server.connect(client);
 		} else { /* Dans le cas du Client */
 			Client	&client = server.getClient(it->fd);
-			if (it->revents & POLLIN) {
-                if (!server.receiveData(client))
-                    server.disconnect(client);
-                else if (client.getRequestParser().isRequestParsed())
-                    modFd(it->fd, POLLOUT);
-            } else if (it->revents & POLLOUT) {
-                HttpResponse response = client.getHttpRequest().execute(server.getServerInfo());
-                DefaultBody *body = new DefaultBody();
 
-				body->append("Hello World!", 13);
-                response.addHeader("Content-Type", "text/plain");
-                response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-                response.setMessageBody(body);
-                server.sendData(client, response);
-                if (client.getHttpRequest().headersContains("Connection", "close")) {
-                    server.disconnect(client);
-                } else {  // if there's no connection header we assume that the connection is keep-alive
-                    client.getRequestParser().clear();
-                    modFd(it->fd, pollInEvent());
-                }
-            } else if (it->revents & POLLHUP)
+            if (it->revents & POLLIN) {
+				clientRead(client, server);
+            } else if (it->revents & POLLOUT) {
+				clientWrite(client, server);
+            } else if (it->revents & POLLRDHUP)
                 server.disconnect(client);
 		}
     }

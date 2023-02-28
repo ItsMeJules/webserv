@@ -25,6 +25,9 @@ class Poll : public IPoll {
 		bool pollFd(int fd, int event);
 		bool deleteFd(int fd);
         bool modFd(int fd, int event);
+		int clientConnect(Server &server);
+		int clientWrite(Client &client, Server &server);
+		int clientRead(Client &client, Server &server);
 		int polling(Server &server);
 
 		int pollOutEvent() const;
