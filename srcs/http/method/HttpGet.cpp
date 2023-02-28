@@ -45,8 +45,8 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	}
 
 	if (ws::file_is_dir(data.requestedPath)) {
-			response.generateError(404, serverInfo.getErrorPages(), *body);
 		if (data.location.getAutoindex() == 0) {
+			response.generateError(404, serverInfo.getErrorPages(), *body);
 			response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 			response.addHeader("Date", response.generateDate());
 
