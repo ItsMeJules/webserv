@@ -5,13 +5,9 @@
 </head>
 
 
-<h1>Comment is POST !</h1>
+<h1>voici ta chose !</h1>
 <body style="text-align: center;">
     <h3>title:</h3> <p><?=$_GET["title"];?></p>
-    <h3>content:</h3> <p><?=$_GET["content"];?></p>
-
-    <!-- <p><?=$_GET["title"] . " " . $_GET["content"]?></p> -->
-
 </body>
 
 </html>
