@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ServerSocket.hpp"
 #include "Server.hpp"
 #include "config_parser.hpp"
@@ -19,20 +21,11 @@ std::vector<Server*> Server::servers = std::vector<Server*>();
 
 std::vector<Server *> vecserv;
 
-int main(int ac, char **av) {
-    if (ac < 2) {
-        ServerSocket serverSocket;
-        serverSocket.setup();
+namespace ws {
 
-        Server server(serverSocket);
-        server.setup();
+    bool setup_servers() {
+        bool success = true;
 
-        while (Server::poller->polling(server) > 0) {
-        }
-        serverSocket.close();
-        delete Server::poller;
-    } else {
-        ws::parseConfig(std::string(av[1]), Server::servers);
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
 
@@ -40,19 +33,37 @@ int main(int ac, char **av) {
             
             server->getServerSocket().setIp(server->getServerInfo().getIp());
             server->getServerSocket().setPort(server->getServerInfo().getPort());
-            server->getServerSocket().setup();
-            server->setup();
+            success = server->getServerSocket().setup() && server->setup();
         }
-        while (1) {
-            for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
-                Server *server = *it;
+        return success;
+    }
 
-                if (Server::poller->polling(*server) < 0) {
-                    ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
-                    delete server;
-                    return 1;
-                } else {
-                }
+}
+
+int main(int ac, char **av) {
+    bool stop = false;
+
+    if (ac < 2) {
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "You must specify a configuration file!");
+        return 1;
+    }
+
+    ws::parseConfig(std::string(av[1]), Server::servers);
+    if (!ws::setup_servers()) {
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
+        return 1;
+    }
+
+    while (!stop) {
+        for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
+            Server *server = *it;
+
+            if (Server::poller->polling(*server) < 0) {
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
+                delete server;
+                stop = true;
+                break;
             }
         }
     }

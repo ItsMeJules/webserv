@@ -84,7 +84,6 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 		std::cerr << "********************CGI***********************" << std::endl;
 
-
 		std::string responseReturn = cgi->execute(request, data);
 		body->append(responseReturn, responseReturn.size());
 

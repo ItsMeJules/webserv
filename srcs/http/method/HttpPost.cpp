@@ -72,6 +72,8 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 					break ;
 				}
 			}
+			if (ofs.is_open())
+				ofs.close();
 		}
 
 		if (!ws::file_exists(data.requestedPath))
