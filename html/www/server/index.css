@@ -102,6 +102,7 @@ input {
 	font-size: 15px;
 	border: 1px solid white;
 	padding: 10px 45px;
+	margin: 10px;
 }
 
 div.delete {
@@ -122,6 +123,25 @@ div.delete:hover {
 	transform: scale(1.1);
 	background-color: rgba(255, 255, 255, 0.080);
 }
+
+input.submit {
+	background-color: #0e1114;
+	border-radius: 29px;
+	border: 1px solid white;
+	color: white;
+	font-size: 15px;
+    padding: 10px 45px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+input.submit:hover{
+	background-color: white;
+	color: #0e1114;
+	border-color: #0e1114;
+	transition: 0.3s;
+}
+
 
 .button{
     background-color: #0e1114;
