@@ -27,7 +27,8 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 	if (ws::file_is_dir(data.requestedPath)) {
 		if (data.clientPath[data.clientPath.size() - 1] != '/')
 			data.clientPath += "/";
-		data.requestedPath = data.location.getRootPath() + data.clientPath + data.location.getIndexPath();
+		if (data.location.getAutoindex() == 0)
+			data.requestedPath = data.location.getRootPath() + data.clientPath + data.location.getIndexPath();
 	}
 
 	data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/") + 1, queryStartPos);

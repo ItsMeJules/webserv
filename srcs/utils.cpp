@@ -152,11 +152,22 @@ std::string ws::html_list_dir(std::string const &path, std::string const &relati
 	DIR *dir;
 	struct dirent *ent;
 	std::string html = "<!DOCTYPE html><html><head><title>WebServ Autoindex</title></head><body><ul>";
-	std::cout << "path=" << path << std::endl;
+
 	if ((dir = opendir(path.c_str())) != NULL) {
+		html += "</a></li>";
+		html += "<li><a href=\"";
+		html += relativePath + "..";
+		html += "\">";
+		html += "..";
+		html += "</a></li>";
 		while ((ent = readdir(dir)) != NULL) {
+			std::string d_name = std::string(ent->d_name);
+
+			if (d_name == ".." || d_name == ".")
+				continue;
+
 			html += "<li><a href=\"";
-			html += relativePath + '/' + ent->d_name;
+			html += relativePath + ent->d_name;
 			html += "\">";
 			html += ent->d_name;
 			html += "</a></li>";
