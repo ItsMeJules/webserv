@@ -6,6 +6,7 @@
 # include "Server.hpp"
 # include "utils.hpp"
 # include "Constants.hpp"
+# include "Client.hpp"
 
 class Server;
 

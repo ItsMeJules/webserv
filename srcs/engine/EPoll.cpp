@@ -86,6 +86,7 @@ int EPoll::clientConnect(Server &server) {
 
 	Client client(socket);
 	server.connect(client);
+	return 1;
 }
 
 int EPoll::clientWrite(Client &client, Server &server) {
@@ -106,6 +107,7 @@ int EPoll::clientWrite(Client &client, Server &server) {
 		client.getRequestParser().clear();
 		modFd(client.getSocket().getFd(), EPOLLIN);
 	}
+	return 1;
 }
 
 int EPoll::clientRead(Client &client, Server &server) {
@@ -115,6 +117,7 @@ int EPoll::clientRead(Client &client, Server &server) {
 		modFd(client.getSocket().getFd(), EPOLLOUT);
 	else if (client.getRequestParser().isRequestParsed())
 		modFd(client.getSocket().getFd(), EPOLLOUT);
+	return 1;
 }
 
 int EPoll::polling(Server &server) {
@@ -137,7 +140,8 @@ int EPoll::polling(Server &server) {
 				deleteFd(events[i].data.fd);
 			continue ;
 		} else if (server.getServerSocket().getFd() == events[i].data.fd) { // Essai de connexion
-			clientConnect(server);
+			if (clientConnect(server) == -3)
+				return -3;
         } else {
             Client &client = server.getClient(events[i].data.fd);
 

@@ -72,6 +72,7 @@ int Poll::clientConnect(Server &server) {
 
 	Client client(socket);
 	server.connect(client);
+	return 1;
 }
 
 int Poll::clientWrite(Client &client, Server &server) {
@@ -92,6 +93,7 @@ int Poll::clientWrite(Client &client, Server &server) {
 		client.getRequestParser().clear();
 		modFd(client.getSocket().getFd(), POLLIN);
 	}
+	return 1;
 }
 
 int Poll::clientRead(Client &client, Server &server) {
@@ -101,6 +103,7 @@ int Poll::clientRead(Client &client, Server &server) {
 		modFd(client.getSocket().getFd(), POLLOUT);
 	else if (client.getRequestParser().isRequestParsed())
 		modFd(client.getSocket().getFd(), POLLOUT);
+	return 1;
 }
 
 int Poll::polling(Server &server) {
@@ -123,12 +126,8 @@ int Poll::polling(Server &server) {
 				deleteFd(it->fd);
 			continue ;
 		} else if (server.getServerSocket().getFd() == it->fd) { // Dans le cas du Serveur
-			ClientSocket socket(server.getServerSocket().getFd());
-			if (!socket.setup())
+			if (clientConnect(server) == -3)
 				return -3;
-
-			Client client(socket);
-			server.connect(client);
 		} else { /* Dans le cas du Client */
 			Client	&client = server.getClient(it->fd);
 
