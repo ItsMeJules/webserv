@@ -538,10 +538,10 @@ void ws::checkConfiguration(Server *servers) {
 
 			for (std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
 				if (std::find(locMethod.begin(), locMethod.end(), *it) == locMethod.end())
-					locMethod.push_back(*it);
+					loc->addtoMethod(*it);
 			}
 			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tMETHOD:");
-			for(std::vector<std::string>::const_iterator it = locMethod.begin(); it != locMethod.end(); ++it) {
+			for(std::vector<std::string>::const_iterator it = loc->getMethod().begin(); it != loc->getMethod().end(); ++it) {
 				ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\t\t\t- " + *it);
 			}
 		}
