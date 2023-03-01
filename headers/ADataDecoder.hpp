@@ -24,6 +24,8 @@ class ADataDecoder {
 
 		bool hasData();
 
+		virtual ADataDecoder *clone() = 0;
+
 		ADataDecoder &operator=(ADataDecoder const &rhs);
 };
 

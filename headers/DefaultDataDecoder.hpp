@@ -14,6 +14,8 @@ class DefaultDataDecoder : public ADataDecoder {
 		~DefaultDataDecoder();
 
 		int decodeInto(std::vector<char> &vec);
+		
+		ADataDecoder *clone();
 
 		DefaultDataDecoder &operator=(DefaultDataDecoder const &rhs);
 };

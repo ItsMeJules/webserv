@@ -6,7 +6,8 @@ HttpMessage::HttpMessage() : _messageBody(NULL) {}
 HttpMessage::HttpMessage(std::string httpVersion) : _httpVersion(httpVersion), _messageBody(NULL) {}
 HttpMessage::HttpMessage(HttpMessage const &message) { *this = message; }
 HttpMessage::~HttpMessage() {
-    delete _messageBody;
+	ws::log(ws::LOG_LVL_DEBUG, "[HTTP MESSAGE] -", "deleting http message.");
+	delete _messageBody;
 }
 
 // ############## PRIVATE ##############
@@ -67,6 +68,7 @@ const std::string &HttpMessage::getHttpVersion() const {
 
 HttpMessage &HttpMessage::operator=(HttpMessage const &rhs) {
 	if (this != &rhs) {
+		std::cout << "test	" << std::endl;
 		if (rhs._messageBody != NULL)
 			_messageBody = rhs._messageBody->clone();
 		_headers = rhs._headers;

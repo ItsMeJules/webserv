@@ -36,6 +36,10 @@ int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 	return ws::DECODER_PARSE_READY;
 }
 
+ADataDecoder *DefaultDataDecoder::clone() {
+	return new DefaultDataDecoder(*this);
+}
+
 // ############## GETTERS / SETTERS ##############
 
 // ############## OPERATORS ##############

@@ -12,7 +12,9 @@ AMessageBody::AMessageBody(ADataDecoder *decoder) : _decoder(decoder) {
 AMessageBody::AMessageBody() {}
 AMessageBody::AMessageBody(AMessageBody const &messageBody) { *this = messageBody; }
 AMessageBody::~AMessageBody() {
+	ws::log(ws::LOG_LVL_DEBUG, "[AMESSAGE BODY] -", "destroying AMessageBody.");
 	destroyTmpFile();
+	delete _decoder;
 }
 
 // ############## PRIVATE ##############

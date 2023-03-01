@@ -229,5 +229,6 @@ FormDataBody &FormDataBody::operator=(FormDataBody const &rhs) {
 		_tmp = rhs._tmp;
 		_boundary = rhs._boundary;
 	}
+	AMessageBody::operator=(rhs);
 	return *this;
 }

@@ -51,5 +51,6 @@ DefaultBody &DefaultBody::operator=(DefaultBody const &rhs) {
 	if (this != &rhs) {
 		_body = rhs._body;
 	}
+	AMessageBody::operator=(rhs);
 	return *this;
 }

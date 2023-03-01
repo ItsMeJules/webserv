@@ -93,6 +93,10 @@ int ChunkedDataDecoder::decodeInto(std::vector<char> &vec) {
 	}
 }
 
+ADataDecoder *ChunkedDataDecoder::clone() {
+	return new ChunkedDataDecoder(*this);
+}
+
 // ############## GETTERS / SETTERS ##############
 
 // ############## OPERATORS ##############
