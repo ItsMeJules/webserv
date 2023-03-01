@@ -14,7 +14,7 @@ AMessageBody::AMessageBody(AMessageBody const &messageBody) { *this = messageBod
 AMessageBody::~AMessageBody() {
 	ws::log(ws::LOG_LVL_DEBUG, "[AMESSAGE BODY] -", "destroying AMessageBody.");
 	destroyTmpFile();
-	delete _decoder;
+	// delete _decoder;
 }
 
 // ############## PRIVATE ##############
@@ -33,7 +33,7 @@ bool AMessageBody::appendFromFile(std::vector<char> &vec, std::vector<char>::siz
 		vec.reserve(vec.size() + readSize);
 
 	_tmpIfStream.read(buffer, readSize);
-	
+
 	vec.insert(vec.end(), &buffer[0], &buffer[_tmpIfStream.gcount()]);
 	return true;
 }
