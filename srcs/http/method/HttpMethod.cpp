@@ -48,11 +48,6 @@ ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, Htt
 	} else
 		data.indexAppended = false;
 
-	std::cout << "requested=" << data.requestedPath << std::endl;
-	std::cout << "index=" << data.location.getIndexPath() << std::endl;
-	std::cout << "root=" << data.location.getRootPath() << std::endl;
-	std::cout << "client=" << data.clientPath << std::endl;
-
 	data.fileName = data.requestedPath.substr(data.requestedPath.rfind("/") + 1, queryStartPos);
 	if (data.fileName != "/" && data.fileName.find(".") != std::string::npos)
 		data.fileExtension = data.fileName.substr(data.fileName.rfind(".") + 1, queryStartPos);

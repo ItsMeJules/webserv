@@ -36,7 +36,6 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 		if (cgi->setup(request)) {
 			std::string responseReturn = cgi->execute(request, data);
-			std::cout << "exec le cgi" << std::endl;
 			body->append(responseReturn, responseReturn.size());
 
 			response.addHeader("Content-Type", ws::mimeTypeFromExtension("html"));

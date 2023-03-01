@@ -19,7 +19,7 @@ HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &requ
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
 	if (remove(data.requestedPath.c_str()) == 0) {
-		response.setStatusCode(204);
+		response.setStatusCode(200);
 		status = HttpResponse::codes[response.getStatusCode()];
 
 		body->append(status.explanation, status.explanation.size());

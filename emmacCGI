@@ -8,9 +8,8 @@
 
 <h1>Hello this is post request ! Voici les infos que tu as rentrees :)</h1>
 <body style="text-align: center;">
-            <h3>voila ton mot:</h3> <p>hello</p>
-                <h3>et la description :</h3> <p>world
-</p>
+            <h3>voila ton mot:</h3> <p>jules</p>
+                <h3>et la description :</h3> <p>peyron</p>
     </body>
 
 </html>
