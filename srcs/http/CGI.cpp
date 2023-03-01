@@ -91,10 +91,11 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 	else
 		wait(NULL);
 
-	delete[] env;
 	for (int i = 0; cgiEnv[i]; i++)
 		free(cgiEnv[i]);
 	delete[] cgiEnv;
+	
+	delete[] env;
 	return (ftostr("emmacCGI"));
 }
 
