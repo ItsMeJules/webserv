@@ -12,26 +12,25 @@ HttpDelete::~HttpDelete() {}
 
 HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	HttpResponse response;
+	ws::http_status_t status;
+
 	DefaultBody *body = new DefaultBody();
 	std::string root = serverInfo.getRootPath();
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
-	if (remove(data.requestedPath.c_str()) == 0)
-	{
+	if (remove(data.requestedPath.c_str()) == 0) {
 		response.setStatusCode(204);
-		body->append(HttpResponse::codes[204].explanation, HttpResponse::codes[204].explanation.size());
+		status = HttpResponse::codes[response.getStatusCode()];
+
+		body->append(status.explanation, status.explanation.size());
+		response.addHeader("Content-Type", "text/plain");
 	}
 	else
-	{
-		response.setStatusCode(404);
-		body->append(HttpResponse::codes[404].explanation, HttpResponse::codes[404].explanation.size());
-	}
-	response.addHeader("Content-Type", "text/plain");
+		response.generateError(404, serverInfo, *body);
+
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
 
-
-	(void)request;
 	return response;
 }
 
