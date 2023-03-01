@@ -21,7 +21,7 @@ int DefaultBody::parse(char *body, int &size) {
 		ret = _decoder->decodeInto(_body);
 	} while (ret == ws::DECODER_CALL_AGAIN || ret == ws::DECODER_PARSE_READY);
 	
-	return ret == ws::DECODER_STOP ? 1 : ret;
+	return ret;
 }
 
 AMessageBody *DefaultBody::clone() {

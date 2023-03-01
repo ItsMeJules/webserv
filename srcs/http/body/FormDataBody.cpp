@@ -132,7 +132,6 @@ int FormDataBody::parse(char *body, int &size) {
 	if (ret == ws::DECODER_STOP) {
 		AMessageBody::_tmpOfStream.flush();
 		AMessageBody::_tmpOfStream.close();
-		return 1;
 	}
 	return ret;
 }

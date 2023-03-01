@@ -5,8 +5,8 @@ services:
     build: container
     tty: true
     container_name: webserv
-    # restart: unless-stopped
+    ports:
+      - 8080:8080
+    restart: unless-stopped
     volumes:
-      # attach a directory relative to the directory containing this compose file
       - ./container/volume:/webserv
-    network_mode: host

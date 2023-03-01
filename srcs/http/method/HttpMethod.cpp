@@ -20,7 +20,7 @@ int HttpMethod::isValid(std::ifstream const &fileStream, ws::request_data_t &dat
 	}
 
 	const std::vector<std::string> allowedMethods = data.location.getMethod();
-
+	
 	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end())
 		return 405;
 	return 200;

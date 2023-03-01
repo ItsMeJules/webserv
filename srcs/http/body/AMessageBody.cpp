@@ -14,7 +14,7 @@ AMessageBody::AMessageBody(AMessageBody const &messageBody) { *this = messageBod
 AMessageBody::~AMessageBody() {
 	ws::log(ws::LOG_LVL_DEBUG, "[AMESSAGE BODY] -", "destroying AMessageBody.");
 	destroyTmpFile();
-	delete _decoder;
+	// delete _decoder;
 }
 
 // ############## PRIVATE ##############

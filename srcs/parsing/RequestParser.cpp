@@ -104,7 +104,7 @@ bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBo
 			return false;
 		}
 
-        _requestParsed = ret == 1;
+        _requestParsed = ret == 0;
     }
 	if (_requestParsed) {
 		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");

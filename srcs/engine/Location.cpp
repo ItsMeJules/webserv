@@ -61,8 +61,6 @@ Location &Location::operator=(Location const &rhs) {
 	return *this;
 }
 
-# include <iostream>
-
 const Location &Location::getBestMatch(std::string const &url, const ServerInfo &serverInfo) {
 	Location *location = NULL;
 	std::map<std::string, Location*> map = serverInfo.getLocations();
@@ -74,10 +72,9 @@ const Location &Location::getBestMatch(std::string const &url, const ServerInfo 
 		std::vector<std::string> locFolders = ws::splitStr(path, "/");
 
 		for (std::vector<std::string>::size_type i = 0; i < urlFolders.size() && i < locFolders.size(); i++) {
-			if (std::string(urlFolders[i]) != std::string(locFolders[i]))
+			if (urlFolders[i] != locFolders[i])
 				break ;
-
-			if (i >= matchedFolders) {
+			if (i + 1 > matchedFolders) {
 				matchedFolders++;
 				location = it->second;
 			}
