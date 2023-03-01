@@ -6,5 +6,3 @@ COPY html/ html/
 COPY conf/* conf/
 	
 COPY start_webserv.sh /
-
-ENTRYPOINT [ "./start_webserv.sh" ]

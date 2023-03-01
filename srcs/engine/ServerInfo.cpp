@@ -2,7 +2,7 @@
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
-ServerInfo::ServerInfo() {
+ServerInfo::ServerInfo() { // TODO changer ca
 	_maxBodySize = 1000000;
 	_autoindex = false;
 	_serverName = "";

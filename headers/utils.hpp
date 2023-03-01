@@ -31,6 +31,8 @@ namespace ws {
 		std::string requestedPath; // path on the server of the file to send
 		Location location;
 
+		bool indexAppended;
+
 		std::string fileName;
 		std::string fileExtension;
 		std::string cgiQuery;
@@ -52,7 +54,6 @@ namespace ws {
 	char *char_array(std::string const &str, int end, int begin = 0);
 	int pos_in_vec(std::string const &str, std::vector<char> const &vec);
 	int pos_in_vec_from_end(std::string const &str, std::vector<char> const &vec);
-	char	**ft_split(char const *s, char c);
 
     // LOGGING
     void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
@@ -65,7 +66,7 @@ namespace ws {
 	void close_tmp_file(ws::tmp_file_t const &tft);
 	size_t get_file_size(std::ifstream &stream);
 	std::string get_file_contents(std::ifstream &stream, int fileSize);
-	std::string html_list_dir(std::string const &path, std::string const &relativePath);
+	std::string html_list_dir(std::string const &path, std::string &relativePath);
 
 	// PARSING
 	bool ft_in_charset(char const c, const std::string &charset);

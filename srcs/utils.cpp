@@ -148,10 +148,13 @@ std::string ws::get_file_contents(std::ifstream &stream, int fileSize) {
 	return fileContent;
 }
 
-std::string ws::html_list_dir(std::string const &path, std::string const &relativePath) {
+std::string ws::html_list_dir(std::string const &path, std::string &relativePath) {
 	DIR *dir;
 	struct dirent *ent;
 	std::string html = "<!DOCTYPE html><html><head><title>WebServ Autoindex</title></head><body><ul>";
+
+	if (relativePath[relativePath.size() - 1] != '/')
+		relativePath += "/";
 
 	if ((dir = opendir(path.c_str())) != NULL) {
 		html += "</a></li>";

@@ -82,7 +82,7 @@ int Poll::clientWrite(Client &client, Server &server) {
 	if (!client.hasRequestFailed())
 		response = client.getHttpRequest().execute(server.getServerInfo());
 	else
-		response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo().getErrorPages(), *errorBody);
+		response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo(), *errorBody);
 
 	server.sendData(client, response);
 	delete errorBody;

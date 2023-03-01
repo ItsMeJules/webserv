@@ -5,6 +5,7 @@
 # include <vector>
 # include <map>
 
+class utils;
 class ServerInfo;
 
 class Location {
@@ -38,6 +39,7 @@ class Location {
 		static const Location &getBestMatch(std::string const &url, const ServerInfo &serverInfo);
 };
 
+# include "utils.hpp"
 # include "ServerInfo.hpp"
 
 #endif

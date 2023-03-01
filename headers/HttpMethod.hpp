@@ -16,6 +16,7 @@ class HttpRequest;
 class HttpMethod {
 	protected:
 		ws::request_data_t initRequestData(ServerInfo const &serverInfo, HttpRequest const &request);
+		bool isValid(std::ifstream const &fileStream, ws::request_data_t &data, ServerInfo const &serverInfo, DefaultBody *body, HttpResponse &response);
 	public:
 		HttpMethod();
 		HttpMethod(HttpMethod const &httpMethod);

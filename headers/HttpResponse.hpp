@@ -9,6 +9,7 @@
 # include "HttpMessage.hpp"
 # include "DefaultBody.hpp"
 # include "utils.hpp"
+# include "ServerInfo.hpp"
 
 class HttpResponse : public HttpMessage {
 	private:
@@ -28,7 +29,7 @@ class HttpResponse : public HttpMessage {
 
 		const std::string build() const;
 		std::string	generateDate();
-		void generateError(int code, std::map<int, std::string> const &errorPage, DefaultBody &body);
+		void generateError(int code, const ServerInfo &serverInfo, DefaultBody &body);
 
 		void setStatusCode(int statusCode);
 

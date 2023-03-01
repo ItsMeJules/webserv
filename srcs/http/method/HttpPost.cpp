@@ -34,28 +34,20 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
 		Cgi *cgi = new Cgi(serverInfo.getCgis());
 
-		if (request.getMethod()->getName() != "POST") {
-			if (request.headersHasKey("Content-Type"))
-				cgi->setContentType(request.getHeader("Content-Type"));
-			else {
-				response.generateError(500, serverInfo.getErrorPages(), *body);
-				response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-				response.addHeader("Date", response.generateDate());
+		if (cgi->setup(request)) {
+			std::string responseReturn = cgi->execute(request, data);
+			body->append(responseReturn, responseReturn.size());
+		} else
+			response.generateError(500, serverInfo, *body);
 
-				response.setMessageBody(body);
-				return response;
-			}
-		}
 		std::cerr << "********************CGI***********************" << std::endl;
-		std::string responseRet = cgi->execute(request, data);
-		body->append(responseRet, responseRet.size());
 
 		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 		response.addHeader("Date", response.generateDate());
-
 		response.setMessageBody(body);
 
 		delete cgi;
+		return response;
 	}
 
 	if (response.getStatusCode() < 400) {
@@ -77,7 +69,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 		}
 
 		if (!ws::file_exists(data.requestedPath))
-			response.generateError(404, serverInfo.getErrorPages(), *body);
+			response.generateError(404, serverInfo, *body);
 		else {
 			body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
 			response.addHeader("Content-Type", "text/plain");

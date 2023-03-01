@@ -36,8 +36,14 @@ std::string	HttpResponse::generateDate(void)
 	return buffer;
 }
 
-void HttpResponse::generateError(int code, std::map<int, std::string> const &errorPage, DefaultBody &body) {
-	std::ifstream fileStream(errorPage.at(code).c_str());
+void HttpResponse::generateError(int code, const ServerInfo &serverInfo, DefaultBody &body) {
+    std::string root = serverInfo.getDefaultLocation().getRootPath();
+    if (root[root.size() - 1] != '/')
+        root += '/';
+
+    std::cout << root + serverInfo.getErrorPages().at(code) << std::endl;
+        
+    std::ifstream fileStream(std::string(root + serverInfo.getErrorPages().at(code)).c_str());
 
     setStatusCode(code);
     if (fileStream.is_open()) {

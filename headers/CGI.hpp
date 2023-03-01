@@ -33,7 +33,7 @@ class Cgi {
 
 		std::string	findQuery(HttpRequest &request);
 		const std::string &getQuery() const;
-		void setContentType(std::string contentType);
+		bool setup(HttpRequest const &request);
 };
 
 std::ostream &			operator<<( std::ostream & o, Cgi const & i );

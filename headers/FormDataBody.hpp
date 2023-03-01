@@ -35,7 +35,6 @@ class FormDataBody : public AMessageBody {
 		std::vector<char> _tmp;
 		std::string _boundary;
 
-		void removeLastBoundary();
 		FormDataPart &getNextNeedParsing();
 	public:
 		FormDataBody();

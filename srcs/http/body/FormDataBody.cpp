@@ -17,12 +17,6 @@ FormDataBody::~FormDataBody() {
 
 // ############## PRIVATE ##############
 
-void FormDataBody::removeLastBoundary() {
-	FormDataPart *part = *(_parts.end() - 1);
-	std::vector<char> &vec = part->_directives[part->_fileKey];
-	vec.erase(vec.end() - (_boundary.size() + 8), vec.end());
-}
-
 FormDataBody::FormDataPart &FormDataBody::getNextNeedParsing() {
 	FormDataPart *part;
 
@@ -90,7 +84,7 @@ void FormDataBody::FormDataPart::parseBody(FormDataBody &parent) {
 	int endChunkPos = ws::pos_in_vec("\r\n--" + parent._boundary , body);
 	if (endChunkPos != -1) {
 		parent._tmp.insert(parent._tmp.begin(), body.begin() + endChunkPos + 2, body.end());
-		// parent._tmp.erase(parent._tmp.begin(), parent._tmp.begin() + (body.size() - endChunkPos + 2));
+		// parent._tmp.erase(parent._tmp.begin(), parent._tmp.begin() + (body.size() - endChunkPos + 2)); // This can be done faster with this
 		body.resize(endChunkPos);	
 		_bodyParsed = true;
 		ws::log(ws::LOG_LVL_DEBUG, "[FormDataBody] -", "form data parsed it's whole body.");

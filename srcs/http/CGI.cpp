@@ -94,6 +94,12 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 	return (ftostr("emmacCGI"));
 }
 
-void Cgi::setContentType(std::string contentType) {
-	_env["CONTENT_TYPE"] = contentType;
+bool Cgi::setup(HttpRequest const &request) {
+	if (request.getMethod()->getName() != "GET") {
+		if (request.headersHasKey("Content-Type"))
+			_env["CONTENT_TYPE"] = request.getHeader("Content-Type");
+		else
+			return false;
+	}
+	return true;
 }

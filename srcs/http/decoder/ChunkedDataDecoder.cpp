@@ -49,8 +49,6 @@ bool ChunkedDataDecoder::checkChunkSize(int const &bufSize, int const &read) {
 
 // ############## PUBLIC ##############
 
-# include <iostream>
-
 int ChunkedDataDecoder::decodeInto(std::vector<char> &vec) {
 	if (_actualChunk.size == -1) {
 		int chunkEndPos = ws::pos_in_vec("\r\n", _tmp);

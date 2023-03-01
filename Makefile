@@ -3,7 +3,7 @@ NAME		=	webserv
 
 #	Compilation
 CXX			=	c++
-CXXFLAG		=	-std=c++98 -Wall -Werror -Wextra -fsanitize=address -g
+CXXFLAG		=	-std=c++98 -Wall -Werror -Wextra
 RM			=	rm -rf
 SRC_DIR 	= 	srcs/
 
@@ -35,7 +35,6 @@ container_init	:
 					mkdir -p container/conf
 
 					cp -r srcs container/volume
-					cp -r obj container/volume
 					cp -r headers container/volume
 
 					cp -r html container
