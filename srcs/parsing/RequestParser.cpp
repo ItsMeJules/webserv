@@ -8,16 +8,19 @@ RequestParser::~RequestParser() {}
 
 // ############## PRIVATE ##############
 
-void RequestParser::parseFirstLine(std::string firstLine) {
+bool RequestParser::parseFirstLine(std::string firstLine) {
 	size_t pos;
+
 	while ((pos = firstLine.find(' ')) != std::string::npos) {
-		if (_httpRequest.getMethod() == NULL)
-			_httpRequest.setMethod(firstLine.substr(0, pos));
-		else if (_httpRequest.getPath().empty())
+		if (_httpRequest.getMethod() == NULL) {
+			if (!_httpRequest.setMethod(firstLine.substr(0, pos)))
+				return false;
+		} else if (_httpRequest.getPath().empty())
 			_httpRequest.setPath(firstLine.substr(0, pos));
 		firstLine.erase(0, pos + 1); // coupe jusqu'a apres l'espace
 	}
 	_httpRequest.setHttpVersion(firstLine);
+	return true;
 }
 
 bool RequestParser::parseHeaders(std::string headers) {
@@ -71,7 +74,8 @@ bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBo
 			_inReceive.str("");
 			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(endHeaders) + " chars from headers.");
 
-			parseFirstLine(wholeRequest.substr(0, wholeRequest.find("\r\n")));
+			if (!parseFirstLine(wholeRequest.substr(0, wholeRequest.find("\r\n"))))
+				return false;
 			if (!parseHeaders(wholeRequest.substr(wholeRequest.find("\r\n") + 2))) // there's no body
 				_requestParsed = true;
 			else {

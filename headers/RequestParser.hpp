@@ -25,7 +25,7 @@ class RequestParser {
 
 		HttpRequest _httpRequest;
 
-		void parseFirstLine(std::string firstLine);
+		bool parseFirstLine(std::string firstLine);
 		bool parseHeaders(std::string headers);
 
 		std::string emptyAndClearStream();

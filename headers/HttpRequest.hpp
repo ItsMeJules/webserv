@@ -31,7 +31,7 @@ class HttpRequest : public HttpMessage {
 		const std::string build() const;
 		HttpResponse execute(ServerInfo const &serverInfo);
 
-		void setMethod(std::string method);
+		bool setMethod(std::string method);
 		void setPath(std::string path);
 
 		HttpMethod *getMethod() const;

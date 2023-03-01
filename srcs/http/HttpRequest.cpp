@@ -32,10 +32,11 @@ HttpResponse HttpRequest::execute(ServerInfo const &serverInfo) {
 
 // ############## GETTERS / SETTERS ##############
 
-void HttpRequest::setMethod(std::string method) {
+bool HttpRequest::setMethod(std::string method) {
 	if (HttpRequest::methods.count(method) == 0)
-		return ;
+		return false;
 	_method = HttpRequest::methods.at(method)->clone();
+	return true;
 }
 
 void HttpRequest::setPath(std::string path) {
