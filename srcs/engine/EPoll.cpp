@@ -93,7 +93,6 @@ int EPoll::clientWrite(Client &client, Server &server) {
 	HttpResponse response;
 	DefaultBody *errorBody = new DefaultBody();
 
-	std::cout << "test=" << client.getHttpRequest().getMethod()->getName() << std::endl;
 	if (!client.hasRequestFailed())
 		response = client.getHttpRequest().execute(server.getServerInfo());
 	else

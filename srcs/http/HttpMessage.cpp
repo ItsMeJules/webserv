@@ -68,7 +68,6 @@ const std::string &HttpMessage::getHttpVersion() const {
 
 HttpMessage &HttpMessage::operator=(HttpMessage const &rhs) {
 	if (this != &rhs) {
-		std::cout << "test	" << std::endl;
 		if (rhs._messageBody != NULL)
 			_messageBody = rhs._messageBody->clone();
 		_headers = rhs._headers;
