@@ -1,4 +1,4 @@
-Content-type: text/html; charset=UTF-8
+
 
 <!DOCTYPE html>
 
@@ -6,12 +6,12 @@ Content-type: text/html; charset=UTF-8
     <title>POST</title>
 </head>
 
-
-<h1>Hello this is post request !</h1>
+<h1>Hello this is post request ! Voici les infos que tu as rentrees :)</h1>
 <body style="text-align: center;">
-            <h3>title:</h3> <p>emma</p>
-                <h3>content:</h3> <p>sdemm</p>
+            <h3>voila ton mot:</h3> <p>hello</p>
+                <h3>et la description :</h3> <p>world
+</p>
     </body>
 
-
 </html>
+

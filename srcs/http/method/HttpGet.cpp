@@ -34,15 +34,17 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 				response.generateError(404, serverInfo, *body);
 		} else if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 			Cgi *cgi = new Cgi(serverInfo.getCgis());
-			if (cgi->setup(request))
+			if (cgi->setup(request)) {
 				responseBody = cgi->execute(request, data);
-			else
+				data.fileExtension = "html";
+			} else
 				response.generateError(500, serverInfo, *body);
 
 			delete cgi;
 		} else
 			responseBody = ws::get_file_contents(fileStream, ws::get_file_size(fileStream));
-		
+
+
 		body->append(responseBody, responseBody.size());
 	} else
 		response.generateError(isValidCode, serverInfo, *body);
