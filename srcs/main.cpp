@@ -38,6 +38,12 @@ namespace ws {
         return success;
     }
 
+    void free_servers() {
+        for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++)
+            delete *it;
+        HttpRequest::clearMethods();
+    }
+
 }
 
 int main(int ac, char **av) {
@@ -48,8 +54,17 @@ int main(int ac, char **av) {
         return 1;
     }
 
-    ws::parseConfig(std::string(av[1]), Server::servers);
-    if (!ws::setup_servers()) { // Leaks a regler
+    try {
+        ws::parseConfig(std::string(av[1]), Server::servers);
+    } catch(const std::invalid_argument &e) {
+        ws::free_servers();
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", std::string("Configuration file invalid: ") + e.what());
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
+        return 1;
+    }
+    
+    if (!ws::setup_servers()) {
+        ws::free_servers();
         ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
         return 1;
     }
@@ -61,11 +76,11 @@ int main(int ac, char **av) {
             if (Server::poller->polling(*server) < 0) {
                 ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
                 ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
-                delete server;
                 stop = true;
                 break;
             }
         }
     }
-    HttpRequest::clearMethods();
-}
+    ws::free_servers();
+    return 0;
+} 
