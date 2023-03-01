@@ -8,28 +8,23 @@ HttpMethod::~HttpMethod() {}
 
 // ############## PRIVATE ##############
 
-bool HttpMethod::isValid(std::ifstream const &fileStream, ws::request_data_t &data, ServerInfo const &serverInfo, DefaultBody *body, HttpResponse &response) {
+// ############## PROTECTED ##############
+
+int HttpMethod::isValid(std::ifstream const &fileStream, ws::request_data_t &data) {
 	if (!fileStream.is_open()) {
 		if (!data.indexAppended) {
-			if (data.location.getAutoindex() == 0 || (data.location.getAutoindex() == 1 && !ws::file_is_dir(data.requestedPath))) {
-				response.generateError(404, serverInfo, *body);
-				return false;
-			}
+			if (data.location.getAutoindex() == 0 || (data.location.getAutoindex() == 1 && !ws::file_is_dir(data.requestedPath)))
+				return 404;
 		} else
 			data.requestedPath.erase(data.requestedPath.size() - data.location.getIndexPath().size());
 	}
 
 	const std::vector<std::string> allowedMethods = data.location.getMethod();
 
-	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end()) {
-		response.generateError(405, serverInfo, *body);
-		return false;
-	}
-	return true;
+	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end())
+		return 405;
+	return 200;
 }
-
-
-// ############## PROTECTED ##############
 
 // paths in config never ends with a '/' but they can start with a /
 ws::request_data_t HttpMethod::initRequestData(ServerInfo const &serverInfo, HttpRequest const &request) {

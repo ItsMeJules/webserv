@@ -17,54 +17,35 @@ HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	HttpResponse response;
 	std::ifstream fileStream;
-	size_t fileSize;
+	int isValidCode;
 
 	DefaultBody *body = new DefaultBody();
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if (!isValid(fileStream, data, serverInfo, body, response)) {
-		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-		response.addHeader("Date", response.generateDate());
-		response.setMessageBody(body);
-		return response;
-	}
+	if ((isValidCode = isValid(fileStream, data)) < 400) {
+		std::string responseBody;
 
-	if (ws::file_is_dir(data.requestedPath)) {
-		if (data.location.getAutoindex() == 1) {	
-			std::string autoIndexStr = ws::html_list_dir(data.requestedPath, data.clientPath);
-			body->append(autoIndexStr, autoIndexStr.size());
+		if (ws::file_is_dir(data.requestedPath)) {
+			if (data.location.getAutoindex() == 1)
+				responseBody = ws::html_list_dir(data.requestedPath, data.clientPath);
+			else
+				response.generateError(404, serverInfo, *body);
+		} else if (serverInfo.getCgis().count(data.fileExtension) != 0) {
+			Cgi *cgi = new Cgi(serverInfo.getCgis());
+			if (cgi->setup(request))
+				responseBody = cgi->execute(request, data);
+			else
+				response.generateError(500, serverInfo, *body);
+
+			delete cgi;
 		} else
-			response.generateError(404, serverInfo, *body);
-		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-		response.addHeader("Date", response.generateDate());
-		response.setMessageBody(body);
-
-		return response;
-	}
-
-	if (serverInfo.getCgis().count(data.fileExtension) != 0) {
-		Cgi *cgi = new Cgi(serverInfo.getCgis());
-
-		if (cgi->setup(request)) {
-			std::string responseReturn = cgi->execute(request, data);
-			body->append(responseReturn, responseReturn.size());
-		} else
-			response.generateError(500, serverInfo, *body);
-
-		std::cerr << "********************CGI***********************" << std::endl;
-
-		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-		response.addHeader("Date", response.generateDate());
-		response.setMessageBody(body);
-
-		delete cgi;
-		return response;
-	}
-
-	fileSize = ws::get_file_size(fileStream);
-	body->append(ws::get_file_contents(fileStream, fileSize), fileSize);
+			responseBody = ws::get_file_contents(fileStream, ws::get_file_size(fileStream));
+		
+		body->append(responseBody, responseBody.size());
+	} else
+		response.generateError(isValidCode, serverInfo, *body);
 
 	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
