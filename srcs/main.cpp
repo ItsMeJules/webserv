@@ -1,4 +1,5 @@
 #include <iostream>
+#include <csignal>
 
 #include "ServerSocket.hpp"
 #include "Server.hpp"
@@ -44,10 +45,16 @@ namespace ws {
         HttpRequest::clearMethods();
     }
 
+    void stop_webserv( int signum ) {
+        ws::log(ws::LOG_LVL_INFO, "[MAIN] -", "Gracefully stopping webserv...");
+        exit(signum);
+    }
+
 }
 
 int main(int ac, char **av) {
     bool stop = false;
+    signal(SIGINT, ws::stop_webserv);  
 
     if (ac < 2) {
         ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "You must specify a configuration file!");
