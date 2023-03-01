@@ -55,12 +55,16 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 
 	_env["STATUS_CODE"] = "200";
 	_env["PATH_INFO"] = data.requestedPath;
+	std::cout << "DATA REQUESTE PATH = " << data.requestedPath << std::endl;
 	_env["PATH_TRANSLATED"] = data.requestedPath;
 	_env["PATH_NAME"] = data.requestedPath;
 	_env["SCRIPT_NAME"] = data.requestedPath;
 	_env["SCRIPT_FILENNAME"] = data.requestedPath;
 	_env["QUERY_STRING"] = data.cgiQuery;
 	_env["CONTENT_LENGTH"] = ws::itos(request.getPath().length());
+	_env["REQUEST_METHOD"] = request.getMethod()->getName();
+	_env["REDIRECT_STATUS"] = "200";
+	std::cout << "METHOD  =" << request.getMethod()->getName();
 
 	char **env = new char*[3];
 	char **cgiEnv = generateEnv();

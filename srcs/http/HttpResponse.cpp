@@ -42,7 +42,7 @@ void HttpResponse::generateError(int code, const ServerInfo &serverInfo, Default
         root += '/';
 
     std::cout << root + serverInfo.getErrorPages().at(code) << std::endl;
-        
+
     std::ifstream fileStream(std::string(root + serverInfo.getErrorPages().at(code)).c_str());
 
     setStatusCode(code);

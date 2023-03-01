@@ -5,7 +5,6 @@
 </head>
 <body>
 	<h1>Delete</h1>
-	echo 'hello pute';
 	<h3>To try the delete method please use the following command on your terminal</h3>
 	<p>$curl -X DELETE http://localhost:8080/path-of-the-file-you-want-to-delete</p>
 </body>
