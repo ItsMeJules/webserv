@@ -47,6 +47,8 @@ namespace ws {
 
     void stop_webserv( int signum ) {
         ws::log(ws::LOG_LVL_INFO, "[MAIN] -", "Gracefully stopping webserv...");
+        ws::free_servers();
+
         exit(signum);
     }
 

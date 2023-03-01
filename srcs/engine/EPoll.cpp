@@ -100,6 +100,7 @@ int EPoll::clientWrite(Client &client, Server &server) {
 
 	server.sendData(client, response);
 	delete errorBody;
+	
 	if (client.getHttpRequest().headersContains("Connection", "close"))
 		server.disconnect(client);
 	// if there's no connection header we assume that the connection is keep-alive

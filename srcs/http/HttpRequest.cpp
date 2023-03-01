@@ -6,9 +6,7 @@ std::map<std::string, HttpMethod*> HttpRequest::methods = HttpRequest::initMetho
 
 HttpRequest::HttpRequest() : _method(NULL) {}
 HttpRequest::HttpRequest(HttpRequest const &httpRequest) : HttpMessage(*this) { *this = httpRequest; }
-HttpRequest::~HttpRequest() {
-	delete _method;
-}
+HttpRequest::~HttpRequest() {}
 
 // ############## PRIVATE ##############
 
@@ -26,7 +24,10 @@ const std::string HttpRequest::build() const {
 }
 
 HttpResponse HttpRequest::execute(ServerInfo const &serverInfo) {
-	return _method->execute(serverInfo, *this);
+	HttpResponse response = _method->execute(serverInfo, *this);
+
+	delete _method;
+	return response;
 }
 
 // ############## GETTERS / SETTERS ##############

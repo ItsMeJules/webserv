@@ -6,7 +6,8 @@ Server::Server() : _socket() {}
 Server::Server(ServerSocket &socket) : _socket(socket) {}
 Server::Server(Server const &server) { *this = server; }
 Server::~Server() {
-	ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "closing server");
+	delete poller;
+	ws::log(ws::LOG_LVL_INFO, "[SERVER] -", "closing server: " + _serverInfo.getServerName());
 }
 
 // ############## PRIVATE ##############
