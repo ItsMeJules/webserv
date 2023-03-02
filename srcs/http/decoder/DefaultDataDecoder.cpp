@@ -13,6 +13,7 @@ DefaultDataDecoder::~DefaultDataDecoder() {}
 
 // ############## PUBLIC ##############
 
+# include <iostream>
 int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 	if (_tmp.empty() && _sizeRead != _contentLength)
 		return ws::DECODER_WAITING_FOR_RECV;
@@ -26,6 +27,8 @@ int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 			return ws::DECODER_PARSE_READY;
 		} else {
 			ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "all data received.");
+			_sizeRead = 0;
+			_contentLength = -1;
 			return ws::DECODER_STOP;
 		}
 	} else if (_sizeRead > _contentLength)

@@ -99,7 +99,6 @@ int EPoll::clientWrite(Client &client, Server &server) {
 		response.generateError(client.getRequestParser().getErrorCode(), server.getServerInfo(), *errorBody);
 
 	server.sendData(client, response);
-	delete errorBody;
 
 	if (client.getHttpRequest().headersContains("Connection", "close"))
 		server.disconnect(client);
@@ -108,6 +107,8 @@ int EPoll::clientWrite(Client &client, Server &server) {
 		client.getRequestParser().clear();
 		modFd(client.getSocket().getFd(), EPOLLIN);
 	}
+
+	delete errorBody;
 	return 1;
 }
 

@@ -115,6 +115,7 @@ bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBo
 
 void RequestParser::clear() {
     HttpRequest empty;
+
     _headersReceived = false;
     _httpRequest = empty;
 	_requestParsed = false;

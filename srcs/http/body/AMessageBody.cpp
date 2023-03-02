@@ -9,12 +9,17 @@ AMessageBody::AMessageBody(ADataDecoder *decoder) : _decoder(decoder) {
 	_tmpOfStream.open(_tmpFile.name.c_str(), std::ofstream::out);
 }
 
-AMessageBody::AMessageBody() {}
-AMessageBody::AMessageBody(AMessageBody const &messageBody) { *this = messageBody; }
+AMessageBody::AMessageBody() : _decoder(NULL) {
+}
+
+AMessageBody::AMessageBody(AMessageBody const &messageBody) { 
+	*this = messageBody;
+}
+
 AMessageBody::~AMessageBody() {
-	ws::log(ws::LOG_LVL_DEBUG, "[AMESSAGE BODY] -", "destroying AMessageBody.");
 	destroyTmpFile();
-	// delete _decoder;
+	if (_decoder != NULL)
+		delete _decoder;
 }
 
 // ############## PRIVATE ##############
@@ -58,7 +63,7 @@ void AMessageBody::setDataDecoder(ADataDecoder *decoder) {
 
 AMessageBody &AMessageBody::operator=(AMessageBody const &rhs) {
 	if (this != &rhs) {
-		_decoder = rhs._decoder;
+		_decoder = (rhs._decoder != NULL) ? rhs._decoder->clone() : NULL;
 		_tmpFile = rhs._tmpFile;
 	}
 	return *this;
