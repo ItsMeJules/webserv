@@ -4,7 +4,7 @@
 
 DefaultBody::DefaultBody(ADataDecoder *decoder) : AMessageBody(decoder) {}
 
-DefaultBody::DefaultBody() {}
+DefaultBody::DefaultBody() : AMessageBody() {}
 DefaultBody::DefaultBody(DefaultBody const &defaultBody) : AMessageBody(*this) { *this = defaultBody; }
 
 DefaultBody::~DefaultBody() {}

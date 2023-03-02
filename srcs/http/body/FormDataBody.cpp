@@ -7,7 +7,7 @@ FormDataBody::FormDataBody(ADataDecoder *decoder, std::string boundaryHeader) :
 	_boundary(boundaryHeader.substr(boundaryHeader.find("boundary=") + 9))
 {}
 
-FormDataBody::FormDataBody() {}
+FormDataBody::FormDataBody() : AMessageBody() {}
 FormDataBody::FormDataBody(FormDataBody const &formDataBody) : AMessageBody(*this) { *this = formDataBody; }
 
 FormDataBody::~FormDataBody() {
