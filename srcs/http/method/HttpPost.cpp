@@ -25,68 +25,66 @@ bool HttpPost::writePartToFile(FormDataBody::FormDataPart &part, std::string con
 
 HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &request) {
 	ws::log(ws::LOG_LVL_INFO, "[HTTP POST] -", "executing post request.");
-	std::cout << "UN" << std::endl;
 	HttpResponse response;
+	std::ifstream fileStream;
+	int isValidCode;
+
+	std::cout << "HELLO CA PASSE DANS POST" 	<< std::endl;
+
 	DefaultBody *body = new DefaultBody();
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
-	FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
-	if (serverInfo.getCgis().count(data.fileExtension) == 1) {
-		Cgi *cgi = new Cgi(serverInfo.getCgis());
+	fileStream.open(data.requestedPath.c_str());
 
-		if (cgi->setup(request)) {
-			std::string responseReturn = cgi->execute(request, data);
-			body->append(responseReturn, responseReturn.size());
+	if ((isValidCode = isValid(fileStream, data)) < 400) {
+		std::string responseBody;
+		FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
-			response.addHeader("Content-Type", ws::mimeTypeFromExtension("html"));
-		} else
-			response.generateError(500, serverInfo, *body);
-				std::cout << "DEUX" << std::endl;
+		if (serverInfo.getCgis().count(data.fileExtension) != 0) {
+			Cgi *cgi = new Cgi(serverInfo.getCgis());
+			if (cgi->setup(request)) {
+				responseBody = cgi->execute(request, data);
+				data.fileExtension = "html";
+			} else
+				response.generateError(500, serverInfo, *body);
 
-		response.addHeader("Content-Length", ws::itos(body->getBodySize()));
-		response.addHeader("Date", response.generateDate());
-		response.setMessageBody(body);
-
-		delete cgi;
-		return response;
-	}
-
-	if (response.getStatusCode() < 400) {
-		if (formBody != NULL) {
+			delete cgi;
+		} else if (formBody != NULL) {
 			FormDataBody::FormDataPart *part;
+			bool success = true;
 			std::ofstream ofs;
 
-			data.requestedPath += serverInfo.getUploadPath();
-				std::cout << "DEUX" << std::endl;
+			data.requestedPath += data.location.getUploadPath();
 
 			while ((part = formBody->readForm()) != NULL) {
 				if (!part->_headersParsed || part->_directiveName != part->_fileKey)
 					continue ;
+
 				if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
+					ws::log(ws::LOG_LVL_ERROR, "[HttpPost] -", "error when writing to " + data.requestedPath);
+
+					response.generateError(500, serverInfo, *body);
+					success = false;
 					break ;
 				}
 			}
-							std::cout << "DEUX" << std::endl;
 
-
+			if (success)
+				responseBody = HttpResponse::codes[200].reason;
 			if (ofs.is_open())
 				ofs.close();
 		}
 
-		if (!ws::file_exists(data.requestedPath))
-			response.generateError(404, serverInfo, *body);
-		else {
-							std::cout << "TROIS" << std::endl;
+		body->append(responseBody, responseBody.size());
+	} else
+		response.generateError(isValidCode, serverInfo, *body);
 
-
-			body->append(HttpResponse::codes[response.getStatusCode()].explanation, HttpResponse::codes[response.getStatusCode()].explanation.size());
-			response.addHeader("Content-Type", "text/plain");
-		}
-	}
-
+	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
 	response.setMessageBody(body);
+
+	fileStream.close();
 
 	return response;
 }

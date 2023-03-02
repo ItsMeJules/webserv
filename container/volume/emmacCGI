@@ -1,0 +1,28 @@
+(LOGLVL: 32) [38;5;14m[HTTP MESSAGE] - [38;5;7mdeleting http message.[0m
+(LOGLVL: 32) [38;5;14m[AMESSAGE BODY] - [38;5;7mdestroying AMessageBody.[0m
+(LOGLVL: 16) [38;5;14m[HTTP RESPONSE] - [38;5;184m101 chars were sent to fd: 5[0m
+(LOGLVL: 32) [38;5;14m[HTTP RESPONSE] - [38;5;7mcontents:
+----------
+HTTP/1.1 200 OK
+Content-Length: -1
+Content-Type: text/html
+Date: Thu, 02 Mar 2023 11:16:23 GMT
+
+
+----------[0m
+(LOGLVL: 32) [38;5;14m[AMESSAGE BODY] - [38;5;7mdestroying AMessageBody.[0m
+(LOGLVL: 32) [38;5;14m[HTTP MESSAGE] - [38;5;7mdeleting http message.[0m
+(LOGLVL: 4) [38;5;14m[EPOLL] - [38;5;10msuccessfully modified fd: 5[0m
+(LOGLVL: 32) [38;5;14m[EPOLL] - [38;5;7mwith events:
+ 	EPOLLERR: 0
+	EPOLLHUP: 0
+	EPOLLRDHUP: 0
+	EPOLLIN: 1
+	EPOLLOUT: 0[0m
+(LOGLVL: 32) [38;5;14m[HTTP MESSAGE] - [38;5;7mdeleting http message.[0m
+(LOGLVL: 32) [38;5;14m[AMESSAGE BODY] - [38;5;7mdestroying AMessageBody.[0m
+(LOGLVL: 2) [38;5;14m[MAIN] - [38;5;184mGracefully stopping webserv...[0m
+(LOGLVL: 2) [38;5;14m[EPOLL] - [38;5;184mclosing epoll instance[0m
+(LOGLVL: 2) [38;5;14m[SERVER] - [38;5;184mclosing server: Webserv[0m
+(LOGLVL: 2) [38;5;14m[CLIENT] - [38;5;184mdestorying client: 5[0m
+(LOGLVL: 32) [38;5;14m[HTTP MESSAGE] - [38;5;7mdeleting http message.[0m

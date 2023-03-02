@@ -1,0 +1,45 @@
+body {
+    background-color: #0e1114;
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    margin: 2%;
+	align-items: center;
+	text-align: center;
+}
+
+h1 {
+    font-size: 6vmin;
+}
+
+span {
+	color: #01e6cd;
+}
+
+div.content {
+    height: 73vh;
+    font-size: 20px;
+    padding: 1vh;
+}
+
+h2 {
+    font-size: 5vmin;
+}
+
+div.content p {
+    width: 80%;
+    margin: auto;
+    margin-top: 4vh;
+}
+
+div.gif {
+    width: 100%;
+}
+
+div.container-text {
+    padding: 1rem;
+}
+
+a {
+	text-decoration: none;
+	color: #01e6cd;
+}
