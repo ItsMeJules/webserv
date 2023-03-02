@@ -68,7 +68,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 			}
 
 			if (success)
-				responseBody = HttpResponse::codes[200].reason;
+				responseBody = HttpResponse::codes[200].explanation;
 			if (ofs.is_open())
 				ofs.close();
 		}
