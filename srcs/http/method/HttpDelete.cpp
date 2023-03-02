@@ -11,6 +11,7 @@ HttpDelete::~HttpDelete() {}
 // ############## PUBLIC ##############
 
 HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &request) {
+	ws::log(ws::LOG_LVL_INFO, "[HTTP DELETE] - ", "executing delete request.");
 	HttpResponse response;
 	ws::http_status_t status;
 
@@ -31,6 +32,7 @@ HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &requ
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
 
+	delete body;
 	return response;
 }
 
