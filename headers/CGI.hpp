@@ -29,6 +29,7 @@ class Cgi {
 
 		char **generateEnv();
 
+		bool cgiExists(std::string const &path);
 		std::string	execute(HttpRequest &request, ws::request_data_t &data);
 
 		std::string	findQuery(HttpRequest &request);

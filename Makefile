@@ -67,10 +67,9 @@ clean			:
 
 clean_container	:
 					@ echo "$(_INFO) Deleting container files"
-					@ sudo $(RM) container/volume
-					@ sudo $(RM) container/conf
-					@ sudo $(RM) container/html
-
+					$(RM) container/volume
+					$(RM) container/conf
+					$(RM) container/html
 #		FClean:
 fclean			:	clean
 					@ $(RM) $(NAME)

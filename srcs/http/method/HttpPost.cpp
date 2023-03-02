@@ -41,10 +41,8 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 		if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 			Cgi *cgi = new Cgi(serverInfo.getCgis());
-			if (cgi->setup(request)) {
-				std::cout << "CGI ICI" << std::endl;
+			if (cgi->setup(request) && cgi->cgiExists(serverInfo.getCgis().at(data.fileExtension))) {
 				responseBody = cgi->execute(request, data);
-				std::cout << "passe le execute" << std::endl;
 				data.fileExtension = "html";
 			} else
 				response.generateError(500, serverInfo, *body);
@@ -81,7 +79,6 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 		response.generateError(isValidCode, serverInfo, *body);
 
 
-	std::cout << "au dessus des headers" << std::endl;
 	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());

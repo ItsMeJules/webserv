@@ -47,6 +47,10 @@ char **Cgi::generateEnv()
 	return env;
 }
 
+bool Cgi::cgiExists(std::string const &path) {
+	return ws::file_exists(path);
+}
+
 std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 {
 	int redirFd;
@@ -65,8 +69,6 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 	_env["CONTENT_LENGTH"] = ws::itos(request.getPath().length());
 	_env["REQUEST_METHOD"] = request.getMethod()->getName();
 	_env["REDIRECT_STATUS"] = "200";
-
-	std::cout << "data requested path  = "  <<  data.requestedPath << std::endl;
 
 	char **env = new char*[3];
 	char **cgiEnv = generateEnv();
@@ -87,13 +89,9 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 	if (pid == 0)
 	{
 		dup2(tmpFile.fd, STDIN_FILENO);
-		ws::close_tmp_file(tmpFile);
-		tmpStream.close();
-
 		dup2(redirFd, STDOUT_FILENO);
-		close(redirFd);
 
-		execve(_cgis[data.fileExtension].c_str(), env, cgiEnv);
+		execve(_cgis[data.fileExtension].c_str(), env, cgiEnv); // no need to check if execve succeeded becuase we do it before.
 	} else
 		wait(NULL);
 
@@ -101,13 +99,17 @@ std::string	Cgi::execute(HttpRequest &request, ws::request_data_t &data)
 	dup2(savedStdOut, STDOUT_FILENO);
 	close(savedStdIn);
 	close(savedStdOut);
+	close(redirFd);
+
+	ws::close_tmp_file(tmpFile);
+	tmpStream.close();
 
 	for (int i = 0; cgiEnv[i]; i++)
 		free(cgiEnv[i]);
 	delete[] cgiEnv;
 
 	delete[] env;
-	return (ftostr("emmacCGI"));
+	return ftostr("emmacCGI");
 }
 
 bool Cgi::setup(HttpRequest const &request) {

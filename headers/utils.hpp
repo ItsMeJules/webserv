@@ -35,6 +35,7 @@ namespace ws {
 
 		std::string fileName;
 		std::string fileExtension;
+
 		std::string cgiQuery;
 	} request_data_t;
 
