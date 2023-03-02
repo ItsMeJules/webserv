@@ -36,13 +36,13 @@ void DefaultBody::append(std::string str, int size) {
 // ############## GETTERS / SETTERS ##############
 
 int DefaultBody::getBodySize() {
-	return _body.size() - 1;
+	return _body.size();
 }
 
 std::string DefaultBody::getBodyStr() {
 	if (_body.size() == 0)
 		return "";
-	return std::string(_body.data(), _body.size() - 1);
+	return std::string(_body.data(), _body.size());
 }
 
 // ############## OPERATORS ##############
