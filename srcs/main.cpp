@@ -1,6 +1,8 @@
 #include <iostream>
 #include <csignal>
 
+#include <sys/stat.h>
+
 #include "ServerSocket.hpp"
 #include "Server.hpp"
 #include "config_parser.hpp"
@@ -26,7 +28,14 @@ namespace ws {
 
     bool setup_servers() {
         bool success = true;
-
+        
+        if (!ws::file_exists(ws::TMP_PATH)) {
+            if (::mkdir(ws::TMP_PATH.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) {
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "failed to create the directory for temporary files!");
+                return false;
+            }
+        }
+        
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
 
