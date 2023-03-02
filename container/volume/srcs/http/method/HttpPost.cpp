@@ -29,18 +29,21 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	std::ifstream fileStream;
 	int isValidCode;
 
+
 	DefaultBody *body = new DefaultBody();
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
 
 	fileStream.open(data.requestedPath.c_str());
 
 	if ((isValidCode = isValid(fileStream, data)) < 400) {
+		std::cout << "HELLO CA PASSE DANS POST" 	<< std::endl;
 		std::string responseBody;
 		FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
-		
+
 		if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 			Cgi *cgi = new Cgi(serverInfo.getCgis());
 			if (cgi->setup(request)) {
+				std::cout << "cgi setup post" << std::endl;
 				responseBody = cgi->execute(request, data);
 				data.fileExtension = "html";
 			} else
@@ -57,7 +60,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 			while ((part = formBody->readForm()) != NULL) {
 				if (!part->_headersParsed || part->_directiveName != part->_fileKey)
 					continue ;
-					
+
 				if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
 					ws::log(ws::LOG_LVL_ERROR, "[HttpPost] -", "error when writing to " + data.requestedPath);
 
@@ -77,6 +80,8 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	} else
 		response.generateError(isValidCode, serverInfo, *body);
 
+
+	std::cout << "au dessus des headers" << std::endl;
 	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());

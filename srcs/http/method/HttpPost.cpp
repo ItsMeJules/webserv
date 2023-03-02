@@ -29,7 +29,6 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	std::ifstream fileStream;
 	int isValidCode;
 
-	std::cout << "HELLO CA PASSE DANS POST" 	<< std::endl;
 
 	DefaultBody *body = new DefaultBody();
 	ws::request_data_t data = HttpMethod::initRequestData(serverInfo, request);
@@ -37,12 +36,14 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	fileStream.open(data.requestedPath.c_str());
 
 	if ((isValidCode = isValid(fileStream, data)) < 400) {
+		std::cout << "HELLO CA PASSE DANS POST" 	<< std::endl;
 		std::string responseBody;
 		FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
 		if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 			Cgi *cgi = new Cgi(serverInfo.getCgis());
 			if (cgi->setup(request)) {
+				std::cout << "cgi setup post" << std::endl;
 				responseBody = cgi->execute(request, data);
 				data.fileExtension = "html";
 			} else
@@ -79,6 +80,8 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 	} else
 		response.generateError(isValidCode, serverInfo, *body);
 
+
+	std::cout << "au dessus des headers" << std::endl;
 	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());

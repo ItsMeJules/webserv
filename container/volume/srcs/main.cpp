@@ -1,6 +1,8 @@
 #include <iostream>
 #include <csignal>
 
+#include <sys/stat.h>
+
 #include "ServerSocket.hpp"
 #include "Server.hpp"
 #include "config_parser.hpp"
@@ -27,11 +29,18 @@ namespace ws {
     bool setup_servers() {
         bool success = true;
 
+        if (!ws::file_exists(ws::TMP_PATH)) {
+            if (::mkdir(ws::TMP_PATH.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) {
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "failed to create the directory for temporary files!");
+                return false;
+            }
+        }
+
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
 
             ws::checkConfiguration(server);
-            
+
             server->getServerSocket().setIp(server->getServerInfo().getIp());
             server->getServerSocket().setPort(server->getServerInfo().getPort());
             success = server->getServerSocket().setup() && server->setup();
@@ -56,12 +65,14 @@ namespace ws {
 
 int main(int ac, char **av) {
     bool stop = false;
-    signal(SIGINT, ws::stop_webserv);  
+    signal(SIGINT, ws::stop_webserv);
 
     if (ac < 2) {
         ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "You must specify a configuration file!");
         return 1;
     }
+
+    std::cout << "dans le main" << std::endl;
 
     try {
         ws::parseConfig(std::string(av[1]), Server::servers);
@@ -71,7 +82,7 @@ int main(int ac, char **av) {
         ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
         return 1;
     }
-    
+
     if (!ws::setup_servers()) {
         ws::free_servers();
         ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
@@ -92,4 +103,4 @@ int main(int ac, char **av) {
     }
     ws::free_servers();
     return 0;
-} 
+}

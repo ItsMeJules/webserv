@@ -36,6 +36,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 		} else if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 			Cgi *cgi = new Cgi(serverInfo.getCgis());
 			if (cgi->setup(request)) {
+				std::cout << "CGI SETUP" << std::endl;
 				responseBody = cgi->execute(request, data);
 				data.fileExtension = "html";
 			} else
@@ -50,6 +51,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 	} else
 		response.generateError(isValidCode, serverInfo, *body);
 
+	std::cout << "au dessus des headers get" << std::endl;
 	response.addHeader("Content-Type", ws::mimeTypeFromExtension(data.fileExtension));
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());

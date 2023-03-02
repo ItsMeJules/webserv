@@ -57,7 +57,7 @@ namespace ws {
 	const int DECODER_CHUNKED_CHUNK_TOO_BIG = -2;
 
 	// tmp files
-	const std::string TMP_PATH = "/mnt/nfs/homes/jpeyron/Documents/webserv/tmp";
+	const std::string TMP_PATH = "/webserv/tmp";
 	const int SIZE_READ = 8192;
 
 	//mime-types
