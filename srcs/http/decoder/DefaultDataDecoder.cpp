@@ -13,7 +13,6 @@ DefaultDataDecoder::~DefaultDataDecoder() {}
 
 // ############## PUBLIC ##############
 
-# include <iostream>
 int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 	if (_tmp.empty() && _sizeRead != _contentLength)
 		return ws::DECODER_WAITING_FOR_RECV;
@@ -23,10 +22,8 @@ int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 	if (_sizeRead == _contentLength) {
 		if (!_tmp.empty()) {
 			_tmp.clear();
-			ws::log(ws::LOG_LVL_ALL, "[DefaultDataDecoder] -", "the whole request was read, " + ws::itos(_sizeRead) + " chars were parsed!");
 			return ws::DECODER_PARSE_READY;
 		} else {
-			ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "all data received.");
 			_sizeRead = 0;
 			_contentLength = -1;
 			return ws::DECODER_STOP;
@@ -34,7 +31,6 @@ int DefaultDataDecoder::decodeInto(std::vector<char> &vec) {
 	} else if (_sizeRead > _contentLength)
 		return ws::DECODER_DEFAULT_BODY_TOO_BIG;
 
-	ws::log(ws::LOG_LVL_DEBUG, "[DefaultDataDecoder] -", "data stored in vector. Left to read " + ws::itos(_contentLength - _sizeRead));
 	_tmp.clear();
 	return ws::DECODER_PARSE_READY;
 }

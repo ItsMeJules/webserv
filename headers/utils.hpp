@@ -56,9 +56,6 @@ namespace ws {
 	int pos_in_vec(std::string const &str, std::vector<char> const &vec);
 	int pos_in_vec_from_end(std::string const &str, std::vector<char> const &vec);
 
-    // LOGGING
-    void log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno = false);
-
 	// FILES
 	bool file_exists(std::string const &path);
 	bool file_is_reg(std::string const &path);

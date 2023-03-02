@@ -13,12 +13,8 @@ ClientSocket::~ClientSocket() {}
 bool ClientSocket::setup() {
 	socklen_t addrlen = sizeof(_address); // important sinon segv
 	_fd = accept(_serverListeningFd, (struct sockaddr*)&_address, (socklen_t*)&addrlen);
-	if (_fd == -1) {
-		ws::log(ws::LOG_LVL_ERROR, "[CLIENT SOCKET] -", "accept failed!", true);
-		return false;
-	} else
-		ws::log(ws::LOG_LVL_SUCCESS, "[CLIENT SOCKET] -", "client successfully connected with fd: " + ws::itos(_fd));
-	return true;
+	
+	return _fd != -1;
 }
 
 // ############## GETTERS / SETTERS ##############

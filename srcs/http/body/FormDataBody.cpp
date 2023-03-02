@@ -23,12 +23,10 @@ FormDataBody::FormDataPart &FormDataBody::getNextNeedParsing() {
 	for (std::vector<FormDataPart*>::iterator it = _parts.begin(); it != _parts.end(); it++) {
 		if ((*it)->_headersParsed && !(*it)->_bodyParsed) {
  			part = (*it);
-			ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "form data " + (*it)->_directiveName + " is about to parse some body part.");
 			return *part;
 		} else if (!(*it)->_headersParsed)
 			return **it;
 	}
-	ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a new form data was created.");
 	part = new FormDataPart();
 	return *part;
 }
@@ -45,7 +43,6 @@ FormDataBody::FormDataPart::FormDataPart(FormDataPart const &formDataPart) { *th
 FormDataBody::FormDataPart::~FormDataPart() {}
 
 void FormDataBody::FormDataPart::parseHeaders() {
-	ws::log(ws::LOG_LVL_ALL, "[FormDataBody] -", "a form data is about to parse it's headers.");
 	int headerEndPos;
 
 	while ((headerEndPos = ws::pos_in_vec("\r\n", _contents)) != -1) {
@@ -61,14 +58,9 @@ void FormDataBody::FormDataPart::parseHeaders() {
 				fileNamePos += 10; // skips filename="
 				_fileKey = _directiveName;
 				_fileName = headerValue.substr(fileNamePos, headerValue.size() - (fileNamePos + 1));
-				
-				ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "file " + _fileName + " with directive " + _directiveName + " has parsed it's headers.");
-			} else
-				ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "directive " + _directiveName + " has parsed it's headers.");
-
+			}
 		} else {
 			_headers.insert(std::make_pair(headerKey, headerValue));
-			ws::log(ws::LOG_LVL_DEBUG, "[FormDataPart] -", "header " + headerKey + " was parsed with value: " + headerValue);
 		}
 		_contents.erase(_contents.begin(), _contents.begin() + headerEndPos + 2);
 	}
@@ -87,9 +79,7 @@ void FormDataBody::FormDataPart::parseBody(FormDataBody &parent) {
 		// parent._tmp.erase(parent._tmp.begin(), parent._tmp.begin() + (body.size() - endChunkPos + 2)); // This can be done faster with this
 		body.resize(endChunkPos);	
 		_bodyParsed = true;
-		ws::log(ws::LOG_LVL_DEBUG, "[FormDataBody] -", "form data parsed it's whole body.");
-	} else
-		ws::log(ws::LOG_LVL_DEBUG, "[FormDataBody] -", "form data \"" + _directiveName + "\" parsed some body contents.");
+	}
 }
 
 std::string FormDataBody::FormDataPart::extractBody() {

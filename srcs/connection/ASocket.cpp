@@ -9,12 +9,7 @@ ASocket::~ASocket() {}
 // ############## PUBLIC ##############
 
 bool ASocket::close() const {
-	bool ret = ::close(_fd) == 0;
-	if (ret)
-		ws::log(ws::LOG_LVL_SUCCESS, "[ASOCKET] -", "successfully closed socket with fd: " + ws::itos(_fd));
-	else
-		ws::log(ws::LOG_LVL_ERROR, "[ASOCKET] -", "failed to close socket with fd: "+ ws::itos(_fd) + "!");
-    return ret;
+    return ::close(_fd) == 0;
 }
 
 // ############## GETTERS / SETTERS ##############

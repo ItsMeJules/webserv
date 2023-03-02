@@ -14,7 +14,6 @@ bool HttpPost::writePartToFile(FormDataBody::FormDataPart &part, std::string con
 		ofs.open(filePath.c_str(), std::ofstream::binary | std::ofstream::out);
 
 	if (ofs.is_open()) {
-		ws::log(ws::LOG_LVL_DEBUG, "[HttpPost] -", "data wrote to " + filePath);
 		ofs << part.extractBody();
 		return true;
 	}
@@ -24,7 +23,6 @@ bool HttpPost::writePartToFile(FormDataBody::FormDataPart &part, std::string con
 // ############## PUBLIC ##############
 
 HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &request) {
-	ws::log(ws::LOG_LVL_INFO, "[HTTP POST] -", "executing post request.");
 	HttpResponse response;
 	std::ifstream fileStream;
 	int isValidCode;
@@ -60,8 +58,6 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 					continue ;
 
 				if (!writePartToFile(*part, data.requestedPath + "/" + part->_fileName, ofs)) {
-					ws::log(ws::LOG_LVL_ERROR, "[HttpPost] -", "error when writing to " + data.requestedPath);
-
 					response.generateError(500, serverInfo, *body);
 					success = false;
 					break ;

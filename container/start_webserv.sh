@@ -2,5 +2,4 @@
 
 cd webserv
 
-make
-./webserv /conf/test.conf
+make && ./webserv /conf/test.conf

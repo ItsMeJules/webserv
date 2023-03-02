@@ -179,9 +179,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 	ServerInfo &serverInfo = server.getServerInfo();
 	size_t sizeArgumentOne = lineArguments[1].size() - 1;
 
-	for (std::vector<std::string>::iterator it = lineArguments.begin(); it != lineArguments.end(); it++) {
-		ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "Argument: \t" + *it);
-	}
 	if (cpt.configKeys.count(lineArguments[0]) == 0)
 		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
 
@@ -192,7 +189,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 				throw std::invalid_argument(lineArguments[1] + " is not a valid name for a server. Only alnum chars are accepted!");
 
 			serverInfo.setServerName(lineArguments[1].substr(0, sizeArgumentOne));
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerName: " + serverInfo.getServerName());
 			break;
 
 		case LISTEN:
@@ -203,13 +199,9 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 					serverInfo.setIp(values[0]);
 				if (checkPortKey(values[1]) == 0)
 					serverInfo.setPort(ws::stoi(values[1]));
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerIp: " + serverInfo.getIp());
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerPort: " + ws::itos(serverInfo.getPort()));
-
 			} else {
 				if (checkPortKey(lineArguments[1].substr(0, sizeArgumentOne)) == 0)
 					serverInfo.setPort(ws::stoi(lineArguments[1].substr(0, sizeArgumentOne)));
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerPort: " + ws::itos(serverInfo.getPort()));
 			}
 			break;
 
@@ -217,26 +209,22 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			if (checkClientMaxBodySize(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
 				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "must finish with a 'G', 'M' or a 'K' !");
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerClientBodySizeMax: " + ws::itos(serverInfo.getMaxBodySize()));
 			break;
 
 		case AUTOINDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			if (checkAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), serverInfo) != 0)
 				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerAutoIndex: " + ws::itos(serverInfo.hasAutoindex()));
 			break;
 
 		case INDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			serverInfo.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerIndexPath: " + serverInfo.getIndexPath());
 			break;
 
 		case UPLOAD:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			serverInfo.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerUploadPath: " + serverInfo.getUploadPath());
 			break;
 
 		case ROOT:
@@ -244,7 +232,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 			serverInfo.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
 			if (serverInfo.getRootPath()[0] != '/')
 				throw std::invalid_argument("Error on line: " + cpt.line + ", root path must be absolute!");
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerRootPath: " + serverInfo.getRootPath());
 			break;
 
 		case CGI:
@@ -252,10 +239,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 
 			serverInfo.addToCGIS(lineArguments[1], lineArguments[2].substr(0, lineArguments[2].size() - 1));
 			cgi = serverInfo.getCgis();
-			for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it)
-			{
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerCGI : First: " + it->first + " Second: " + it->second + "\n");				
-			}
 			break;
 
 		case METHOD:
@@ -272,10 +255,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 					serverInfo.addtoMethod(*it);
 				}
 			}
-			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
-			{
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerMethod : " + *it + "\n");
-			}
 			break;
 
 		case ERROR_PAGE:
@@ -286,11 +265,6 @@ int ws::parseServerLine(config_parsing_t &cpt, Server &server) {
 
 			serverInfo.addErrorPage(tmp, lineArguments[2].substr(0, lineArguments[2].size() - 1));
 			errorPage = serverInfo.getError();
-			for(std::map<int, std::string>::const_iterator it = errorPage.begin(); it != errorPage.end(); ++it)
-			{
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in ServerErrorPage : First: " + ws::itos(it->first) + " Second " + it->second);
-
-			}
 			break;
 
 		default:
@@ -307,10 +281,6 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 
 	size_t sizeArgumentOne = lineArguments[1].size() - 1;
 
-	for (std::vector<std::string>::iterator it = lineArguments.begin(); it != lineArguments.end(); it++) {
-		ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "Argument: \t" + *it);
-	}
-
 	if (cpt.configKeys.count(lineArguments[0]) == 0)
 		throw std::invalid_argument(lineArguments[0] + " is not a valid key for the config.");
 
@@ -318,13 +288,11 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 		case INDEX:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			location.setIndexPath(lineArguments[1].substr(0, sizeArgumentOne));
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in LocationIndex: " + location.getIndexPath());
 			break;
 
 		case ROOT:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			location.setRootPath(lineArguments[1].substr(0, sizeArgumentOne));
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in LocationRoot: " + location.getRootPath());
 			break;
 
 		case AUTOINDEX:
@@ -332,7 +300,6 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 
 			if (checkLocationAutoIndex(lineArguments[1].substr(0, sizeArgumentOne), location) != 0)
 				throw std::invalid_argument(lineArguments[1].substr(0, sizeArgumentOne) + "need to be params by 'on' or 'off' !");
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in LocationAutoIndex: " + ws::itos(location.getAutoindex()));
 			break;
 
 		case METHOD:
@@ -349,16 +316,11 @@ int ws::parseLocationLine(config_parsing_t &cpt, Location &location) {
 					location.addtoMethod(*it);
 			}
 			method = location.getMethod();
-			for(std::vector<std::string>::const_iterator it = method.begin(); it != method.end(); ++it)
-			{
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in LocationMethod : " + *it);
-			}
 			break;
 
 		case UPLOAD:
 			checkerArguments(lineArguments.size(), 2, lineArguments[1]);
 			location.setUploadPath(lineArguments[1].substr(0, sizeArgumentOne));
-			ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tSet in LocationUploadPath: " + location.getUploadPath());
 			break;
 
 		default:
@@ -392,10 +354,6 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
                 server = NULL;
             else if (cpt.blockLevel == 3)
                 location = NULL;
-			if (cpt.blockLevel == 3)
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -","\tClosing Bracket");
-			else
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -","Closing Bracket");
             cpt.blockLevel--;
             continue ;
         }
@@ -405,14 +363,12 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
 			case 0: // check if we are inside the http, else it's dead
 				if (lineType != HTTP)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only http blocks can be found at this level.");
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "Http Line: " + cpt.line);
 				cpt.blockLevel++;
 				break;
 
             case 1: //we are inside the html block
                 if (lineType != SERVER)
                     throw std::invalid_argument("Error on line " + ws::itos(cpt.lineNumber) + ", only server blocks can be found at this level.");
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\tNew Server Line: " + cpt.line);
                 server = new Server();
                 servers.push_back(server);
                 cpt.blockLevel++;
@@ -420,7 +376,6 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
 
             case 2: //we are inside server block
                 if (lineType == LOCATION && location == NULL) {
-					ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "\t\tNew Location Line: " + cpt.line);
                     ws::skip_chars(cpt.line.erase(0, 8), ws::WHITE_SPACES); //we erase "location", then we skip the spaces after location
                     cpt.line.erase(cpt.line.find_first_of(ws::WHITE_SPACES)); //we erase any trailing characters after the path
 
@@ -446,15 +401,12 @@ int ws::parseConfig(std::string const &name, std::vector<Server*> &servers) {
                 break ;
 
             default:
-				ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "0 - Error Value");
 				return 1;
 				break;
         }
     }
     if (cpt.blockLevel != 0)
         throw std::invalid_argument("Missing closing bracket!");
-	else
-		ws::log(ws::LOG_LVL_PARSING, "[PARSING] -", "Whole file is parsed");
    return 0;
 }
 
@@ -476,75 +428,37 @@ void ws::checkConfiguration(Server *servers) {
 		errorPage = serverInfo.getError();
 		cgi = serverInfo.getCgis();
 
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "----------------------------------SETUP SERVER----------------------------------");
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "IP: \t\t\t" + serverInfo.getIp());
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "PORT: \t\t\t" + ws::itos(serverInfo.getPort()));
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "NAME: \t\t\t" + serverInfo.getServerName());
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "ROOT: \t\t\t" + serverInfo.getRootPath());
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "CLIENT_MAX_SIZE_BODY: \t" + ws::itos(serverInfo.getMaxBodySize()));
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "INDEX: \t\t\t" + serverInfo.getIndexPath());
-
-		if (serverInfo.getUploadPath().empty())
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "UPLOAD: \t\t\t[EMPTY]");
-		else
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "UPLOAD: \t\t\t" + serverInfo.getUploadPath());
-
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "AUTOINDEX: \t\t\t" + ws::itos(serverInfo.hasAutoindex()));
 		defaultLocation.setRootPath(serverInfo.getRootPath());
 		defaultLocation.setIndexPath(serverInfo.getIndexPath());
 		defaultLocation.setUploadPath(serverInfo.getUploadPath());
 		defaultLocation.setAutoIndex(serverInfo.hasAutoindex());
 
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "METHOD: \t\t");
-		for(std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\t\t\t- " + *it);
+		for (std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
 			defaultLocation.addtoMethod(*it);
 		}
 		serverInfo.setDefaultLocation(defaultLocation);
 
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "CGIS: \t\t");
-		for(std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it) {
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\t\t\t- " + it->first + " \t" + it->second + "\n");
-		}
-
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "ERROR_PAGES: \t\t");
-		for(std::map<int, std::string>::iterator it = errorPage.begin(); it != errorPage.end(); ++it) {
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\t\t\t- " + ws::itos(it->first) + " \t" + it->second);
-		}
-
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "LOCATIONS: \t\t");
-		for(std::map<std::string, Location *>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+		for (std::map<std::string, Location *>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
 			Location *loc = it->second;
 			std::vector<std::string> locMethod = loc->getMethod();
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t" + it->first + " :");
 
 			if (loc->getIndexPath().empty())
 				loc->setIndexPath(serverInfo.getIndexPath());
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tINDEX: \t\t" + loc->getIndexPath());
 
 			if (loc->getAutoindex() == -1)
 				loc->setAutoIndex(serverInfo.hasAutoindex());
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tAUTOINDEX: \t" + ws::itos(loc->getAutoindex()));
 
 
 			if (loc->getRootPath().empty())
 				loc->setRootPath(serverInfo.getRootPath());
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tROOT: \t\t" + loc->getRootPath());
 
 
 			if (loc->getUploadPath().empty())
 				loc->setUploadPath(serverInfo.getUploadPath());
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tUPLOAD: \t" + loc->getUploadPath());
 
 			for (std::vector<std::string>::const_iterator it = serverMethods.begin(); it != serverMethods.end(); ++it) {
 				if (std::find(locMethod.begin(), locMethod.end(), *it) == locMethod.end())
 					loc->addtoMethod(*it);
 			}
-			ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\tMETHOD:");
-			for(std::vector<std::string>::const_iterator it = loc->getMethod().begin(); it != loc->getMethod().end(); ++it) {
-				ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "\t\t\t\t- " + *it);
-			}
 		}
-
-		ws::log(ws::LOG_LVL_INFO, "[INFO_SERVER] -", "------------------------------------END SERVER----------------------------------");
 }

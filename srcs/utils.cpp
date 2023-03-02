@@ -74,29 +74,6 @@ int ws::pos_in_vec_from_end(std::string const &str, std::vector<char> const &vec
 	return -1;
 }
 
-void ws::log(int const &level, std::string const &prefix, std::string const &message, const bool &_errno) {
-	const int lvl = ws::LOG_LVL & level;
-	std::string color;
-
-	if (ws::LOG_LVL & ws::LOG_LVL_NONE || !lvl)
-		return ;
-
-	if (lvl == ws::LOG_LVL_ERROR)
-		color = ws::C_RED;
-	else if (lvl == ws::LOG_LVL_INFO || lvl == ws::LOG_LVL_ALL)
-		color = ws::C_YELLOW;
-	else if (lvl == ws::LOG_LVL_SUCCESS)
-		color = ws::C_LIME;
-	else if (lvl == ws::LOG_LVL_DEBUG)
-		color = C_SILVER;
-	else if (lvl == ws::LOG_LVL_PARSING)
-		color = C_SILVER;
-
-	std::cout << "(LOGLVL: " << level << ") " << ws::C_AQUA << prefix << (prefix.empty() ? "" : " ") << color << message << ws::C_RESET << std::endl;
-	if (_errno)
-		std::cout << "\n error: " << strerror(errno) << std::endl;
-}
-
 bool ws::file_exists(std::string const &path) {
 	struct stat fileInfo;
 	return stat(path.c_str(), &fileInfo) == 0;

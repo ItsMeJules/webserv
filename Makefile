@@ -3,7 +3,7 @@ NAME		=	webserv
 
 #	Compilation
 CXX			=	c++
-CXXFLAG		=	-std=c++98 -Wall -Werror -Wextra -fsanitize=address -g
+CXXFLAG		=	-std=c++98 -Wall -Werror -Wextra
 RM			=	rm -rf
 SRC_DIR 	= 	srcs/
 

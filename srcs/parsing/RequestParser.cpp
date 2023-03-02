@@ -31,7 +31,6 @@ bool RequestParser::parseHeaders(std::string headers) {
 		headers.erase(0, endLinePos + 2); // +2 skips CRLF
 		if (headers.rfind("\r\n", 0) != std::string::npos) { // does the string start with \r\n
 			_headersReceived = true;
-			ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request metadata was parsed");
 			if (headers.size() == 2) // theres no body after the headers
 				return false;
 			break;
@@ -72,7 +71,6 @@ bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBo
 
 		if (endHeaders != std::string::npos) {
 			_inReceive.str("");
-			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(endHeaders) + " chars from headers.");
 
 			if (!parseFirstLine(wholeRequest.substr(0, wholeRequest.find("\r\n"))))
 				return false;
@@ -80,13 +78,11 @@ bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBo
 				_requestParsed = true;
 			else {
 				int bodySize = wholeRequest.size() - (endHeaders + 4);
-				ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "about to parse " + ws::itos(bodySize) + " chars from body received with headers.");
 
 				std::vector<char> vector(wholeRequest.data() + (wholeRequest.size() - bodySize), wholeRequest.data() + wholeRequest.size());
 				parseRequest(vector.data(), bodySize, maxBodySize); // removes to byteCount header size.
 			}
 		} else {
-			ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "data stored in stringstream");
 			_inReceive << request;
 		}
 	} else {
@@ -106,10 +102,6 @@ bool RequestParser::parseRequest(char *request, int &byteCount, int const &maxBo
 
         _requestParsed = ret == 0;
     }
-	if (_requestParsed) {
-		ws::log(ws::LOG_LVL_ALL, "[REQUEST PARSER] -", "request was fully parsed");
-		ws::log(ws::LOG_LVL_DEBUG, "[REQUEST PARSER] -", "contents:\n----------\n" + _httpRequest.build() + "\n----------");
-	}
 	return true;
 }
 

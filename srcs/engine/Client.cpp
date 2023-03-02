@@ -6,7 +6,6 @@ Client::Client() : _requestFailed(false) {}
 Client::Client(ClientSocket socket) : _socket(socket), _requestFailed(false) {}
 Client::Client(Client const &client) { *this = client; }
 Client::~Client() {
-	ws::log(ws::LOG_LVL_INFO, "[CLIENT] -", "destorying client: " + ws::itos(_socket.getFd()));
 }
 
 // ############## PRIVATE ##############
