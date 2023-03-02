@@ -25,7 +25,7 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if ((isValidCode = isValid(fileStream, data)) < 400) {
+	if ((isValidCode = isValid(fileStream, request, data)) < 400) {
 		std::string responseBody;
 
 		if (ws::file_is_dir(data.requestedPath)) {

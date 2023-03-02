@@ -16,7 +16,7 @@ class HttpRequest;
 class HttpMethod {
 	protected:
 		ws::request_data_t initRequestData(ServerInfo const &serverInfo, HttpRequest const &request);
-		int isValid(std::ifstream const &fileStream, ws::request_data_t &data);
+		int isValid(std::ifstream const &fileStream, HttpRequest &request, ws::request_data_t &data);
 	public:
 		HttpMethod();
 		HttpMethod(HttpMethod const &httpMethod);

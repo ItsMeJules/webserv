@@ -34,7 +34,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if ((isValidCode = isValid(fileStream, data)) < 400) {
+	if ((isValidCode = isValid(fileStream, request, data)) < 400) {
 		std::string responseBody;
 		FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 		

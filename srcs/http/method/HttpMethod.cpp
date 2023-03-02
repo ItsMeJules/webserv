@@ -10,14 +10,16 @@ HttpMethod::~HttpMethod() {}
 
 // ############## PROTECTED ##############
 
-int HttpMethod::isValid(std::ifstream const &fileStream, ws::request_data_t &data) {
+int HttpMethod::isValid(std::ifstream const &fileStream, HttpRequest &request, ws::request_data_t &data) {
 	if (!fileStream.is_open()) {
 		if (!data.indexAppended) {
 			if (data.location.getAutoindex() == 0 || (data.location.getAutoindex() == 1 && !ws::file_is_dir(data.requestedPath)))
 				return 404;
 		} else
 			data.requestedPath.erase(data.requestedPath.size() - data.location.getIndexPath().size());
-	}
+	// a file uploaded which has the same name as the index line
+	} else if (dynamic_cast<HttpPost*>(this) != NULL && dynamic_cast<FormDataBody*>(request.getMessageBody()) != NULL)
+		data.requestedPath.erase(data.requestedPath.size() - data.location.getIndexPath().size());
 
 	const std::vector<std::string> allowedMethods = data.location.getMethod();
 	
