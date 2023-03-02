@@ -6,6 +6,7 @@
     	<meta name="keywords" content>
     	<meta name="description" content>
 		<link rel="stylesheet" href="/server/index.css">
+		<link rel="stylesheet" href="index.css">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link rel="icon" href="/server/favicon.ico" type="image/x-icon">
@@ -34,15 +35,16 @@
 					<div class="title">
 						<h2>TRY <span>POST</span> METHOD</h2>
 					</div>
-					<h3>Choose a file to import :</h3>
 					<form action="upload" method="POST" enctype="multipart/form-data">
-						Send this file: <input name="userfile" type="file" />
-						<button type="submit" name="send" value="send">Send</button>
+						<h3>Choose a <span>file</span> to import :</h3>
+						<input placeholder="Choose a file..." name="userfile" type="file" class="file"/>
+						<button type="submit" class ="submit" name="send" value="send">Send</button>
 					</form>
 					<form action="/server/post.php" method="GET">
-						<input type="text" name="title" placeholder="title" /></br>
-						<input name="content" placeholder="description"/></br>
-						<input type="submit" value="POST" />
+						<h3>Please <span>complete</span> the form:</h3>
+						<input type="text" name="title" placeholder="A Title" /></br>
+						<input name="content" placeholder="A Description"/></br>
+						<input type="submit" class="submit" value="POST" />
 					</form>
 				</div>
 				<div class="delete">
@@ -67,3 +69,4 @@
 		</div>
     </body>
 </html>
+

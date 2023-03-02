@@ -38,8 +38,16 @@ namespace ws {
         
         for (std::vector<Server*>::iterator it = Server::servers.begin(); it != Server::servers.end(); it++) {
             Server *server = *it;
+            std::string uploadPath = server->getServerInfo().getRootPath() + "/" + server->getServerInfo().getUploadPath();
 
             ws::checkConfiguration(server);
+            
+            if (!ws::file_exists(uploadPath)) {
+                if (::mkdir(uploadPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) {
+                    ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "failed to create the directory for uploaded files!");
+                    return false;
+                }
+            }
             
             server->getServerSocket().setIp(server->getServerInfo().getIp());
             server->getServerSocket().setPort(server->getServerInfo().getPort());
