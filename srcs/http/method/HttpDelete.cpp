@@ -31,6 +31,7 @@ HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &requ
 	response.addHeader("Content-Length", ws::itos(body->getBodySize()));
 	response.addHeader("Date", response.generateDate());
 
+	delete body;
 	return response;
 }
 
