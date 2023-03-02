@@ -117,7 +117,10 @@ void RequestParser::clear() {
     HttpRequest empty;
 
     _headersReceived = false;
+	
+	delete _httpRequest.getMessageBody();
     _httpRequest = empty;
+
 	_requestParsed = false;
     _inReceive.str("");
 }

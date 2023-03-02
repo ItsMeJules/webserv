@@ -105,6 +105,26 @@ input {
 	margin: 10px;
 }
 
+input.file {
+	background-color: #0e1114;
+}
+
+input::file-selector-button {
+	background-color: transparent;
+	border-radius: 29px;
+	border: 1px solid white;
+	color: white;
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+input::file-selector-button:hover {
+	background-color: white;
+	color: #0e1114;
+	border-color: #0e1114;
+	transition: 0.3s;
+}
+
 div.delete {
 	width: 42.5vh;
 	height: 60vh;
@@ -142,7 +162,6 @@ input.submit:hover{
 	transition: 0.3s;
 }
 
-
 .button{
     background-color: #0e1114;
 	border-radius: 29px;
@@ -155,6 +174,24 @@ input.submit:hover{
 }
 
 .button:hover{
+	background-color: white;
+	color: #0e1114;
+	border-color: #0e1114;
+	transition: 0.3s;
+}
+
+button.submit{
+    background-color: #0e1114;
+	border-radius: 29px;
+	border: 1px solid white;
+	color: white;
+	font-size: 15px;
+    padding: 10px 45px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+button.submit:hover{
 	background-color: white;
 	color: #0e1114;
 	border-color: #0e1114;
@@ -205,3 +242,4 @@ a {
 		height: 100%;
 	}
 }
+

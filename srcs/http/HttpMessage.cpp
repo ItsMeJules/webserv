@@ -1,4 +1,5 @@
 #include "HttpMessage.hpp"
+#include "FormDataBody.hpp"
 
 // ############## CONSTRUCTORS / DESTRUCTORS ##############
 
@@ -7,6 +8,9 @@ HttpMessage::HttpMessage(std::string httpVersion) : _httpVersion(httpVersion), _
 HttpMessage::HttpMessage(HttpMessage const &message) { *this = message; }
 HttpMessage::~HttpMessage() {
 	ws::log(ws::LOG_LVL_DEBUG, "[HTTP MESSAGE] -", "deleting http message.");
+	if (dynamic_cast<FormDataBody*>(_messageBody) != NULL)
+		ws::log(ws::LOG_LVL_DEBUG, "[HTTP MESSAGE] -", "it is a formdatabody!");
+	
 	delete _messageBody;
 }
 

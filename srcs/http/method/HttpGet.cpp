@@ -25,7 +25,8 @@ HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request
 
 	fileStream.open(data.requestedPath.c_str());
 	std::cout << "requested path    ---" << data.requestedPath << std::endl;
-	if ((isValidCode = isValid(fileStream, data)) < 400) {
+
+	if ((isValidCode = isValid(fileStream, request, data)) < 400) {
 		std::string responseBody;
 
 		std::cout << "ICI" << data.fileExtension << std::endl;

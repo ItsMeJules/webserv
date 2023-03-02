@@ -35,8 +35,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 
 	fileStream.open(data.requestedPath.c_str());
 
-	if ((isValidCode = isValid(fileStream, data)) < 400) {
-		std::cout << "HELLO CA PASSE DANS POST" 	<< std::endl;
+	if ((isValidCode = isValid(fileStream, request, data)) < 400) {
 		std::string responseBody;
 		FormDataBody *formBody = dynamic_cast<FormDataBody*>(request.getMessageBody());
 
@@ -72,7 +71,7 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 			}
 
 			if (success)
-				responseBody = HttpResponse::codes[200].reason;
+				responseBody = HttpResponse::codes[200].explanation;
 			if (ofs.is_open())
 				ofs.close();
 		}
