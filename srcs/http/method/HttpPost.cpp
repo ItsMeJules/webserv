@@ -43,8 +43,9 @@ HttpResponse HttpPost::execute(ServerInfo const &serverInfo, HttpRequest &reques
 		if (serverInfo.getCgis().count(data.fileExtension) != 0) {
 			Cgi *cgi = new Cgi(serverInfo.getCgis());
 			if (cgi->setup(request)) {
-				std::cout << "cgi setup post" << std::endl;
+				std::cout << "CGI ICI" << std::endl;
 				responseBody = cgi->execute(request, data);
+				std::cout << "passe le execute" << std::endl;
 				data.fileExtension = "html";
 			} else
 				response.generateError(500, serverInfo, *body);
