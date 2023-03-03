@@ -22,7 +22,7 @@ int HttpMethod::isValid(std::ifstream const &fileStream, HttpRequest &request, w
 		data.requestedPath.erase(data.requestedPath.size() - data.location.getIndexPath().size());
 
 	const std::vector<std::string> allowedMethods = data.location.getMethod();
-	
+
 	if (std::find(allowedMethods.begin(), allowedMethods.end(), getName()) == allowedMethods.end())
 		return 405;
 	return 200;
