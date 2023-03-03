@@ -11,6 +11,7 @@ HttpDelete::~HttpDelete() {}
 // ############## PUBLIC ##############
 
 HttpResponse HttpDelete::execute(ServerInfo const &serverInfo, HttpRequest &request) {
+	ws::log(ws::LOG_LVL_INFO, "[HTTP DELETE] -", "executing get request.");
 	HttpResponse response;
 	ws::http_status_t status;
 

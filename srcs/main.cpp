@@ -31,6 +31,7 @@ namespace ws {
 
         if (!ws::file_exists(ws::TMP_PATH)) {
             if (::mkdir(ws::TMP_PATH.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) {
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "failed to create the directory for temporary files!");
                 return false;
             }
         }
@@ -43,6 +44,7 @@ namespace ws {
 
             if (!ws::file_exists(uploadPath)) {
                 if (::mkdir(uploadPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) {
+                    ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "failed to create the directory for uploaded files!");
                     return false;
                 }
             }
@@ -61,6 +63,7 @@ namespace ws {
     }
 
     void stop_webserv( int signum ) {
+        ws::log(ws::LOG_LVL_INFO, "[MAIN] -", "Gracefully stopping webserv...");
         ws::free_servers();
 
         exit(signum);
@@ -73,18 +76,24 @@ int main(int ac, char **av) {
     signal(SIGINT, ws::stop_webserv);
 
     if (ac < 2) {
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "You must specify a configuration file!");
         return 1;
     }
+
+    std::cout << "dans le main" << std::endl;
 
     try {
         ws::parseConfig(std::string(av[1]), Server::servers);
     } catch(const std::invalid_argument &e) {
         ws::free_servers();
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", std::string("Configuration file invalid: ") + e.what());
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
         return 1;
     }
 
     if (!ws::setup_servers()) {
         ws::free_servers();
+        ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
         return 1;
     }
 
@@ -93,6 +102,8 @@ int main(int ac, char **av) {
             Server *server = *it;
 
             if (Server::poller->polling(*server) < 0) {
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "something went wrong with server: " + server->getServerInfo().getServerName());
+                ws::log(ws::LOG_LVL_ERROR, "[MAIN] -", "Stopping program...");
                 stop = true;
                 break;
             }

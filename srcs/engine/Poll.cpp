@@ -32,6 +32,8 @@ bool Poll::pollFd(int fd, int events) {
     bzero(&event.revents, sizeof(event.revents)); // Pour être safe et s'assurer que ça soit Clean.
 
     _pollFd.push_back(event); // to add to the vector
+	ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "sucessfully added fd: " + ws::itos(fd) + " to polling vector");
+	ws::log(ws::LOG_LVL_DEBUG, "[POLL] -", "with events:\n " + formatEvents(events));
 	return true;
 }
 
@@ -40,6 +42,7 @@ bool Poll::deleteFd(int fd) {
 	// il faudrait que je change l'interface IPoll
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
 		if (it->fd == fd) {
+			ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "successfully deleted fd: " + ws::itos(fd) + " from polling vector");
 			return true;
 		}
 	}
@@ -52,6 +55,8 @@ bool Poll::modFd(int fd, int events) {
     for (std::vector<pollfd_t>::iterator it = _pollFd.begin(); it != _pollFd.end(); it++) {
 		if (it->fd == fd) {
 			it->revents = events;
+			ws::log(ws::LOG_LVL_SUCCESS, "[POLL] -", "successfully modified fd: " + ws::itos(fd));
+			ws::log(ws::LOG_LVL_DEBUG, "[POLL] -", "with events:\n " + formatEvents(events));
 			return true;
 		}
 	}
@@ -59,6 +64,8 @@ bool Poll::modFd(int fd, int events) {
 }
 
 int Poll::clientConnect(Server &server) {
+	ws::log(ws::LOG_LVL_INFO, "[SERVER] - ", "connecting client...");
+
 	ClientSocket socket(server.getServerSocket().getFd());
 	if (!socket.setup())
 		return -3;
@@ -102,6 +109,7 @@ int Poll::clientRead(Client &client, Server &server) {
 int Poll::polling(Server &server) {
 	int readyFdAmount = poll(_pollFd.data(), _pollFd.size(), ws::POLL_WAIT_TIMEOUT);
     if (readyFdAmount == -1) {
+		ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "waiting failed!", true);
 		return -1;
 	}
 
@@ -110,6 +118,8 @@ int Poll::polling(Server &server) {
 		if (it->revents == 0)
 			continue ;
 		if (it->revents & POLLERR) {
+			ws::log(ws::LOG_LVL_ERROR, "[POLL] -", "error on fd: " + ws::itos(it->fd) + "!");
+			ws::log(ws::LOG_LVL_DEBUG, "[POLL] -", "with events:\n " + formatEvents(it->revents));
 			if (server.isConnected(it->fd))
 				server.disconnect(server.getClient(it->fd));
 			else
