@@ -15,6 +15,7 @@ HttpGet &HttpGet::operator=(HttpGet const &rhs) {
 }
 
 HttpResponse HttpGet::execute(ServerInfo const &serverInfo, HttpRequest &request) {
+	ws::log(ws::LOG_LVL_INFO, "[HTTP GET] -", "executing get request.");
 	HttpResponse response;
 	std::ifstream fileStream;
 	int isValidCode;
